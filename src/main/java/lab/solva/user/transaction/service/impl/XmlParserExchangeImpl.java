@@ -30,8 +30,8 @@ import java.util.*;
 public class XmlParserExchangeImpl implements XmlParserExchange {
 
     private final ExchangeInfoRepository exchangeInfoRepository;
-    private final ExchangeRateRepository exchangeRateRepository;
 
+    private final ExchangeRateRepository exchangeRateRepository;
     @Override
     public Set<ExchangeRateEntity> gettingRates() {
         // Получение текущей даты

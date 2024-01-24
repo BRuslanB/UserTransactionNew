@@ -21,29 +21,15 @@ repositories {
 	mavenCentral()
 }
 
-//dependencies {
-//	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-//	implementation 'org.springframework.boot:spring-boot-starter-web'
-////	implementation 'javax.xml.bind:jaxb-api'  // Зависимость для обработки XML (JAXB API)
-////	implementation 'org.hibernate:hibernate-entitymanager'  // Зависимость для EntityManager в Hibernate
-//	implementation 'javax.xml.bind:jaxb-api:2.3.1'  // Замените версию на актуальную
-//	implementation 'org.hibernate:hibernate-core:5.5.6.Final'  // Замените версию на актуальную
-//	implementation 'org.hibernate:hibernate-entitymanager:5.5.6.Final'  // Замените версию на актуальную
-//	compileOnly 'org.projectlombok:lombok'
-//	runtimeOnly 'org.postgresql:postgresql'
-//	annotationProcessor 'org.projectlombok:lombok'
-//	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-//}
-
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa:2.7.18'
 	implementation 'org.springframework.boot:spring-boot-starter-web:2.7.4'
-	implementation 'javax.xml.bind:jaxb-api:2.3.1'  // Замените версию на актуальную
-	implementation 'org.hibernate:hibernate-core:5.6.1.Final'  // Замените версию на актуальную
-	implementation 'org.hibernate:hibernate-entitymanager:5.6.1.Final'  // Замените версию на актуальную
-	compileOnly 'org.projectlombok:lombok:1.18.22'  // Замените версию на актуальную
+	implementation 'javax.xml.bind:jaxb-api:2.3.1'
+	implementation 'org.hibernate:hibernate-core:5.6.1.Final'
+	implementation 'org.hibernate:hibernate-entitymanager:5.6.1.Final'
+	compileOnly 'org.projectlombok:lombok:1.18.22'
 	runtimeOnly 'org.postgresql:postgresql:42.5.1'
-	annotationProcessor 'org.projectlombok:lombok:1.18.22'  // Замените версию на актуальную
+	annotationProcessor 'org.projectlombok:lombok:1.18.22'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test:2.7.4'
 }
 
