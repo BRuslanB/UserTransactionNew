@@ -36,7 +36,7 @@ public class ExpenseTransactionEntity {
     @Column(name = "expense_category")
     private String expenseCategory;
 
-    @Column(name = "transaction_date")
+    @Column(name = "transaction_date", columnDefinition = "TIMESTAMP WITH TIME ZONE")
     private Timestamp transactionDateTime;
 
     @Column(name = "limit_exceeded")

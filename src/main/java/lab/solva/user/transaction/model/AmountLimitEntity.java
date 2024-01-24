@@ -24,7 +24,7 @@ public class AmountLimitEntity {
     @Column(name = "limit_sum")
     private double limit_sum;
 
-    @Column(name = "limit_date")
+    @Column(name = "limit_date", columnDefinition = "TIMESTAMP WITH TIME ZONE")
     private Timestamp limitDateTime;
 
     @Column(name = "limit_currency_code")

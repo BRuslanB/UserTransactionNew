@@ -9,7 +9,6 @@ import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
 public class ExchangeInfoDto {
 
     public String link;

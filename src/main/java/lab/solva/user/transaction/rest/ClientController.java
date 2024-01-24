@@ -1,7 +1,8 @@
 package lab.solva.user.transaction.rest;
 
+import lab.solva.user.transaction.dto.AmountLimitDateDto;
 import lab.solva.user.transaction.dto.AmountLimitDto;
-import lab.solva.user.transaction.dto.ExpenseTransactionDto;
+import lab.solva.user.transaction.dto.TransactionExceededLimitDto;
 import lab.solva.user.transaction.service.ClientService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -17,13 +18,13 @@ public class ClientController {
     private final ClientService clientService;
 
     @GetMapping
-    public List<AmountLimitDto> getAllAmountLimit() {
+    public List<AmountLimitDateDto> getAllAmountLimitDate() {
         // Логирование действия
-        return clientService.getAllAmountLimitDto();
+        return clientService.getAllAmountLimitDateDto();
     }
 
     @GetMapping(value = "transaction")
-    public List<ExpenseTransactionDto> getTransactionExceededLimit() {
+    public List<TransactionExceededLimitDto> getTransactionExceededLimit() {
         // Логирование действия
         return clientService.getTransactionExceededLimitDto();
     }
@@ -33,5 +34,4 @@ public class ClientController {
         // Логирование действия
         clientService.setAmountLimitDto(amountLimitDto);
     }
-
 }

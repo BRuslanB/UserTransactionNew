@@ -20,14 +20,12 @@ import java.util.Set;
 public interface ExchangeInfoRepository extends JpaRepository<ExchangeInfoEntity, Long>  {
 
     ExchangeInfoEntity findFirstByOrderByRequestDateDesc();
-
     default Optional<ExchangeInfoEntity> findLatestExchangeInfo() {
         return Optional.ofNullable(findFirstByOrderByRequestDateDesc());
     }
 
     @Query("SELECT c FROM ExchangeInfoEntity c WHERE c.requestDate = :requestDate")
     Set<ExchangeInfoEntity> findByRequestDate(LocalDate requestDate);
-
     default Optional<ExchangeInfoEntity> findByExchangeInfo(LocalDate requestDate) {
         return findByRequestDate(requestDate).stream().findFirst();
     }
