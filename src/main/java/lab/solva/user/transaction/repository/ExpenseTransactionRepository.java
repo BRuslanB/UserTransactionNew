@@ -1,6 +1,5 @@
 package lab.solva.user.transaction.repository;
 
-import lab.solva.user.transaction.dto.TransactionExceededLimitDto;
 import lab.solva.user.transaction.model.ExpenseTransactionEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -13,12 +12,26 @@ import java.util.List;
 @Transactional
 public interface ExpenseTransactionRepository extends JpaRepository<ExpenseTransactionEntity, Long>  {
 
-//    @Query("SELECT new lab.solva.user.transaction.dto.TransactionExceededLimitDto(" +
-//            "t.accountClient, t.accountCounterparty, t.currencyCode, t.transactionSum, " +
-//            "t.expenseCategory, t.transactionDateTime, l.limitSum, l.limitDateTime, l.limitCurrencyCode) " +
-//            "FROM ExpenseTransactionEntity t JOIN AmountLimitEntity l " +
-//            "ON t.expenseCategory = l.expenseCategory " +
-//            "WHERE t.transactionDateTime >= l.limitDateTime " +
-//            "ORDER BY t.transactionDateTime ASC")
-//    List<TransactionExceededLimitDto> findTransactionsWithLimits();
+    @Query("SELECT t.accountClient, " +
+                "t.accountCounterparty, " +
+                "t.currencyCode, " +
+                "t.transactionSum, " +
+                "t.expenseCategory, " +
+                "t.transactionDateTime, " +
+                "l.limitSum, " +
+                "l.limitDateTime, " +
+                "l.limitCurrencyCode " +
+            "FROM ExpenseTransactionEntity t " +
+            "JOIN t.amountLimitEntity l " +
+            "WHERE t.limitExceeded = true " +
+            "ORDER BY t.transactionDateTime ASC")
+    List<Object[]> findAllTransactionWithExceededLimit();
+
+    @Query(value = "SELECT SUM(c.transactionSum) " +
+            "FROM ExpenseTransactionEntity c " +
+            "WHERE c.accountClient = :accountClient " +
+                "AND c.expenseCategory = :expenseCategory " +
+                "AND c.currencyCode = :currencyCode " +
+                "AND MONTH(c.transactionDateTime) = :month AND YEAR(c.transactionDateTime) = :year")
+    double calcTransactionSum(String accountClient, String expenseCategory, String currencyCode, int month, int year);
 }

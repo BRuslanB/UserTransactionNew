@@ -25,7 +25,7 @@ public class ExchangeInfoEntity {
     @Column(name = "request_date")
     private LocalDate requestDate;
 
-    @OneToMany(mappedBy = "exchangeInfo", fetch = FetchType.EAGER,
+    @OneToMany(mappedBy = "exchangeInfoEntity", fetch = FetchType.EAGER,
             cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<ExchangeRateEntity> exchangeRates;
+    private Set<ExchangeRateEntity> exchangeRateEntities;
 }

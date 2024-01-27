@@ -12,6 +12,6 @@ import java.util.Set;
 @Transactional
 public interface ExchangeRateRepository extends JpaRepository<ExchangeRateEntity, Long> {
 
-    @Query("SELECT c FROM ExchangeRateEntity c WHERE c.exchangeInfo.id = :exchangeInfoId")
-    Set<ExchangeRateEntity> findByAllExchangeRates(Long exchangeInfoId);
+    @Query("SELECT c FROM ExchangeRateEntity c WHERE c.exchangeInfoEntity.id = :exchangeInfoId")
+    Set<ExchangeRateEntity> findAllExchangeRate(Long exchangeInfoId);
 }

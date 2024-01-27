@@ -6,6 +6,7 @@ import lombok.*;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.validation.constraints.Size;
 
 @Entity
 @Table(name = "t_exchange_rate")
@@ -23,6 +24,7 @@ public class ExchangeRateEntity {
     @Column(name = "currency_name")
     private String currencyName;
 
+    @Size(max = 3)
     @Column(name = "currency_code")
     private String currencyCode;
 
@@ -31,5 +33,5 @@ public class ExchangeRateEntity {
 
     @ManyToOne
     @JoinColumn(name = "exchange_info_id")
-    private ExchangeInfoEntity exchangeInfo;
+    private ExchangeInfoEntity exchangeInfoEntity;
 }

@@ -36,22 +36,22 @@ public class XmlParserExchangeImpl implements XmlParserExchange {
     public Set<ExchangeRateEntity> gettingRates() {
         // Получение текущей даты
         LocalDate currentDate = LocalDate.now();
-//        LocalDate currentDate = LocalDate.of(2024, 1, 25); // для проверки
+//        LocalDate currentDate = LocalDate.of(2024, 1, 25); // --для проверки
         // Получение данных на текущую дата из БД
-        Optional<ExchangeInfoEntity> currentExchangeInfoOptional = exchangeInfoRepository.findByExchangeInfo(currentDate);
+        Optional<ExchangeInfoEntity> currentExchangeInfoOptional = exchangeInfoRepository.findExchangeInfo(currentDate);
         if (currentExchangeInfoOptional.isPresent()) {
             ExchangeInfoEntity exchangeInfoEntity = currentExchangeInfoOptional.get();
             // Сохраняем этот факт в Лог вместе с текущей датой (currentDate)
-            return exchangeRateRepository.findByAllExchangeRates(exchangeInfoEntity.getId());
+            return exchangeRateRepository.findAllExchangeRate(exchangeInfoEntity.getId());
         } else {
-            // Обработка случая, когда нет данных на текущую даты в БД
+            // Обработка случая, когда нет данных на текущую дату в БД
             if (requestExchange(currentDate)) {
                 // Данные из внешнего сервиса успешно получены и сохранены в БД
                 // Сохраняем этот факт в Лог вместе с текущей датой (currentDate)
             } else {
                 // Данные из внешнего сервиса не получены
                 // Сохраняем этот факт в Лог вместе с текущей датой (currentDate)
-            };
+            }
         }
         // Получение данных на последнюю дату из БД
         // Если данные из внешнего сервиса на текущую даты были успешно сохраннны в БД, получаем эти данные
@@ -60,7 +60,7 @@ public class XmlParserExchangeImpl implements XmlParserExchange {
         if (latestExchangeInfoOptional.isPresent()) {
             ExchangeInfoEntity exchangeInfoEntity = latestExchangeInfoOptional.get();
             // Сохраняем этот факт в Лог вместе с последней датой (exchangeInfoEntity.getRequestDate())
-            return exchangeRateRepository.findByAllExchangeRates(exchangeInfoEntity.getId());
+            return exchangeRateRepository.findAllExchangeRate(exchangeInfoEntity.getId());
         } else {
             // Обработка случая, когда нет данных в БД
             // Сохраняем этот факт в Лог
@@ -105,10 +105,11 @@ public class XmlParserExchangeImpl implements XmlParserExchange {
                     exchangeRateEntity.setCurrencyName(exchangeRateDto.fullname);
                     exchangeRateEntity.setCurrencyCode(exchangeRateDto.title);
                     exchangeRateEntity.setExchangeRate(exchangeRateDto.description);
-                    exchangeRateEntity.setExchangeInfo(exchangeInfoEntity); // Set the relationship
+                    // Сохраняем ссылку на родительскую сущность
+                    exchangeRateEntity.setExchangeInfoEntity(exchangeInfoEntity);
                     exchangeRateEntitySet.add(exchangeRateEntity);
                 }
-                exchangeInfoEntity.setExchangeRates(exchangeRateEntitySet);
+                exchangeInfoEntity.setExchangeRateEntities(exchangeRateEntitySet);
                 exchangeInfoRepository.save(exchangeInfoEntity);
 
                 return true;
@@ -150,8 +151,9 @@ public class XmlParserExchangeImpl implements XmlParserExchange {
                 Element itemElement = (Element) item.item(i);
                 String title = getTextContent(itemElement, "title");
 
-                // Выборка по необходимым валютам
+                // Выборка по необходимым валютам для хранение их в БД
                 if ((CurrencyType.USD.name().equals(title)) ||
+                    (CurrencyType.EUR.name().equals(title)) ||
                     (CurrencyType.RUB.name().equals(title))) {
                     String fullname = getTextContent(itemElement, "fullname");
                     double description = Double.parseDouble(Objects.requireNonNull(getTextContent(itemElement, "description")));
