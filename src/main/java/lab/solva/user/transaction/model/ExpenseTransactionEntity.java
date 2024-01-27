@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import javax.validation.constraints.Size;
 import java.sql.Timestamp;
 
 @Entity
@@ -21,12 +22,15 @@ public class ExpenseTransactionEntity {
     @Column(name = "id")
     private Long id;
 
+    @Size(max = 10)
     @Column(name = "account_client")
     private String accountClient;
 
+    @Size(max = 10)
     @Column(name = "account_counterparty")
     private String accountCounterparty;
 
+    @Size(max = 3)
     @Column(name = "currency_code")
     private String currencyCode;
 
@@ -41,4 +45,12 @@ public class ExpenseTransactionEntity {
 
     @Column(name = "limit_exceeded")
     private boolean limitExceeded;
+
+//    @OneToMany(mappedBy = "expenseTransaction", fetch = FetchType.EAGER,
+//            cascade = CascadeType.ALL, orphanRemoval = true)
+//    private Set<AmountLimitEntity> amountLimitEntities;
+
+    @ManyToOne
+    @JoinColumn(name = "amount_limit_id")
+    private AmountLimitEntity amountLimitEntity;
 }

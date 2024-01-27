@@ -2,7 +2,6 @@ package lab.solva.user.transaction.service.impl;
 
 import lab.solva.user.transaction.dto.AmountLimitDateDto;
 import lab.solva.user.transaction.dto.AmountLimitDto;
-import lab.solva.user.transaction.dto.ExpenseTransactionDto;
 import lab.solva.user.transaction.dto.TransactionExceededLimitDto;
 import lab.solva.user.transaction.model.AmountLimitEntity;
 import lab.solva.user.transaction.repository.AmountLimitRepository;
@@ -13,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,10 +29,13 @@ public class ClientServiceImpl implements ClientService {
         if (amountLimitEntityList.size() > 0) {
             for (AmountLimitEntity amountLimitEntity : amountLimitEntityList) {
                 AmountLimitDateDto amountLimitDateDto = new AmountLimitDateDto();
-                amountLimitDateDto.limit_sum = amountLimitEntity.getLimit_sum();
+                amountLimitDateDto.account_from = amountLimitEntity.getAccountClient();
+                amountLimitDateDto.limit_sum = amountLimitEntity.getLimitSum();
                 amountLimitDateDto.limit_currency_shortname = amountLimitEntity.getLimitCurrencyCode();
+                amountLimitDateDto.expense_category = amountLimitEntity.getExpenseCategory();
                 amountLimitDateDto.limit_datetime = amountLimitEntity.getLimitDateTime();
-            };
+                amountLimitDateDtoList.add(amountLimitDateDto);
+            }
         }
         return amountLimitDateDtoList;
     }
@@ -44,11 +45,12 @@ public class ClientServiceImpl implements ClientService {
         // Сохранение полученных данных из amountLimitDto
         if (amountLimitDto != null) {
             AmountLimitEntity amountLimitEntity  = new AmountLimitEntity();
-            amountLimitEntity.setLimit_sum(amountLimitDto.limit_sum);
+            amountLimitEntity.setAccountClient(amountLimitDto.account_from);
+            amountLimitEntity.setLimitSum(amountLimitDto.limit_sum);
             // Используем текущую дату и время в нужном формате
             LocalDateTime currentDateTime = LocalDateTime.now();
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ssXXX");
-            amountLimitEntity.setLimitDateTime(Timestamp.valueOf(currentDateTime.format(formatter)));
+            amountLimitEntity.setLimitDateTime(Timestamp.valueOf(currentDateTime));
+
             amountLimitEntity.setLimitCurrencyCode(amountLimitDto.limit_currency_shortname);
             amountLimitEntity.setExpenseCategory(amountLimitDto.expense_category);
             // Логирование действия
@@ -59,11 +61,27 @@ public class ClientServiceImpl implements ClientService {
     @Override
     public List<TransactionExceededLimitDto> getTransactionExceededLimitDto() {
         // Получение списка транзакций, превысивших лимит из БД
-//        List<TransactionExceededLimitDto> transactionExceededLimitDtoList =
-//                expenseTransactionRepository.findTransactionsWithLimits();
-//        if (transactionExceededLimitDtoList.size() > 0) {
-//            return transactionExceededLimitDtoList;
-//        }
-        return null;
+        List<Object[]> result = expenseTransactionRepository.findAllTransactionWithExceededLimit();
+        List<TransactionExceededLimitDto> transactionExceededLimitDtoList = new ArrayList<>();
+
+        for (Object[] objects : result) {
+            String accountClient = (String) objects[0];
+            String accountCounterparty = (String) objects[1];
+            String currencyCode = (String) objects[2];
+            Double transactionSum = (Double) objects[3];
+            String expenseCategory = (String) objects[4];
+            Timestamp transactionDateTime = (Timestamp) objects[5];
+            Double limitSum = (Double) objects[6];
+            Timestamp limitDateTime = (Timestamp) objects[7];
+            String limitCurrencyCode = (String) objects[8];
+
+            TransactionExceededLimitDto transactionExceededLimitDto = new TransactionExceededLimitDto(
+                    accountClient, accountCounterparty, currencyCode, transactionSum,
+                    expenseCategory, transactionDateTime, limitSum, limitDateTime, limitCurrencyCode
+            );
+            transactionExceededLimitDtoList.add(transactionExceededLimitDto);
+        }
+
+        return transactionExceededLimitDtoList;
     }
 }
