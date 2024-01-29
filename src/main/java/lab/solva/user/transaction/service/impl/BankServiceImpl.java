@@ -2,6 +2,7 @@ package lab.solva.user.transaction.service.impl;
 
 import lab.solva.user.transaction.dto.ExpenseTransactionDto;
 import lab.solva.user.transaction.enumeration.CurrencyType;
+import lab.solva.user.transaction.enumeration.ExpenseCategory;
 import lab.solva.user.transaction.model.AmountLimitEntity;
 import lab.solva.user.transaction.model.ExchangeRateEntity;
 import lab.solva.user.transaction.model.ExpenseTransactionEntity;
@@ -35,18 +36,28 @@ public class BankServiceImpl implements BankService {
         // Сохранение полученных данных из expenseTransactionDto
         if (expenseTransactionDto != null) {
             ExpenseTransactionEntity expenseTransactionEntity = new ExpenseTransactionEntity();
-            expenseTransactionEntity.setAccountClient(expenseTransactionDto.account_to);
-            expenseTransactionEntity.setAccountCounterparty(expenseTransactionDto.account_from);
+            expenseTransactionEntity.setAccountClient(expenseTransactionDto.account_from);
+            expenseTransactionEntity.setAccountCounterparty(expenseTransactionDto.account_to);
             expenseTransactionEntity.setCurrencyCode(expenseTransactionDto.currency_shortname);
             expenseTransactionEntity.setTransactionSum(expenseTransactionDto.Sum);
+            // Проверка Expense Category на допустимое заначение
+            String expenseCategory = expenseTransactionDto.expense_category;
+            if (ExpenseCategory.SERVICE.name().equals(expenseCategory.toUpperCase()) ||
+                    ExpenseCategory.PRODUCT.name().equals(expenseCategory.toUpperCase())) {
+                expenseTransactionEntity.setExpenseCategory(expenseCategory);
+            } else {
+                // Не допустимое значение
+                // Сохраняем этот факт в Лог
+                return;
+            }
             expenseTransactionEntity.setExpenseCategory(expenseTransactionDto.expense_category);
             expenseTransactionEntity.setTransactionDateTime(expenseTransactionDto.datetime);
             // Вычисление значение для поля limitExceeded
-            expenseTransactionEntity.setLimitExceeded(getLimitExceeded(expenseTransactionDto.account_to,
+            expenseTransactionEntity.setLimitExceeded(getLimitExceeded(expenseTransactionDto.account_from,
                     expenseTransactionDto.expense_category, expenseTransactionDto.currency_shortname,
                     expenseTransactionDto.Sum));
             // Сохраняем ссылку на родительскую сущность
-            expenseTransactionEntity.setAmountLimitEntity(getAmountLimit(expenseTransactionDto.account_to,
+            expenseTransactionEntity.setAmountLimitEntity(getAmountLimit(expenseTransactionDto.account_from,
                     expenseTransactionDto.expense_category));
             // Логирование действия
             expenseTransactionRepository.save(expenseTransactionEntity);
@@ -57,14 +68,14 @@ public class BankServiceImpl implements BankService {
                                      double currentTransactionSum){
 
         double currentLimit; // Сумма лимита за текущий месяц
-        double sumTransactionResult = 0.0; // Сумма всех транзакции за месяц
+        double sumTransactionResult = 0.0; // Итоговая сумма всех транзакции за месяц (по всем валютам)
 
         // Получение текущего месяца и года
         LocalDateTime currentDateTime = LocalDateTime.now();
         int currentMonth = currentDateTime.getMonthValue();
         int currentYear = currentDateTime.getYear();
 
-        // Вычисление суммы всех транзакции за месяц по всем валютам
+        // Вычисление суммы всех транзакции за месяц по каждой валюте
         double sumTransactionKZT = expenseTransactionRepository.calcTransactionSum(
                 accountClient, expenseCategory, CurrencyType.KZT.name(), currentMonth, currentYear);
         double sumTransactionUSD = expenseTransactionRepository.calcTransactionSum(
@@ -199,7 +210,7 @@ public class BankServiceImpl implements BankService {
     }
 
     private AmountLimitEntity saveAmountLimit(String accountClient, String expenseCategory) {
-        // Получаем 1 число текущего месяца с временем 00:00:00
+        // Получаем 1 число текущего месяца с началом времени 00:00:00
         LocalDateTime firstDayOfMonth = LocalDateTime.now().withDayOfMonth(1).toLocalDate().atStartOfDay();
 
         AmountLimitEntity amountLimitEntity  = new AmountLimitEntity();

@@ -152,9 +152,9 @@ public class XmlParserExchangeImpl implements XmlParserExchange {
                 String title = getTextContent(itemElement, "title");
 
                 // Выборка по необходимым валютам для хранение их в БД
-                if ((CurrencyType.USD.name().equals(title)) ||
-                    (CurrencyType.EUR.name().equals(title)) ||
-                    (CurrencyType.RUB.name().equals(title))) {
+                if (CurrencyType.USD.name().equals(title)||
+                    CurrencyType.EUR.name().equals(title)||
+                    CurrencyType.RUB.name().equals(title)) {
                     String fullname = getTextContent(itemElement, "fullname");
                     double description = Double.parseDouble(Objects.requireNonNull(getTextContent(itemElement, "description")));
 

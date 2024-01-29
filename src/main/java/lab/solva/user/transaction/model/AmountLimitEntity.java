@@ -40,10 +40,6 @@ public class AmountLimitEntity {
     @Column(name = "expense_category")
     private String expenseCategory;
 
-//    @ManyToOne
-//    @JoinColumn(name = "expense_transaction_id")
-//    private ExpenseTransactionEntity expenseTransaction;
-
     @OneToMany(mappedBy = "amountLimitEntity", fetch = FetchType.EAGER,
             cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<ExpenseTransactionEntity> expenseTransactionEntities;
