@@ -3,8 +3,8 @@ package lab.solva.user.transaction.dto;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
-import java.sql.Timestamp;
 import javax.validation.constraints.Size;
+import java.time.ZonedDateTime;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -23,11 +23,13 @@ public class TransactionExceededLimitDto {
 
     public String expense_category;
 
-    public Timestamp datetime;
+    // Формат с поддержкой часового пояса
+    public ZonedDateTime datetime;
 
     public double limit_sum;
 
-    public Timestamp limit_datetime;
+    // Формат с поддержкой часового пояса
+    public ZonedDateTime limit_datetime;
 
     @Size(max = 3)
     public String limit_currency_shortname;

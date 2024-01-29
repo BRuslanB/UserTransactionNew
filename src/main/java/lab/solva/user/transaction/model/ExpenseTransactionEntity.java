@@ -46,10 +46,6 @@ public class ExpenseTransactionEntity {
     @Column(name = "limit_exceeded")
     private boolean limitExceeded;
 
-//    @OneToMany(mappedBy = "expenseTransaction", fetch = FetchType.EAGER,
-//            cascade = CascadeType.ALL, orphanRemoval = true)
-//    private Set<AmountLimitEntity> amountLimitEntities;
-
     @ManyToOne
     @JoinColumn(name = "amount_limit_id")
     private AmountLimitEntity amountLimitEntity;

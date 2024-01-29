@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.Size;
-import java.sql.Timestamp;
+import java.time.ZonedDateTime;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -20,5 +20,6 @@ public class AmountLimitDateDto {
 
     public String expense_category;
 
-    public Timestamp limit_datetime;
+    // Формат с поддержкой часового пояса
+    public ZonedDateTime limit_datetime;
 }
