@@ -11,6 +11,7 @@ import lab.solva.user.transaction.repository.ExpenseTransactionRepository;
 import lab.solva.user.transaction.service.BankService;
 import lab.solva.user.transaction.service.ExchangeService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -21,6 +22,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @Service
+@Log4j2
 @RequiredArgsConstructor
 public class BankServiceImpl implements BankService {
 
@@ -233,8 +235,11 @@ public class BankServiceImpl implements BankService {
         // Используем значение по умолчанию для вида валюты лимита
         amountLimitEntity.setLimitCurrencyCode(DEFAULT_LIMIT_CURRENCY_CODE);
         amountLimitEntity.setExpenseCategory(expenseCategory);
-        // Логирование действия
+
         amountLimitRepository.save(amountLimitEntity);
+        // Логирование действия
+        log.debug("!Default Amount Limit save successfully, id={}, accountClient={}",
+                amountLimitEntity.getId(), amountLimitEntity.getAccountClient());
 
         return amountLimitEntity;
     }

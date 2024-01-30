@@ -16,3 +16,28 @@ spring:
       format_sql: true
       jdbc:
         time_zone: UTC
+
+# springdoc settings
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: true
+  api-docs:
+    path: /api-docs
+    enabled: true
+
+# logging setting
+logging:
+  level:
+    root: ERROR
+    kz.bars.family.budget.api: DEBUG
+    org.springframework.boot.autoconfigure.logging: WARN
+  file:
+    name: logs/app.log
+    append: true
+  appenders:
+    - type: file
+      immediateFlush: true
+      layout:
+        type: pattern
+        pattern: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
