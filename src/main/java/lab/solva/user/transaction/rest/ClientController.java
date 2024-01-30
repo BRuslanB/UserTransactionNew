@@ -17,19 +17,24 @@ public class ClientController {
 
     private final ClientService clientService;
 
-    @GetMapping
-    public List<AmountLimitDateDto> getAllAmountLimitDate() {
+    @GetMapping(value = "{account_client}")
+    // Получение всех лимитов из БД
+    public List<AmountLimitDateDto> getAllAmountLimitDateByAccountClient
+            (@PathVariable(name = "account_client") String accountClient) {
         // Логирование действия
-        return clientService.getAllAmountLimitDateDto();
+        return clientService.getAllAmountLimitDateDtoByAccountClient(accountClient);
     }
 
-    @GetMapping(value = "transaction")
-    public List<TransactionExceededLimitDto> getTransactionExceededLimit() {
+    @GetMapping(value = "transaction/{account_client}")
+    // Получение списка всех транзакции превысивших установленный лимит из БД
+    public List<TransactionExceededLimitDto> getAllTransactionExceededLimitByAccountClient(
+            @PathVariable(name = "account_client") String accountClient) {
         // Логирование действия
-        return clientService.getTransactionExceededLimitDto();
+        return clientService.getAllTransactionExceededLimitDtoByAccountClient(accountClient);
     }
 
     @PostMapping
+    // Установка и сохранение лимита в БД
     public void setAmountLimit(@RequestBody AmountLimitDto amountLimitDto){
         // Логирование действия
         clientService.setAmountLimitDto(amountLimitDto);

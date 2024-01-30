@@ -7,7 +7,7 @@ import lab.solva.user.transaction.model.ExchangeInfoEntity;
 import lab.solva.user.transaction.model.ExchangeRateEntity;
 import lab.solva.user.transaction.repository.ExchangeInfoRepository;
 import lab.solva.user.transaction.repository.ExchangeRateRepository;
-import lab.solva.user.transaction.service.XmlParserExchange;
+import lab.solva.user.transaction.service.ExchangeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -27,7 +27,7 @@ import java.util.*;
 
 @Service
 @RequiredArgsConstructor
-public class XmlParserExchangeImpl implements XmlParserExchange {
+public class ExchangeServiceImpl implements ExchangeService {
 
     private final ExchangeInfoRepository exchangeInfoRepository;
 
@@ -38,7 +38,8 @@ public class XmlParserExchangeImpl implements XmlParserExchange {
         LocalDate currentDate = LocalDate.now();
 //        LocalDate currentDate = LocalDate.of(2024, 1, 25); // --для проверки
         // Получение данных на текущую дата из БД
-        Optional<ExchangeInfoEntity> currentExchangeInfoOptional = exchangeInfoRepository.findExchangeInfo(currentDate);
+        Optional<ExchangeInfoEntity> currentExchangeInfoOptional =
+                exchangeInfoRepository.findCurrentExchangeInfo(currentDate);
         if (currentExchangeInfoOptional.isPresent()) {
             ExchangeInfoEntity exchangeInfoEntity = currentExchangeInfoOptional.get();
             // Сохраняем этот факт в Лог вместе с текущей датой (currentDate)
@@ -59,7 +60,7 @@ public class XmlParserExchangeImpl implements XmlParserExchange {
         Optional<ExchangeInfoEntity> latestExchangeInfoOptional = exchangeInfoRepository.findLatestExchangeInfo();
         if (latestExchangeInfoOptional.isPresent()) {
             ExchangeInfoEntity exchangeInfoEntity = latestExchangeInfoOptional.get();
-            // Сохраняем этот факт в Лог вместе с последней датой (exchangeInfoEntity.getRequestDate())
+            // Сохраняем этот факт в Лог вместе с последней датой Request Date
             return exchangeRateRepository.findAllExchangeRate(exchangeInfoEntity.getId());
         } else {
             // Обработка случая, когда нет данных в БД
@@ -197,7 +198,7 @@ public class XmlParserExchangeImpl implements XmlParserExchange {
     }
 
     @Override
-    public List<ExchangeRateDto> getAllExchangeRateDto() {
+    public List<ExchangeRateDto> getAllExchangeRateDtoByCurrentDate() {
         List<ExchangeRateDto> exchangeRateDtoList = new ArrayList<>();
         List<ExchangeRateEntity> exchangeRateEntityList = gettingRates().stream().toList();
 

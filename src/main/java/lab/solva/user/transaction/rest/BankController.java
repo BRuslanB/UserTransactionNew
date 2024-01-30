@@ -14,6 +14,7 @@ public class BankController {
     private final BankService bankService;
 
     @PostMapping
+    // Сохранение транзакции из внешнего сервиса в БД
     public void saveExpenseTransaction(@RequestBody ExpenseTransactionDto expenseTransactionDto){
         // Логирование действия
         bankService.saveExpenseTransactionDto(expenseTransactionDto);
