@@ -13,8 +13,13 @@ import java.util.Optional;
 @Transactional
 public interface AmountLimitRepository extends JpaRepository<AmountLimitEntity, Long>  {
 
-    List<AmountLimitEntity> findAllByOrderByLimitDateTimeDesc();
+    // Возвращает список всех лимитов клиента
+    @Query("SELECT c FROM AmountLimitEntity c " +
+            "WHERE c.accountClient = :accountClient " +
+            "ORDER BY c.limitDateTime DESC")
+    List<AmountLimitEntity> findAllAmountLimitByAccount(String accountClient);
 
+    // Возвращает последний установленный лимит клиента по категории затрат за текущий месяц
     @Query("SELECT c FROM AmountLimitEntity c " +
             "WHERE c.accountClient = :accountClient " +
                 "AND c.expenseCategory = :expenseCategory " +

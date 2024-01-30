@@ -1,7 +1,7 @@
 package lab.solva.user.transaction.rest;
 
 import lab.solva.user.transaction.dto.ExchangeRateDto;
-import lab.solva.user.transaction.service.XmlParserExchange;
+import lab.solva.user.transaction.service.ExchangeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,12 +16,13 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ExchangeController {
 
-    private final XmlParserExchange xmlParserExchange;
+    private final ExchangeService exchangeService;
 
     @GetMapping
-    public List<ExchangeRateDto> getAllExchangeRate(){
+    // Получение всех курсов валют на текущую дату из БД
+    public List<ExchangeRateDto> getAllExchangeRateByCurrentDate(){
         // Используется для просмотра результата
         // Логирование действия
-        return xmlParserExchange.getAllExchangeRateDto();
+        return exchangeService.getAllExchangeRateDtoByCurrentDate();
     }
 }

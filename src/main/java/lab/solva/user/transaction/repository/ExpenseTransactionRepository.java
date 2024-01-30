@@ -12,7 +12,7 @@ import java.util.List;
 @Transactional
 public interface ExpenseTransactionRepository extends JpaRepository<ExpenseTransactionEntity, Long>  {
 
-    // Получаем список транзакции с превышением лимита, возвращает массив объетов (полей Entity)
+    // Получаем список транзакции с превышением лимита, возвращает массив объектов полей Entity
     @Query("SELECT t.accountClient, " +
                 "t.accountCounterparty, " +
                 "t.currencyCode, " +
@@ -24,9 +24,10 @@ public interface ExpenseTransactionRepository extends JpaRepository<ExpenseTrans
                 "l.limitCurrencyCode " +
             "FROM ExpenseTransactionEntity t " +
             "JOIN t.amountLimitEntity l " +
-            "WHERE t.limitExceeded = true " +
+            "WHERE t.accountClient = :accountClient " +
+                "AND t.limitExceeded = true " +
             "ORDER BY t.transactionDateTime ASC")
-    List<Object[]> findAllTransactionWithExceededLimit();
+    List<Object[]> findAllTransactionWithExceededLimit(String accountClient);
 
     // Возвращаем сумму всех транзации по условию, если нет записей вернет значение 0
     @Query(value = "SELECT COALESCE(SUM(c.transactionSum), 0) " +

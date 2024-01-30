@@ -26,9 +26,9 @@ public class ClientServiceImpl implements ClientService {
     private final AmountLimitRepository amountLimitRepository;
     private final ExpenseTransactionRepository expenseTransactionRepository;
     @Override
-    public List<AmountLimitDateDto> getAllAmountLimitDateDto() {
+    public List<AmountLimitDateDto> getAllAmountLimitDateDtoByAccountClient(String accountClient) {
         // Получение всех лимитов из БД
-        List<AmountLimitEntity> amountLimitEntityList = amountLimitRepository.findAllByOrderByLimitDateTimeDesc();
+        List<AmountLimitEntity> amountLimitEntityList = amountLimitRepository.findAllAmountLimitByAccount(accountClient);
         List<AmountLimitDateDto> amountLimitDateDtoList = new ArrayList<>();
         if (amountLimitEntityList.size() > 0) {
             for (AmountLimitEntity amountLimitEntity : amountLimitEntityList) {
@@ -73,9 +73,9 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
-    public List<TransactionExceededLimitDto> getTransactionExceededLimitDto() {
-        // Получение списка транзакций, превысивших лимит из БД
-        List<Object[]> result = expenseTransactionRepository.findAllTransactionWithExceededLimit();
+    public List<TransactionExceededLimitDto> getAllTransactionExceededLimitDtoByAccountClient(String accountFrom) {
+        // Получение списка транзакций из БД, превысивших лимит
+        List<Object[]> result = expenseTransactionRepository.findAllTransactionWithExceededLimit(accountFrom);
         List<TransactionExceededLimitDto> transactionExceededLimitDtoList = new ArrayList<>();
 
         for (Object[] objects : result) {

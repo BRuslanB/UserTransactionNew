@@ -14,14 +14,16 @@ import java.util.Set;
 @Transactional
 public interface ExchangeInfoRepository extends JpaRepository<ExchangeInfoEntity, Long>  {
 
+    // Возвращает запись о последней дате курса валют
     ExchangeInfoEntity findFirstByOrderByRequestDateDesc();
     default Optional<ExchangeInfoEntity> findLatestExchangeInfo() {
         return Optional.ofNullable(findFirstByOrderByRequestDateDesc());
     }
 
+    // Возвращает запись об указанной дате курса валют (по умолчанию на текущую дату)
     @Query("SELECT c FROM ExchangeInfoEntity c WHERE c.requestDate = :requestDate")
     Set<ExchangeInfoEntity> findExchangeInfoByRequestDate(LocalDate requestDate);
-    default Optional<ExchangeInfoEntity> findExchangeInfo(LocalDate requestDate) {
+    default Optional<ExchangeInfoEntity> findCurrentExchangeInfo(LocalDate requestDate) {
         return findExchangeInfoByRequestDate(requestDate).stream().findFirst();
     }
 }
