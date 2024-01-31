@@ -21,8 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-@Log4j2
 @RequiredArgsConstructor
+@Log4j2
 public class ClientServiceImpl implements ClientService {
 
     private final AmountLimitRepository amountLimitRepository;

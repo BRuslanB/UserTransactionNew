@@ -28,8 +28,6 @@ dependencies {
 	implementation 'org.hibernate:hibernate-core:5.6.1.Final'
 	implementation 'org.hibernate:hibernate-entitymanager:5.6.1.Final'
 	implementation 'org.hibernate.validator:hibernate-validator:7.0.2.Final'
-//	implementation 'org.springdoc:springdoc-openapi-starter:1.5.11' // Используйте актуальную версию
-//	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui'
 	implementation 'org.springdoc:springdoc-openapi-ui:1.7.0'
 	compileOnly 'org.projectlombok:lombok:1.18.22'
 	runtimeOnly 'org.postgresql:postgresql:42.5.1'

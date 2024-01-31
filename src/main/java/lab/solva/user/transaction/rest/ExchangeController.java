@@ -16,18 +16,18 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/api/exchange")
 @CrossOrigin
-@Log4j2
 @RequiredArgsConstructor
+@Log4j2
 @Tag(name = "Exchange", description = "All methods of Exchange Services")
 public class ExchangeController {
 
     private final ExchangeService exchangeService;
 
     @GetMapping
-    @Operation(description = "Retrieving all exchange rates for the current date from the database")
+    @Operation(description = "Retrieving all Exchange Rates for the Current Date from the Database")
     public List<ExchangeRateDto> getAllExchangeRateByCurrentDate(){
 
-        log.debug("!Call method getting all exchange rates for the current date from the database");
+        log.debug("!Call method getting all Exchange Rates for the Current Date from the Database");
         return exchangeService.getAllExchangeRateDtoByCurrentDate();
     }
 }

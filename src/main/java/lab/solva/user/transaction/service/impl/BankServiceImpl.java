@@ -22,12 +22,12 @@ import java.util.Map;
 import java.util.Optional;
 
 @Service
-@Log4j2
 @RequiredArgsConstructor
+@Log4j2
 public class BankServiceImpl implements BankService {
 
-    private final static double DEFAULT_LIMIT_SUM = 100.0;
-    private final static String DEFAULT_LIMIT_CURRENCY_CODE = CurrencyType.EUR.name();
+    private final static double DEFAULT_LIMIT_SUM = 1000.0;
+    private final static String DEFAULT_LIMIT_CURRENCY_CODE = CurrencyType.USD.name();
 
     private final ExpenseTransactionRepository expenseTransactionRepository;
     private final AmountLimitRepository amountLimitRepository;
@@ -214,7 +214,7 @@ public class BankServiceImpl implements BankService {
                 // Другие кейсы для остальных видов валют (при необходимости)
             }
         } else {
-            log.error("!Warning, Limit is not set and not received from the Database, " +
+            log.error("!Attention, Limit is not set and not received from the Database, " +
                     "accountClient={}, expenseCategory={}", accountClient, expenseCategory);
 
             return false;

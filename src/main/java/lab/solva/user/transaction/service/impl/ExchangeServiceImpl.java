@@ -27,8 +27,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Service
-@Log4j2
 @RequiredArgsConstructor
+@Log4j2
 public class ExchangeServiceImpl implements ExchangeService {
 
     private final ExchangeInfoRepository exchangeInfoRepository;
