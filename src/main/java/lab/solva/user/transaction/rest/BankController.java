@@ -21,7 +21,7 @@ public class BankController {
     @PostMapping
     @Operation(description = "Saving a transaction from an external service to the database")
     public void saveExpenseTransaction(@RequestBody ExpenseTransactionDto expenseTransactionDto){
-        // Логирование действия
+
         log.debug("!Call method saving a transaction from an external service to the database");
         bankService.saveExpenseTransactionDto(expenseTransactionDto);
     }

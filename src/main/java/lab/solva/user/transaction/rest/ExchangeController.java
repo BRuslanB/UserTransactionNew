@@ -26,7 +26,7 @@ public class ExchangeController {
     @GetMapping
     @Operation(description = "Retrieving all exchange rates for the current date from the database")
     public List<ExchangeRateDto> getAllExchangeRateByCurrentDate(){
-        // Логирование действия
+
         log.debug("!Call method getting all exchange rates for the current date from the database");
         return exchangeService.getAllExchangeRateDtoByCurrentDate();
     }

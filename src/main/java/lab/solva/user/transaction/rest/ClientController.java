@@ -26,7 +26,7 @@ public class ClientController {
     @Operation(description = "Getting all limits from the database")
     public List<AmountLimitDateDto> getAllAmountLimitDateByAccountClient
             (@PathVariable(name = "account_client") String accountClient) {
-        // Логирование действия
+
         log.debug("!Call method getting all limits from the database");
         return clientService.getAllAmountLimitDateDtoByAccountClient(accountClient);
     }
@@ -35,7 +35,7 @@ public class ClientController {
     @Operation(description = "Retrieving a list of all transactions that exceeded the specified limit from the database")
     public List<TransactionExceededLimitDto> getAllTransactionExceededLimitByAccountClient(
             @PathVariable(name = "account_client") String accountClient) {
-        // Логирование действия
+
         log.debug("!Call method getting a list of all transactions that exceeded the established limit from the database");
         return clientService.getAllTransactionExceededLimitDtoByAccountClient(accountClient);
     }
@@ -43,7 +43,7 @@ public class ClientController {
     @PostMapping
     @Operation(description = "Setting and saving a limit in the database")
     public void setAmountLimit(@RequestBody AmountLimitDto amountLimitDto){
-        // Логирование действия
+
         log.debug("!Call method setting and saving a limit in the database");
         clientService.setAmountLimitDto(amountLimitDto);
     }

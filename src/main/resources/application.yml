@@ -30,7 +30,7 @@ springdoc:
 logging:
   level:
     root: ERROR
-    kz.bars.family.budget.api: DEBUG
+    lab.solva.user.transaction: DEBUG
     org.springframework.boot.autoconfigure.logging: WARN
   file:
     name: logs/app.log
