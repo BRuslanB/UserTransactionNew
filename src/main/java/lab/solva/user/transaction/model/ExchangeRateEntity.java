@@ -21,14 +21,14 @@ public class ExchangeRateEntity {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "currency_name")
+    @Column(name = "currency_name", nullable = false)
     private String currencyName;
 
     @Size(max = 3)
-    @Column(name = "currency_code")
+    @Column(name = "currency_code", nullable = false)
     private String currencyCode;
 
-    @Column(name = "exchange_rate")
+    @Column(name = "exchange_rate", nullable = false)
     private double exchangeRate;
 
     @ManyToOne

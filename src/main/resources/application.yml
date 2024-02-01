@@ -2,7 +2,6 @@
 server:
   port: 8080
 
-# spring settings
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/transaction_db
@@ -14,8 +13,11 @@ spring:
       ddl-auto: update
       use_sql_comments: true
       format_sql: true
-      jdbc:
-        time_zone: UTC
+      properties:
+        hibernate.jdbc.time_zone: UTC
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
 
 # springdoc settings
 springdoc:

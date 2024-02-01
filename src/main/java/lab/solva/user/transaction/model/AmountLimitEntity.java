@@ -24,23 +24,25 @@ public class AmountLimitEntity {
     private Long id;
 
     @Size(max = 10)
-    @Column(name = "account_client")
+    @Column(name = "account_client", nullable = false)
     private String accountClient;
 
-    @Column(name = "limit_sum")
+    @Column(name = "limit_sum", nullable = false)
     private double limitSum;
 
-    @Column(name = "limit_date", columnDefinition = "TIMESTAMP WITH TIME ZONE")
+    @Column(name = "limit_date", nullable = false,
+            columnDefinition = "TIMESTAMP WITH TIME ZONE")
     private Timestamp limitDateTime;
 
     @Size(max = 3)
-    @Column(name = "limit_currency_code")
+    @Column(name = "limit_currency_code", nullable = false)
     private String limitCurrencyCode;
 
-    @Column(name = "expense_category")
+    @Size(max = 10)
+    @Column(name = "expense_category", nullable = false)
     private String expenseCategory;
 
     @OneToMany(mappedBy = "amountLimitEntity", fetch = FetchType.EAGER,
-            cascade = CascadeType.ALL, orphanRemoval = true)
+            cascade = CascadeType.REMOVE)
     private Set<ExpenseTransactionEntity> expenseTransactionEntities;
 }
