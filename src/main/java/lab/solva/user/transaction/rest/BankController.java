@@ -19,10 +19,10 @@ public class BankController {
     private final BankService bankService;
 
     @PostMapping
-    @Operation(description = "Saving a transaction from an External service to the Database")
+    @Operation(description = "Saving a Transaction to the Database")
     public void saveExpenseTransaction(@RequestBody ExpenseTransactionDto expenseTransactionDto){
 
-        log.debug("!Call method saving a transaction from an External service to the Database");
+        log.debug("!Call method saving a Transaction to the Database");
         bankService.saveExpenseTransactionDto(expenseTransactionDto);
     }
 }

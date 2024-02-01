@@ -52,6 +52,8 @@ public class ClientServiceImpl implements ClientService {
             }
         }
 
+        log.debug("!Getting all Limits from the Database, accountClient={}", accountClient);
+
         return amountLimitDateDtoList;
     }
 
@@ -120,6 +122,9 @@ public class ClientServiceImpl implements ClientService {
             );
             transactionExceededLimitDtoList.add(transactionExceededLimitDto);
         }
+
+        log.debug("!Getting a list of Transactions from the Database that Exceeded the Limit, " +
+                        "accountClient={}", accountFrom);
 
         return transactionExceededLimitDtoList;
     }

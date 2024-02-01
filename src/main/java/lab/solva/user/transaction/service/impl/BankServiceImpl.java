@@ -110,27 +110,19 @@ public class BankServiceImpl implements BankService {
 
         // Добавление суммы по текущей транзакции к определенной сумме
         switch (CurrencyType.valueOf(currencyCode)) {
-            case KZT:
-                sumTransactionKZT += currentTransactionSum;
-                break;
-            case USD:
-                sumTransactionUSD += currentTransactionSum;
-                break;
-            case EUR:
-                sumTransactionEUR += currentTransactionSum;
-                break;
-            case RUB:
-                sumTransactionRUB += currentTransactionSum;
-                break;
+            case KZT -> sumTransactionKZT += currentTransactionSum;
+            case USD -> sumTransactionUSD += currentTransactionSum;
+            case EUR -> sumTransactionEUR += currentTransactionSum;
+            case RUB -> sumTransactionRUB += currentTransactionSum;
 
             // Другие кейсы для остальных видов валют (при необходимости)
 
-            default:
+            default -> {
                 // Получен неизвестный вид валюты которого нет в БД
                 log.error("!Invalid value, received an unknown Currency Code, " +
                         "accountClient={}, currencyCode={}", accountClient, currencyCode);
-
                 return false;
+            }
         }
 
         // Получение текущего курса валют из БД
@@ -150,8 +142,8 @@ public class BankServiceImpl implements BankService {
 
             // Конвертирование всех сумм транзакции к Currency Code установленного лимита
             switch (CurrencyType.valueOf(limitCurrencyCode)) {
-                case KZT:
-                    sumTransactionResult = sumTransactionKZT ;
+                case KZT -> {
+                    sumTransactionResult = sumTransactionKZT;
                     if (exchangeRateMap.get(CurrencyType.USD.name()) != null) {
                         sumTransactionResult += sumTransactionUSD * exchangeRateMap.get(CurrencyType.USD.name());
                     }
@@ -161,9 +153,9 @@ public class BankServiceImpl implements BankService {
                     if (exchangeRateMap.get(CurrencyType.RUB.name()) != null) {
                         sumTransactionResult += sumTransactionRUB * exchangeRateMap.get(CurrencyType.RUB.name());
                     }
-                    break;
-                case USD:
-                    sumTransactionResult = sumTransactionUSD ;
+                }
+                case USD -> {
+                    sumTransactionResult = sumTransactionUSD;
                     if (exchangeRateMap.get(CurrencyType.USD.name()) != null) {
                         sumTransactionResult += sumTransactionKZT / exchangeRateMap.get(CurrencyType.USD.name());
                     }
@@ -177,9 +169,9 @@ public class BankServiceImpl implements BankService {
                         sumTransactionResult += sumTransactionRUB *
                                 (exchangeRateMap.get(CurrencyType.RUB.name()) / exchangeRateMap.get(CurrencyType.USD.name()));
                     }
-                    break;
-                case EUR:
-                    sumTransactionResult = sumTransactionEUR ;
+                }
+                case EUR -> {
+                    sumTransactionResult = sumTransactionEUR;
                     if (exchangeRateMap.get(CurrencyType.EUR.name()) != null) {
                         sumTransactionResult += sumTransactionKZT / exchangeRateMap.get(CurrencyType.EUR.name());
                     }
@@ -193,9 +185,9 @@ public class BankServiceImpl implements BankService {
                         sumTransactionResult += sumTransactionRUB *
                                 (exchangeRateMap.get(CurrencyType.RUB.name()) / exchangeRateMap.get(CurrencyType.EUR.name()));
                     }
-                    break;
-                case RUB:
-                    sumTransactionResult = sumTransactionRUB ;
+                }
+                case RUB -> {
+                    sumTransactionResult = sumTransactionRUB;
                     if (exchangeRateMap.get(CurrencyType.RUB.name()) != null) {
                         sumTransactionResult += sumTransactionKZT / exchangeRateMap.get(CurrencyType.RUB.name());
                     }
@@ -209,7 +201,7 @@ public class BankServiceImpl implements BankService {
                         sumTransactionResult += sumTransactionEUR *
                                 (exchangeRateMap.get(CurrencyType.EUR.name()) / exchangeRateMap.get(CurrencyType.RUB.name()));
                     }
-                    break;
+                }
 
                 // Другие кейсы для остальных видов валют (при необходимости)
             }

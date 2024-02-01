@@ -56,14 +56,7 @@ public class ExchangeServiceImpl implements ExchangeService {
         } else {
 
             // Обработка случая, когда нет данных на текущую дату в БД
-            Long exchangeInfoEntityId = requestExchange(currentDate);
-            if (exchangeInfoEntityId != null) {
-                // Данные из внешнего сервиса успешно получены и сохранены в БД
-                log.debug("!Exchange Rates obtained from the Database, id={}, currentDate={}",
-                        exchangeInfoEntityId, currentDate);
-
-            } else {
-                // Данные из внешнего сервиса не получены
+            if (!requestExchange(currentDate)) {
                 log.debug("!Warning, Exchange Rates were not received for the Current Date from the Database, " +
                                 "currentDate={}", currentDate);
             }
@@ -91,7 +84,7 @@ public class ExchangeServiceImpl implements ExchangeService {
         return null;
     }
 
-    private Long requestExchange(LocalDate currentDate) {
+    private boolean requestExchange(LocalDate currentDate) {
 
         // Преобразование в формат dd.MM.yyyy
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
@@ -101,7 +94,7 @@ public class ExchangeServiceImpl implements ExchangeService {
         String xmlData = fetchXmlData(resourceUrl);
 
         if (xmlData == null) {
-            return null;
+            return false;
         }
 
         try {
@@ -141,7 +134,7 @@ public class ExchangeServiceImpl implements ExchangeService {
                 log.debug("!Exchange Rates save successfully, id={}, currentDate={}",
                         exchangeInfoEntity.getId(), currentDate);
 
-                return exchangeInfoEntity.getId();
+                return true;
             }
 
         } catch (Exception e) {
@@ -149,7 +142,7 @@ public class ExchangeServiceImpl implements ExchangeService {
             log.error("!Attention, there is a problem with the XML parser, required Tags were not found or the XML Structure is broken");
         }
 
-        return null;
+        return false;
     }
 
     private String fetchXmlData(String resourceUrl) {
@@ -248,6 +241,8 @@ public class ExchangeServiceImpl implements ExchangeService {
             exchangeRateDto.setDescription(exchangeRateEntity.getExchangeRate());
             exchangeRateDtoList.add(exchangeRateDto);
         }
+
+        log.debug("!Getting all Exchange Rates");
 
         return exchangeRateDtoList;
     }
