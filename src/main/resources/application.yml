@@ -18,6 +18,8 @@ spring:
   flyway:
     enabled: true
     locations: classpath:db/migration
+    clean-disabled: false
+    baseline-on-migrate: true
 
 # springdoc settings
 springdoc:

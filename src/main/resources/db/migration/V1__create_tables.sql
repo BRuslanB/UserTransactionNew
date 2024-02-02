@@ -17,7 +17,8 @@ CREATE TABLE t_expense_transaction (
     transaction_sum NUMERIC NOT NULL,
     expense_category VARCHAR(10) NOT NULL,
     transaction_date TIMESTAMP WITH TIME ZONE NOT NULL,
-    limit_exceeded BOOLEAN NOT NULL
+    limit_exceeded BOOLEAN NOT NULL,
+    amount_limit_id INT
 );
 
 DROP TABLE IF EXISTS t_exchange_info CASCADE;
@@ -32,5 +33,6 @@ CREATE TABLE t_exchange_rate (
     id SERIAL PRIMARY KEY NOT NULL,
     currency_name TEXT NOT NULL,
     currency_code VARCHAR(3) NOT NULL,
-    exchange_rate NUMERIC NOT NULL
+    exchange_rate NUMERIC NOT NULL,
+    exchange_info_id INT NOT NULL
 );
