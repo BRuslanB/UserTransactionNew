@@ -51,7 +51,7 @@ public class ClientControllerTest {
         List<AmountLimitDateDto> amountLimitDateDtoList = Arrays.asList(
                 createAmountLimitDateDto(accountClient, 1000.0,"RUB", "Service",
                         ZonedDateTime.parse("2024-01-01T00:00:00+06:00", DateTimeFormatter.ISO_OFFSET_DATE_TIME)),
-                createAmountLimitDateDto(accountClient, 500.0,"EUR", "Service",
+                createAmountLimitDateDto(accountClient, 500.0,"EUR", "Product",
                         ZonedDateTime.parse("2024-01-30T15:35:34+06:00", DateTimeFormatter.ISO_OFFSET_DATE_TIME))
         );
 
@@ -71,7 +71,7 @@ public class ClientControllerTest {
                 .andExpect(jsonPath("$[1].account_from", is(accountClient)))
                 .andExpect(jsonPath("$[1].limit_sum", is(500.0)))
                 .andExpect(jsonPath("$[1].limit_currency_shortname", is("EUR")))
-                .andExpect(jsonPath("$[1].expense_category", is("Service")))
+                .andExpect(jsonPath("$[1].expense_category", is("Product")))
                 .andExpect(jsonPath("$[1].limit_datetime", is("2024-01-30T15:35:34+06:00")));
     }
 
@@ -81,11 +81,17 @@ public class ClientControllerTest {
         // Arrange
         String accountClient = "0000000001";
         String accountCounterparty = "9000000000";
+        // добавить еще одну запись в List
         List<TransactionExceededLimitDto> transactionExceededLimitDtoList = Arrays.asList(
                 createTransactionExceededLimitDto(accountClient, accountCounterparty,
                         "RUB", 1000.0, "Service",
                         ZonedDateTime.parse("2024-01-30T16:30:45+06:00", DateTimeFormatter.ISO_OFFSET_DATE_TIME),
                         500.0,"EUR",
+                        ZonedDateTime.parse("2024-01-30T15:35:34+06:00", DateTimeFormatter.ISO_OFFSET_DATE_TIME)),
+                createTransactionExceededLimitDto(accountClient, accountCounterparty,
+                        "USD", 100.0, "Product",
+                        ZonedDateTime.parse("2024-02-30T14:30:45+06:00", DateTimeFormatter.ISO_OFFSET_DATE_TIME),
+                        200.0,"USD",
                         ZonedDateTime.parse("2024-01-30T15:35:34+06:00", DateTimeFormatter.ISO_OFFSET_DATE_TIME))
         );
 
@@ -105,7 +111,16 @@ public class ClientControllerTest {
                 .andExpect(jsonPath("$[0].datetime", is("2024-01-30T16:30:45+06:00")))
                 .andExpect(jsonPath("$[0].limit_sum", is(500.0)))
                 .andExpect(jsonPath("$[0].limit_currency_shortname", is("EUR")))
-                .andExpect(jsonPath("$[0].limit_datetime", is("2024-01-30T15:35:34+06:00")));
+                .andExpect(jsonPath("$[0].limit_datetime", is("2024-01-30T15:35:34+06:00")))
+                .andExpect(jsonPath("$[1].account_from", is(accountClient)))
+                .andExpect(jsonPath("$[1].account_to", is(accountCounterparty)))
+                .andExpect(jsonPath("$[1].currency_shortname", is("USD")))
+                .andExpect(jsonPath("$[1].Sum", is(100.0)))
+                .andExpect(jsonPath("$[1].expense_category", is("Product")))
+                .andExpect(jsonPath("$[1].datetime", is("2024-01-30T14:30:45+06:00")))
+                .andExpect(jsonPath("$[1].limit_sum", is(200.0)))
+                .andExpect(jsonPath("$[1].limit_currency_shortname", is("USD")))
+                .andExpect(jsonPath("$[1].limit_datetime", is("2024-01-30T15:35:34+06:00")));
     }
 
     @Test
