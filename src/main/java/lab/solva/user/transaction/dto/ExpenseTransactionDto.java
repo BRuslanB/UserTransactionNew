@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.validation.constraints.Size;
-import java.sql.Timestamp;
 import java.time.ZonedDateTime;
 
 @Getter

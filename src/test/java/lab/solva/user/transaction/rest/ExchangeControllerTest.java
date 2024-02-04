@@ -27,9 +27,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 public class ExchangeControllerTest {
 
+    @SuppressWarnings("unused")
     @Autowired
     private MockMvc mockMvc;
 
+    @SuppressWarnings("unused")
     @MockBean
     private ExchangeService exchangeService;
 

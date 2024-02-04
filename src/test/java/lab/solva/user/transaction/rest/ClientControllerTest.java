@@ -3,7 +3,6 @@ package lab.solva.user.transaction.rest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lab.solva.user.transaction.dto.AmountLimitDateDto;
 import lab.solva.user.transaction.dto.AmountLimitDto;
-import lab.solva.user.transaction.dto.ExpenseTransactionDto;
 import lab.solva.user.transaction.dto.TransactionExceededLimitDto;
 import lab.solva.user.transaction.service.ClientService;
 import org.junit.jupiter.api.Test;
@@ -23,8 +22,9 @@ import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.*;
-import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -35,9 +35,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 public class ClientControllerTest {
 
+    @SuppressWarnings("unused")
     @Autowired
     private MockMvc mockMvc;
 
+    @SuppressWarnings("unused")
     @MockBean
     private ClientService clientService;
 

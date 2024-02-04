@@ -19,6 +19,7 @@ public class BankController {
 
     private final BankService bankService;
 
+    @SuppressWarnings("unused")
     @PostMapping
     @Operation(description = "Saving a Transaction to the Database")
     public ResponseEntity<Object> saveExpenseTransaction(@RequestBody ExpenseTransactionDto expenseTransactionDto){

@@ -32,9 +32,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 public class BankControllerTest {
 
+    @SuppressWarnings("unused")
     @Autowired
     private MockMvc mockMvc;
 
+    @SuppressWarnings("unused")
     @MockBean
     private BankService bankService;
 

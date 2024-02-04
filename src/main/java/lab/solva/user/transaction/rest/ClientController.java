@@ -23,6 +23,7 @@ public class ClientController {
 
     private final ClientService clientService;
 
+    @SuppressWarnings("unused")
     @GetMapping(value = "{account_client}")
     @Operation(description = "Getting all Limits from the Database")
     public List<AmountLimitDateDto> getAllAmountLimitDateByAccountClient
@@ -32,6 +33,7 @@ public class ClientController {
         return clientService.getAllAmountLimitDateDtoByAccountClient(accountClient);
     }
 
+    @SuppressWarnings("unused")
     @GetMapping(value = "transaction/{account_client}")
     @Operation(description = "Retrieving a list of all Transactions that exceeded the specified limit from the Database")
     public List<TransactionExceededLimitDto> getAllTransactionExceededLimitByAccountClient(
@@ -41,6 +43,7 @@ public class ClientController {
         return clientService.getAllTransactionExceededLimitDtoByAccountClient(accountClient);
     }
 
+    @SuppressWarnings("unused")
     @PostMapping
     @Operation(description = "Setting and saving a Limit in the Database")
     public ResponseEntity<Object> setAmountLimit(@RequestBody AmountLimitDto amountLimitDto){
