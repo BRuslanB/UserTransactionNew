@@ -1,11 +1,15 @@
 package lab.solva.user.transaction.dto;
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.validation.constraints.Size;
 import java.time.ZonedDateTime;
 
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class AmountLimitDateDto {

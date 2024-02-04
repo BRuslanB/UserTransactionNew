@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,10 +40,10 @@ public class BankServiceImpl implements BankService {
         // Сохранение полученных данных из expenseTransactionDto
         if (expenseTransactionDto != null) {
             ExpenseTransactionEntity expenseTransactionEntity = new ExpenseTransactionEntity();
-            expenseTransactionEntity.setAccountClient(expenseTransactionDto.account_from);
-            expenseTransactionEntity.setAccountCounterparty(expenseTransactionDto.account_to);
-            expenseTransactionEntity.setCurrencyCode(expenseTransactionDto.currency_shortname);
-            expenseTransactionEntity.setTransactionSum(expenseTransactionDto.Sum);
+            expenseTransactionEntity.setAccountClient(expenseTransactionDto.getAccount_from());
+            expenseTransactionEntity.setAccountCounterparty(expenseTransactionDto.getAccount_to());
+            expenseTransactionEntity.setCurrencyCode(expenseTransactionDto.getCurrency_shortname());
+            expenseTransactionEntity.setTransactionSum(expenseTransactionDto.getSum());
 
             // Проверка Expense Category на допустимое значение
             String expenseCategory = expenseTransactionDto.expense_category;
@@ -57,11 +58,13 @@ public class BankServiceImpl implements BankService {
             }
 
             // Проверка Date и Time на допустимое значение
-            Timestamp transactionTimestamp = expenseTransactionDto.datetime;
-            LocalDateTime transactionDateTime = transactionTimestamp.toLocalDateTime();
+            ZonedDateTime transactionZonedDateTime = expenseTransactionDto.getDatetime();
+            LocalDateTime transactionDateTime = transactionZonedDateTime.toLocalDateTime();
             LocalDateTime currentDateTime = LocalDateTime.now();
 
             if (transactionDateTime.isBefore(currentDateTime)) {
+                Timestamp transactionTimestamp = Timestamp.from(transactionZonedDateTime.toInstant());
+
                 expenseTransactionEntity.setTransactionDateTime(transactionTimestamp);
             } else {
                 log.error("!Invalid value, Transaction Date and time is later than the Current Date and time, " +
@@ -72,13 +75,13 @@ public class BankServiceImpl implements BankService {
             }
 
             // Вычисление значение для поля limitExceeded
-            expenseTransactionEntity.setLimitExceeded(getLimitExceeded(expenseTransactionDto.account_from,
-                    expenseTransactionDto.expense_category, expenseTransactionDto.currency_shortname,
-                    expenseTransactionDto.Sum));
+            expenseTransactionEntity.setLimitExceeded(getLimitExceeded(expenseTransactionDto.getAccount_from(),
+                    expenseTransactionDto.getExpense_category(), expenseTransactionDto.getCurrency_shortname(),
+                    expenseTransactionDto.getSum()));
 
             // Сохраняем ссылку на родительскую сущность
-            expenseTransactionEntity.setAmountLimitEntity(getAmountLimit(expenseTransactionDto.account_from,
-                    expenseTransactionDto.expense_category));
+            expenseTransactionEntity.setAmountLimitEntity(getAmountLimit(expenseTransactionDto.getAccount_from(),
+                    expenseTransactionDto.getExpense_category()));
 
             expenseTransactionRepository.save(expenseTransactionEntity);
 

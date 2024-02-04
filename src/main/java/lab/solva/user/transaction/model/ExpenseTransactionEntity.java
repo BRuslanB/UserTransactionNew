@@ -15,12 +15,7 @@ import java.sql.Timestamp;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ExpenseTransactionEntity {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Long id;
+public class ExpenseTransactionEntity extends BaseEntity {
 
     @Size(max = 10)
     @Column(name = "account_client", nullable = false)

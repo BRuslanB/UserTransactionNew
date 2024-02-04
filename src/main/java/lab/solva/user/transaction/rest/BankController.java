@@ -6,6 +6,7 @@ import lab.solva.user.transaction.dto.ExpenseTransactionDto;
 import lab.solva.user.transaction.service.BankService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -20,9 +21,12 @@ public class BankController {
 
     @PostMapping
     @Operation(description = "Saving a Transaction to the Database")
-    public void saveExpenseTransaction(@RequestBody ExpenseTransactionDto expenseTransactionDto){
+    public ResponseEntity<Object> saveExpenseTransaction(@RequestBody ExpenseTransactionDto expenseTransactionDto){
 
         log.debug("!Call method saving a Transaction to the Database");
         bankService.saveExpenseTransactionDto(expenseTransactionDto);
+
+        // Return expenseTransactionDto
+        return ResponseEntity.ok(expenseTransactionDto);
     }
 }

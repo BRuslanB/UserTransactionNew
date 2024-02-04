@@ -14,12 +14,7 @@ import javax.validation.constraints.Size;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ExchangeRateEntity {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Long id;
+public class ExchangeRateEntity extends BaseEntity {
 
     @Column(name = "currency_name", nullable = false)
     private String currencyName;

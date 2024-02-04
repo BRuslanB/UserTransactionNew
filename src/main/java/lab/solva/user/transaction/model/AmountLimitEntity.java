@@ -16,12 +16,7 @@ import java.util.Set;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class AmountLimitEntity {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Long id;
+public class AmountLimitEntity extends BaseEntity {
 
     @Size(max = 10)
     @Column(name = "account_client", nullable = false)

@@ -8,6 +8,7 @@ import lab.solva.user.transaction.dto.TransactionExceededLimitDto;
 import lab.solva.user.transaction.service.ClientService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -42,9 +43,12 @@ public class ClientController {
 
     @PostMapping
     @Operation(description = "Setting and saving a Limit in the Database")
-    public void setAmountLimit(@RequestBody AmountLimitDto amountLimitDto){
+    public ResponseEntity<Object> setAmountLimit(@RequestBody AmountLimitDto amountLimitDto){
 
         log.debug("!Call method setting and saving a Limit in the Database");
         clientService.setAmountLimitDto(amountLimitDto);
+
+        // Return amountLimitDto
+        return ResponseEntity.ok(amountLimitDto);
     }
 }

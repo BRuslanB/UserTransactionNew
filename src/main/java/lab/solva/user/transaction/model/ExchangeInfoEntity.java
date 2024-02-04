@@ -12,12 +12,7 @@ import java.util.Set;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ExchangeInfoEntity {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Long id;
+public class ExchangeInfoEntity extends BaseEntity {
 
     @Column(name = "resource", nullable = false)
     private String resource;

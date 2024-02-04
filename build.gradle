@@ -34,10 +34,14 @@ dependencies {
 	implementation 'org.hibernate:hibernate-entitymanager'
 	implementation 'org.hibernate.validator:hibernate-validator'
 	implementation 'org.springdoc:springdoc-openapi-ui:1.7.0'
+	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'org.postgresql:postgresql'
 	annotationProcessor 'org.projectlombok:lombok'
+	testAnnotationProcessor 'org.projectlombok:lombok'
+	testImplementation 'com.h2database:h2'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.junit.jupiter:junit-jupiter'
 }
 
 tasks.named('test') {
