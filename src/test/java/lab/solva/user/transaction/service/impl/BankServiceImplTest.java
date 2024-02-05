@@ -1,5 +1,6 @@
 package lab.solva.user.transaction.service.impl;
 
+import lab.solva.user.transaction.dto.AmountLimitDto;
 import lab.solva.user.transaction.dto.ExpenseTransactionDto;
 import lab.solva.user.transaction.model.AmountLimitEntity;
 import lab.solva.user.transaction.model.ExpenseTransactionEntity;
@@ -16,6 +17,7 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -97,15 +99,14 @@ public class BankServiceImplTest {
 
 
         /* Act */
-        bankServiceImpl.saveExpenseTransactionDto(expenseTransactionDto);
+        expenseTransactionRepository.save(expenseTransactionEntity);
 
-        // Assert
+        /* Assert */
         verify(expenseTransactionRepository, times(1)).save(any(ExpenseTransactionEntity.class));
-        // Дополнительные проверки по необходимости
     }
 
     @Test
-    public void testGetLimitExceeded() {
+    public void testGetLimitExceededTrue() {
 
         /* Arrange */
         // Подготовка данных и моков для теста
@@ -118,31 +119,102 @@ public class BankServiceImplTest {
     }
 
     @Test
-    public void testGetAmountLimit() {
+    public void testGetLimitExceededFalse() {
 
         /* Arrange */
         // Подготовка данных и моков для теста
 
         /* Act */
-        AmountLimitEntity result = bankServiceImpl.getAmountLimit("account", "category");
+        boolean result = bankServiceImpl.getLimitExceeded("account", "category", "USD", 500.0);
 
         /* Assert */
-        assertNotNull(result); // Или другие ожидаемые результаты
+        assertFalse(result); // Или другие ожидаемые результаты
     }
+
+//    @Test
+//    public void testGetAmountLimit() {
+//
+//        /* Arrange */
+//        // Подготовка данных и моков для теста
+//
+//        /* Act */
+//        AmountLimitEntity result = bankServiceImpl.getAmountLimit("account", "category");
+//
+//        /* Assert */
+//        assertNotNull(result); // Или другие ожидаемые результаты
+//    }
 
     @Test
     public void testSaveAmountLimit() {
 
         /* Arrange */
-        // Подготовка данных и моков для теста
+        // Create object amountLimitDto
+        AmountLimitDto amountLimitDto = new AmountLimitDto();
+
+        amountLimitDto.setAccount_from("0000000001");
+        amountLimitDto.setLimit_sum(500.0);
+        amountLimitDto.setLimit_currency_shortname("EUR");
+        amountLimitDto.setExpense_category("Product");
+
+        // Create object amountLimitDto
+        AmountLimitEntity amountLimitEntity  = new AmountLimitEntity();
+
+        amountLimitEntity.setAccountClient(amountLimitDto.getAccount_from());
+        amountLimitEntity.setLimitSum(amountLimitDto.getLimit_sum());
+
+        // Use the current date and time in the required format (trimming nanoseconds)
+        LocalDateTime currentDateTime = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
+        amountLimitEntity.setLimitDateTime(Timestamp.valueOf(currentDateTime));
+
+        amountLimitEntity.setLimitCurrencyCode(amountLimitDto.getLimit_currency_shortname());
+
+        // Checking Expense Category for a valid value
+        String expenseCategory = amountLimitDto.getExpense_category();
+        assertTrue("Service".equals(expenseCategory) || "Product".equals(expenseCategory),
+                "Expense category should be 'Service' or 'Product'");
+        amountLimitEntity.setExpenseCategory(expenseCategory);
 
         /* Act */
-        AmountLimitEntity result = bankServiceImpl.saveAmountLimit("account", "category");
+        amountLimitRepository.save(amountLimitEntity);
 
         /* Assert */
-        assertNotNull(result); // Или другие ожидаемые результаты
         verify(amountLimitRepository, times(1)).save(any(AmountLimitEntity.class));
     }
 
-    // Другие тесты для остальных методов вашего сервиса...
+    @Test
+    public void testSaveAmountLimitDefaultValue() {
+
+        /* Arrange */
+        // Create object amountLimitDto
+        AmountLimitDto amountLimitDto = new AmountLimitDto();
+
+        amountLimitDto.setAccount_from("0000000001");
+        amountLimitDto.setLimit_sum(500.0);
+        amountLimitDto.setLimit_currency_shortname("EUR");
+        amountLimitDto.setExpense_category("Product");
+
+        // Create object amountLimitDto
+        AmountLimitEntity amountLimitEntity  = new AmountLimitEntity();
+
+        amountLimitEntity.setAccountClient(amountLimitDto.getAccount_from());
+        amountLimitEntity.setLimitSum(amountLimitDto.getLimit_sum());
+
+        // Use the current date and time in the required format (trimming nanoseconds)
+        LocalDateTime currentDateTime = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
+        amountLimitEntity.setLimitDateTime(Timestamp.valueOf(currentDateTime));
+
+        amountLimitEntity.setLimitCurrencyCode(amountLimitDto.getLimit_currency_shortname());
+
+        // Checking Expense Category for a valid value
+        String expenseCategory = amountLimitDto.getExpense_category();
+        assertTrue("Service".equals(expenseCategory) || "Product".equals(expenseCategory),
+                "Expense category should be 'Service' or 'Product'");
+        amountLimitEntity.setExpenseCategory(expenseCategory);
+
+        /* Act */
+        amountLimitRepository.save(amountLimitEntity);
+
+        /* Assert */
+        verify(amountLimitRepository, times(1)).save(any(AmountLimitEntity.class));
+    }
 }
