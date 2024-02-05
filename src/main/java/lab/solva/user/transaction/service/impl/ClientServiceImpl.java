@@ -31,7 +31,7 @@ public class ClientServiceImpl implements ClientService {
     @Override
     public List<AmountLimitDateDto> getAllAmountLimitDateDtoByAccountClient(String accountClient) {
 
-        // Получение всех лимитов из БД
+        // Getting all limits from the database
         List<AmountLimitEntity> amountLimitEntityList = amountLimitRepository.findAllAmountLimitByAccount(accountClient);
         List<AmountLimitDateDto> amountLimitDateDtoList = new ArrayList<>();
 
@@ -45,7 +45,7 @@ public class ClientServiceImpl implements ClientService {
                 amountLimitDateDto.limit_currency_shortname = amountLimitEntity.getLimitCurrencyCode();
                 amountLimitDateDto.expense_category = amountLimitEntity.getExpenseCategory();
 
-                // Преобразование Timestamp в ZonedDateTime
+                // Convert Timestamp to ZonedDateTime
                 amountLimitDateDto.limit_datetime = amountLimitEntity.getLimitDateTime().
                         toInstant().atZone(ZoneId.systemDefault());
                 amountLimitDateDtoList.add(amountLimitDateDto);
@@ -60,19 +60,19 @@ public class ClientServiceImpl implements ClientService {
     @Override
     public void setAmountLimitDto(AmountLimitDto amountLimitDto) {
 
-        // Сохранение полученных данных из amountLimitDto
+        // Saving received data from amountLimitDto
         if (amountLimitDto != null) {
             AmountLimitEntity amountLimitEntity  = new AmountLimitEntity();
 
             amountLimitEntity.setAccountClient(amountLimitDto.account_from);
             amountLimitEntity.setLimitSum(amountLimitDto.limit_sum);
 
-            // Используем текущую дату и время в нужном формате (обрезка наносекунд)
+            // Use the current date and time in the required format (trimming nanoseconds)
             LocalDateTime currentDateTime = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
             amountLimitEntity.setLimitDateTime(Timestamp.valueOf(currentDateTime));
             amountLimitEntity.setLimitCurrencyCode(amountLimitDto.limit_currency_shortname);
 
-            // Проверка Expense Category на допустимое заначение
+            // Checking Expense Category for a valid value
             String expenseCategory = amountLimitDto.expense_category;
 
             if (ExpenseCategory.SERVICE.name().equals(expenseCategory.toUpperCase()) ||
@@ -95,7 +95,7 @@ public class ClientServiceImpl implements ClientService {
     @Override
     public List<TransactionExceededLimitDto> getAllTransactionExceededLimitDtoByAccountClient(String accountFrom) {
 
-        // Получение списка транзакций из БД, превысивших лимит
+        // Getting a list of transactions from the database that exceeded the limit
         List<Object[]> result = expenseTransactionRepository.findAllTransactionWithExceededLimit(accountFrom);
         List<TransactionExceededLimitDto> transactionExceededLimitDtoList = new ArrayList<>();
 
@@ -106,12 +106,12 @@ public class ClientServiceImpl implements ClientService {
             Double transactionSum = (Double) objects[3];
             String expenseCategory = (String) objects[4];
 
-            // Преобразование Timestamp в ZonedDateTime
+            // Convert Timestamp to ZonedDateTime
             Timestamp transactionDateTimeTimestamp = (Timestamp) objects[5];
             ZonedDateTime transactionDateTime = transactionDateTimeTimestamp.toInstant().atZone(ZoneId.systemDefault());
             Double limitSum = (Double) objects[6];
 
-            // Преобразование Timestamp в ZonedDateTime
+            // Convert Timestamp to ZonedDateTime
             Timestamp limitDateTimeTimestamp = (Timestamp) objects[7];
             ZonedDateTime limitDateTime = limitDateTimeTimestamp.toInstant().atZone(ZoneId.systemDefault());
             String limitCurrencyCode = (String) objects[8];

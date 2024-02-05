@@ -8,12 +8,12 @@ import java.util.List;
 
 public interface ClientService {
 
-    // Получение всех лимитов из БД в Dto формате
+    // Retrieving all limits from the database in Dto format
     List<AmountLimitDateDto> getAllAmountLimitDateDtoByAccountClient(String accountClient);
 
-    // Установка и сохранение лимита в БД
+    // Setting and saving a limit in the database
     void setAmountLimitDto(AmountLimitDto amountLimitDto);
 
-    // Получение списка всех транзакции превысивших установленный лимит из БД в Dto формате
+    // Obtaining a list of all transactions that exceeded the established limit from the database in Dto format
     List<TransactionExceededLimitDto> getAllTransactionExceededLimitDtoByAccountClient(String accountClient);
 }

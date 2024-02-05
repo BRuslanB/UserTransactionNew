@@ -24,6 +24,6 @@ public class AmountLimitDateDto {
 
     public String expense_category;
 
-    // Формат с поддержкой часового пояса
+    // Time Zone Supported Format
     public ZonedDateTime limit_datetime;
 }

@@ -4,6 +4,6 @@ import lab.solva.user.transaction.dto.ExpenseTransactionDto;
 
 public interface BankService {
 
-    // Сохранение транзакции в БД
+    // Saving a transaction to the database
     void saveExpenseTransactionDto(ExpenseTransactionDto expenseTransactionDto);
 }

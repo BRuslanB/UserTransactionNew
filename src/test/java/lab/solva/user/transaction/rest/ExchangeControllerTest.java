@@ -16,8 +16,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.mockito.Mockito.*;
-import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -38,7 +38,7 @@ public class ExchangeControllerTest {
     @Test
     public void testGetAllExchangeRateByCurrentDate() throws Exception {
 
-        // Arrange
+        /* Arrange */
         List<ExchangeRateDto> exchangeRateDtoList = Arrays.asList(
                 createExchangeRateDto("USD", "ДОЛЛАР США", 449.98),
                 createExchangeRateDto("EUR", "ЕВРО", 487.0),
@@ -47,7 +47,7 @@ public class ExchangeControllerTest {
 
         when(exchangeService.getAllExchangeRateDtoByCurrentDate()).thenReturn(exchangeRateDtoList);
 
-        // Act & Assert
+        /* Act & Assert */
         mockMvc.perform(get("/api/exchange")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())

@@ -22,9 +22,9 @@ import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.*;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -46,7 +46,7 @@ public class ClientControllerTest {
     @Test
     public void testGetAllAmountLimitDateByAccountClient() throws Exception {
 
-        // Arrange
+        /* Arrange */
         String accountClient = "0000000001";
         List<AmountLimitDateDto> amountLimitDateDtoList = Arrays.asList(
                 createAmountLimitDateDto(accountClient, 1000.0,"RUB", "Service",
@@ -57,7 +57,7 @@ public class ClientControllerTest {
 
         when(clientService.getAllAmountLimitDateDtoByAccountClient(accountClient)).thenReturn(amountLimitDateDtoList);
 
-        // Act & Assert
+        /* Act & Assert */
         mockMvc.perform(get("/api/client/{account_client}", accountClient)
                 .param("account_client", accountClient)
                 .contentType(MediaType.APPLICATION_JSON))
@@ -78,10 +78,10 @@ public class ClientControllerTest {
     @Test
     public void testGetAllTransactionExceededLimitByAccountClient() throws Exception {
 
-        // Arrange
+        /* Arrange */
         String accountClient = "0000000001";
         String accountCounterparty = "9000000000";
-        // добавить еще одну запись в List
+        // add another entry to List
         List<TransactionExceededLimitDto> transactionExceededLimitDtoList = Arrays.asList(
                 createTransactionExceededLimitDto(accountClient, accountCounterparty,
                         "RUB", 1000.0, "Service",
@@ -97,7 +97,7 @@ public class ClientControllerTest {
 
         when(clientService.getAllTransactionExceededLimitDtoByAccountClient(accountClient)).thenReturn(transactionExceededLimitDtoList);
 
-        // Act & Assert
+        /* Act & Assert */
         mockMvc.perform(get("/api/client/transaction/{account_client}", accountClient)
                 .param("account_client", accountClient)
                 .contentType(MediaType.APPLICATION_JSON))
@@ -126,7 +126,7 @@ public class ClientControllerTest {
     @Test
     public void testSetAmountLimit() throws Exception {
 
-        // Arrange
+        /* Arrange */
         AmountLimitDto amountLimitDto = new AmountLimitDto();
 
         amountLimitDto.setAccount_from("0000000001");
@@ -134,7 +134,7 @@ public class ClientControllerTest {
         amountLimitDto.setLimit_currency_shortname("EUR");
         amountLimitDto.setExpense_category("Product");
 
-        // Act & Assert
+        /* Act & Assert */
         mockMvc.perform(post("/api/client")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(asJsonString(amountLimitDto)))
@@ -148,7 +148,7 @@ public class ClientControllerTest {
         verify(clientService, times(1)).setAmountLimitDto(ArgumentMatchers.any(AmountLimitDto.class));
     }
 
-    // Метод для преобразования объекта в строку JSON
+    // Method to convert an object to a JSON string
     private static String asJsonString(final Object obj) {
         try {
             final ObjectMapper objectMapper = new ObjectMapper();

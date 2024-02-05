@@ -23,6 +23,8 @@ The User Transaction Service is built using the following technologies:
 * Hibernate
 * PostgreSQL
 * FlyWay
+* Log4j2
+* JUnit
 
 ## Prerequisites
 Before running the Service, you will need to have the following software installed on your machine:
