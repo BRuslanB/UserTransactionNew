@@ -1,11 +1,17 @@
 package lab.solva.user.transaction.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.validation.constraints.Size;
-import java.sql.Timestamp;
+import java.time.ZonedDateTime;
 
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class ExpenseTransactionDto {
@@ -19,10 +25,15 @@ public class ExpenseTransactionDto {
     @Size(max = 3)
     public String currency_shortname;
 
-    public double Sum;
+    @JsonProperty("Sum")
+    private double sum;
 
     @Size(max = 3)
     public String expense_category;
 
-    public Timestamp datetime;
+    // Формат с поддержкой часового пояса
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ssXXX")
+    public ZonedDateTime datetime;
+
+//    public Timestamp datetime;
 }

@@ -1,14 +1,16 @@
 package lab.solva.user.transaction.dto;
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.validation.constraints.Size;
 
+@Setter
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@Setter
 public class ExchangeRateDto {
 
     public String fullname;

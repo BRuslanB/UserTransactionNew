@@ -11,10 +11,12 @@ import lab.solva.user.transaction.repository.ExpenseTransactionRepository;
 import lab.solva.user.transaction.service.BankService;
 import lab.solva.user.transaction.service.ExchangeService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,10 +24,11 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Log4j2
 public class BankServiceImpl implements BankService {
 
-    private final static double DEFAULT_LIMIT_SUM = 100.0;
-    private final static String DEFAULT_LIMIT_CURRENCY_CODE = CurrencyType.EUR.name();
+    private final static double DEFAULT_LIMIT_SUM = 1000.0;
+    private final static String DEFAULT_LIMIT_CURRENCY_CODE = CurrencyType.USD.name();
 
     private final ExpenseTransactionRepository expenseTransactionRepository;
     private final AmountLimitRepository amountLimitRepository;
@@ -33,43 +36,57 @@ public class BankServiceImpl implements BankService {
 
     @Override
     public void saveExpenseTransactionDto(ExpenseTransactionDto expenseTransactionDto) {
+
         // Сохранение полученных данных из expenseTransactionDto
         if (expenseTransactionDto != null) {
             ExpenseTransactionEntity expenseTransactionEntity = new ExpenseTransactionEntity();
-            expenseTransactionEntity.setAccountClient(expenseTransactionDto.account_from);
-            expenseTransactionEntity.setAccountCounterparty(expenseTransactionDto.account_to);
-            expenseTransactionEntity.setCurrencyCode(expenseTransactionDto.currency_shortname);
-            expenseTransactionEntity.setTransactionSum(expenseTransactionDto.Sum);
+            expenseTransactionEntity.setAccountClient(expenseTransactionDto.getAccount_from());
+            expenseTransactionEntity.setAccountCounterparty(expenseTransactionDto.getAccount_to());
+            expenseTransactionEntity.setCurrencyCode(expenseTransactionDto.getCurrency_shortname());
+            expenseTransactionEntity.setTransactionSum(expenseTransactionDto.getSum());
+
             // Проверка Expense Category на допустимое значение
             String expenseCategory = expenseTransactionDto.expense_category;
+
             if (ExpenseCategory.SERVICE.name().equals(expenseCategory.toUpperCase()) ||
                     ExpenseCategory.PRODUCT.name().equals(expenseCategory.toUpperCase())) {
                 expenseTransactionEntity.setExpenseCategory(expenseCategory);
             } else {
-                // Не допустимое значение, категория расходов не найдена в списке
-                // Сохраняем этот факт в Лог
+                log.error("!Invalid value, Expense Category not found in the list of valid values, " +
+                                "accountClient={}, expenseCategory={}", expenseTransactionDto.account_from, expenseCategory);
                 return;
             }
+
             // Проверка Date и Time на допустимое значение
-            Timestamp transactionTimestamp = expenseTransactionDto.datetime;
-            LocalDateTime transactionDateTime = transactionTimestamp.toLocalDateTime();
+            ZonedDateTime transactionZonedDateTime = expenseTransactionDto.getDatetime();
+            LocalDateTime transactionDateTime = transactionZonedDateTime.toLocalDateTime();
             LocalDateTime currentDateTime = LocalDateTime.now();
+
             if (transactionDateTime.isBefore(currentDateTime)) {
+                Timestamp transactionTimestamp = Timestamp.from(transactionZonedDateTime.toInstant());
+
                 expenseTransactionEntity.setTransactionDateTime(transactionTimestamp);
             } else {
-                // Не допустимое значение, дата и время транзации позже текущей дата и времени
-                // Сохраняем этот факт в Лог
+                log.error("!Invalid value, Transaction Date and time is later than the Current Date and time, " +
+                        "accountClient={}, transactionDateTime={}, currentDateTime={}",
+                        expenseTransactionDto.account_from, transactionDateTime.toString(), currentDateTime.toString());
+
                 return;
             }
+
             // Вычисление значение для поля limitExceeded
-            expenseTransactionEntity.setLimitExceeded(getLimitExceeded(expenseTransactionDto.account_from,
-                    expenseTransactionDto.expense_category, expenseTransactionDto.currency_shortname,
-                    expenseTransactionDto.Sum));
+            expenseTransactionEntity.setLimitExceeded(getLimitExceeded(expenseTransactionDto.getAccount_from(),
+                    expenseTransactionDto.getExpense_category(), expenseTransactionDto.getCurrency_shortname(),
+                    expenseTransactionDto.getSum()));
+
             // Сохраняем ссылку на родительскую сущность
-            expenseTransactionEntity.setAmountLimitEntity(getAmountLimit(expenseTransactionDto.account_from,
-                    expenseTransactionDto.expense_category));
-            // Логирование действия
+            expenseTransactionEntity.setAmountLimitEntity(getAmountLimit(expenseTransactionDto.getAccount_from(),
+                    expenseTransactionDto.getExpense_category()));
+
             expenseTransactionRepository.save(expenseTransactionEntity);
+
+            log.debug("!Expense Transaction save successfully, id={}, accountClient={}",
+                    expenseTransactionEntity.getId(), expenseTransactionEntity.getAccountClient());
         }
     }
 
@@ -94,29 +111,26 @@ public class BankServiceImpl implements BankService {
         double sumTransactionRUB = expenseTransactionRepository.calcTransactionSum(
                 accountClient, expenseCategory, CurrencyType.RUB.name(), currentMonth, currentYear);
 
-        // Добавляние суммы по текущей транзакции к определенной сумме
+        // Добавление суммы по текущей транзакции к определенной сумме
         switch (CurrencyType.valueOf(currencyCode)) {
-            case KZT:
-                sumTransactionKZT += currentTransactionSum;
-                break;
-            case USD:
-                sumTransactionUSD += currentTransactionSum;
-                break;
-            case EUR:
-                sumTransactionEUR += currentTransactionSum;
-                break;
-            case RUB:
-                sumTransactionRUB += currentTransactionSum;
-                break;
+            case KZT -> sumTransactionKZT += currentTransactionSum;
+            case USD -> sumTransactionUSD += currentTransactionSum;
+            case EUR -> sumTransactionEUR += currentTransactionSum;
+            case RUB -> sumTransactionRUB += currentTransactionSum;
+
             // Другие кейсы для остальных видов валют (при необходимости)
-            default:
-                // Получен неизвестный вид валюты
-                // Сохраняем этот факт в Лог
+
+            default -> {
+                // Получен неизвестный вид валюты которого нет в БД
+                log.error("!Invalid value, received an unknown Currency Code, " +
+                        "accountClient={}, currencyCode={}", accountClient, currencyCode);
                 return false;
+            }
         }
 
         // Получение текущего курса валют из БД
         List<ExchangeRateEntity> exchangeRateEntityList = exchangeService.gettingRates().stream().toList();
+
         // Создаем и заполняем HashMap с курсами валют
         Map<String, Double> exchangeRateMap = new HashMap<>();
         for (ExchangeRateEntity exchangeRateEntity : exchangeRateEntityList) {
@@ -131,8 +145,8 @@ public class BankServiceImpl implements BankService {
 
             // Конвертирование всех сумм транзакции к Currency Code установленного лимита
             switch (CurrencyType.valueOf(limitCurrencyCode)) {
-                case KZT:
-                    sumTransactionResult = sumTransactionKZT ;
+                case KZT -> {
+                    sumTransactionResult = sumTransactionKZT;
                     if (exchangeRateMap.get(CurrencyType.USD.name()) != null) {
                         sumTransactionResult += sumTransactionUSD * exchangeRateMap.get(CurrencyType.USD.name());
                     }
@@ -142,9 +156,9 @@ public class BankServiceImpl implements BankService {
                     if (exchangeRateMap.get(CurrencyType.RUB.name()) != null) {
                         sumTransactionResult += sumTransactionRUB * exchangeRateMap.get(CurrencyType.RUB.name());
                     }
-                    break;
-                case USD:
-                    sumTransactionResult = sumTransactionUSD ;
+                }
+                case USD -> {
+                    sumTransactionResult = sumTransactionUSD;
                     if (exchangeRateMap.get(CurrencyType.USD.name()) != null) {
                         sumTransactionResult += sumTransactionKZT / exchangeRateMap.get(CurrencyType.USD.name());
                     }
@@ -158,9 +172,9 @@ public class BankServiceImpl implements BankService {
                         sumTransactionResult += sumTransactionRUB *
                                 (exchangeRateMap.get(CurrencyType.RUB.name()) / exchangeRateMap.get(CurrencyType.USD.name()));
                     }
-                    break;
-                case EUR:
-                    sumTransactionResult = sumTransactionEUR ;
+                }
+                case EUR -> {
+                    sumTransactionResult = sumTransactionEUR;
                     if (exchangeRateMap.get(CurrencyType.EUR.name()) != null) {
                         sumTransactionResult += sumTransactionKZT / exchangeRateMap.get(CurrencyType.EUR.name());
                     }
@@ -174,9 +188,9 @@ public class BankServiceImpl implements BankService {
                         sumTransactionResult += sumTransactionRUB *
                                 (exchangeRateMap.get(CurrencyType.RUB.name()) / exchangeRateMap.get(CurrencyType.EUR.name()));
                     }
-                    break;
-                case RUB:
-                    sumTransactionResult = sumTransactionRUB ;
+                }
+                case RUB -> {
+                    sumTransactionResult = sumTransactionRUB;
                     if (exchangeRateMap.get(CurrencyType.RUB.name()) != null) {
                         sumTransactionResult += sumTransactionKZT / exchangeRateMap.get(CurrencyType.RUB.name());
                     }
@@ -190,12 +204,14 @@ public class BankServiceImpl implements BankService {
                         sumTransactionResult += sumTransactionEUR *
                                 (exchangeRateMap.get(CurrencyType.EUR.name()) / exchangeRateMap.get(CurrencyType.RUB.name()));
                     }
-                    break;
+                }
+
                 // Другие кейсы для остальных видов валют (при необходимости)
             }
         } else {
-            // Лимит не установлен и не получен из БД
-            // Сохраняем этот факт в Лог
+            log.error("!Attention, Limit is not set and not received from the Database, " +
+                    "accountClient={}, expenseCategory={}", accountClient, expenseCategory);
+
             return false;
         }
 
@@ -214,6 +230,7 @@ public class BankServiceImpl implements BankService {
          // Получение последнего установленного лимита из БД
         Optional<AmountLimitEntity> lastAmountLimitOptional = amountLimitRepository.findAmountLimit(
                 accountClient, expenseCategory, currentMonth, currentYear);
+
         // Получаем лимит если лимит есть в БД, или сохраняем лимит заданный по умолчанию
         amountLimitEntity = lastAmountLimitOptional.orElseGet(() -> saveAmountLimit(accountClient, expenseCategory));
 
@@ -221,20 +238,28 @@ public class BankServiceImpl implements BankService {
     }
 
     private AmountLimitEntity saveAmountLimit(String accountClient, String expenseCategory) {
+
         // Получаем 1 число текущего месяца с началом времени 00:00:00
         LocalDateTime firstDayOfMonth = LocalDateTime.now().withDayOfMonth(1).toLocalDate().atStartOfDay();
 
         AmountLimitEntity amountLimitEntity  = new AmountLimitEntity();
+
         amountLimitEntity.setAccountClient(accountClient);
+
         // Используем значение по умолчанию для суммы лимита
         amountLimitEntity.setLimitSum(DEFAULT_LIMIT_SUM);
+
         // Используем значение firstDayOfMonth
         amountLimitEntity.setLimitDateTime(Timestamp.valueOf(firstDayOfMonth));
+
         // Используем значение по умолчанию для вида валюты лимита
         amountLimitEntity.setLimitCurrencyCode(DEFAULT_LIMIT_CURRENCY_CODE);
         amountLimitEntity.setExpenseCategory(expenseCategory);
-        // Логирование действия
+
         amountLimitRepository.save(amountLimitEntity);
+
+        log.debug("!Default Limit save successfully, id={}, accountClient={}, expenseCategory={}",
+                amountLimitEntity.getId(), amountLimitEntity.getAccountClient(), amountLimitEntity.getExpenseCategory());
 
         return amountLimitEntity;
     }

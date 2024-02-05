@@ -15,35 +15,31 @@ import java.sql.Timestamp;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ExpenseTransactionEntity {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Long id;
+public class ExpenseTransactionEntity extends BaseEntity {
 
     @Size(max = 10)
-    @Column(name = "account_client")
+    @Column(name = "account_client", nullable = false)
     private String accountClient;
 
     @Size(max = 10)
-    @Column(name = "account_counterparty")
+    @Column(name = "account_counterparty", nullable = false)
     private String accountCounterparty;
 
     @Size(max = 3)
-    @Column(name = "currency_code")
+    @Column(name = "currency_code", nullable = false)
     private String currencyCode;
 
-    @Column(name = "transaction_sum")
+    @Column(name = "transaction_sum", nullable = false)
     private double transactionSum;
 
-    @Column(name = "expense_category")
+    @Column(name = "expense_category", nullable = false)
     private String expenseCategory;
 
-    @Column(name = "transaction_date", columnDefinition = "TIMESTAMP WITH TIME ZONE")
+    @Column(name = "transaction_date", nullable = false,
+            columnDefinition = "TIMESTAMP WITH TIME ZONE")
     private Timestamp transactionDateTime;
 
-    @Column(name = "limit_exceeded")
+    @Column(name = "limit_exceeded", nullable = false)
     private boolean limitExceeded;
 
     @ManyToOne
