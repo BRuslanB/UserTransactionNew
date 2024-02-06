@@ -13,11 +13,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.lang.reflect.Field;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -50,6 +52,7 @@ public class BankServiceImplTest {
         expenseTransactionDto.setCurrency_shortname("USD");
         expenseTransactionDto.setSum(100.0);
         expenseTransactionDto.setExpense_category("Service");
+
         // Converting a date and time string to the desired format
         ZonedDateTime zonedDateTime = ZonedDateTime.parse("2024-02-01T15:15:20+06:00", DateTimeFormatter.ISO_OFFSET_DATE_TIME);
         expenseTransactionDto.setDatetime(zonedDateTime);
@@ -64,17 +67,12 @@ public class BankServiceImplTest {
 
         // Checking Expense Category for a valid value
         String expenseCategory = expenseTransactionDto.expense_category;
-        assertTrue("Service".equals(expenseCategory) || "Product".equals(expenseCategory),
-            "Expense category should be 'Service' or 'Product'");
         expenseTransactionEntity.setExpenseCategory(expenseCategory);
 
         // Checking Date and Time for valid values
         ZonedDateTime transactionZonedDateTime = expenseTransactionDto.getDatetime();
         LocalDateTime transactionDateTime = transactionZonedDateTime.toLocalDateTime();
         LocalDateTime currentDateTime = LocalDateTime.now();
-
-        assertTrue(transactionDateTime.isBefore(currentDateTime),
-            "Transaction DateTime should be before Current DateTime");
 
         Timestamp transactionTimestamp = Timestamp.from(transactionZonedDateTime.toInstant());
         expenseTransactionEntity.setTransactionDateTime(transactionTimestamp);
@@ -97,52 +95,105 @@ public class BankServiceImplTest {
             )
         );
 
-
         /* Act */
         expenseTransactionRepository.save(expenseTransactionEntity);
 
         /* Assert */
+        assertTrue(transactionDateTime.isBefore(currentDateTime),
+                "Transaction DateTime should be before Current DateTime");
+        assertTrue("Service".equals(expenseCategory) || "Product".equals(expenseCategory),
+                "Expense category should be 'Service' or 'Product'");
+
+        // Verify that the service method was called
         verify(expenseTransactionRepository, times(1)).save(any(ExpenseTransactionEntity.class));
     }
 
     @Test
-    public void testGetLimitExceededTrue() {
+    public void testGetLimitExceeded_True() {
 
         /* Arrange */
-        // Подготовка данных и моков для теста
+        String accountClient = "0000000001";
+        String expenseCategory = "Service";
+        String currencyCode = "USD";
+        double currentTransactionSum = 5000.0;
 
         /* Act */
-        boolean result = bankServiceImpl.getLimitExceeded("account", "category", "USD", 500.0);
+        boolean limitExceeded = bankServiceImpl.getLimitExceeded(accountClient, expenseCategory, currencyCode, currentTransactionSum);
 
         /* Assert */
-        assertTrue(result); // Или другие ожидаемые результаты
+        assertTrue(limitExceeded, "Expected limit to be exceeded for the provided data");
     }
 
     @Test
-    public void testGetLimitExceededFalse() {
+    public void testGetLimitExceeded_False() {
 
         /* Arrange */
-        // Подготовка данных и моков для теста
+        String accountClient = "0000000001";
+        String expenseCategory = "Service";
+        String currencyCode = "USD";
+        double currentTransactionSum = 200.0;
 
         /* Act */
-        boolean result = bankServiceImpl.getLimitExceeded("account", "category", "USD", 500.0);
+        boolean limitExceeded = bankServiceImpl.getLimitExceeded(accountClient, expenseCategory, currencyCode, currentTransactionSum);
 
         /* Assert */
-        assertFalse(result); // Или другие ожидаемые результаты
+        assertFalse(limitExceeded, "Expected limit not to be exceeded for the provided data");
     }
 
-//    @Test
-//    public void testGetAmountLimit() {
-//
-//        /* Arrange */
-//        // Подготовка данных и моков для теста
-//
-//        /* Act */
-//        AmountLimitEntity result = bankServiceImpl.getAmountLimit("account", "category");
-//
-//        /* Assert */
-//        assertNotNull(result); // Или другие ожидаемые результаты
-//    }
+    @Test
+    public void testGetAmountLimitWhenLimitExists() {
+
+        /* Arrange */
+        String accountClient = "0000000001";
+        String expenseCategory = "Product";
+        LocalDateTime currentDateTime = LocalDateTime.now();
+        int currentMonth = currentDateTime.getMonthValue();
+        int currentYear = currentDateTime.getYear();
+
+        AmountLimitEntity existingLimit = new AmountLimitEntity();
+
+        // Setting the required values in existingLimit
+        when(amountLimitRepository.findAmountLimit(accountClient, expenseCategory, currentMonth, currentYear))
+                .thenReturn(Optional.of(existingLimit));
+
+        /* Act */
+        AmountLimitEntity result = bankServiceImpl.getAmountLimit(accountClient, expenseCategory);
+
+        /* Assert */
+        assertNotNull(result);
+        assertEquals(existingLimit, result);
+    }
+
+    @Test
+    public void testGetAmountLimitWhenLimitDoesNotExist() {
+
+        /* Arrange */
+        String accountClient = "0000000001";
+        String expenseCategory = "Service";
+        LocalDateTime currentDateTime = LocalDateTime.now();
+        int currentMonth = currentDateTime.getMonthValue();
+        int currentYear = currentDateTime.getYear();
+
+        AmountLimitEntity defaultLimit = new AmountLimitEntity();
+        defaultLimit.setAccountClient(accountClient);
+        defaultLimit.setExpenseCategory(expenseCategory);
+        defaultLimit.setLimitSum(1000.0);
+        defaultLimit.setLimitCurrencyCode("USD");
+
+        // Mocking the behavior of amountLimitRepository
+        when(amountLimitRepository.findAmountLimit(accountClient, expenseCategory, currentMonth, currentYear))
+                .thenReturn(Optional.empty());
+
+        /* Act */
+        AmountLimitEntity result = bankServiceImpl.getAmountLimit(accountClient, expenseCategory);
+
+        /* Assert */
+        assertNotNull(result);
+        assertEquals(defaultLimit.getAccountClient(), result.getAccountClient());
+        assertEquals(defaultLimit.getExpenseCategory(), result.getExpenseCategory());
+        assertEquals(defaultLimit.getLimitSum(), result.getLimitSum());
+        assertEquals(defaultLimit.getLimitCurrencyCode(), result.getLimitCurrencyCode());
+    }
 
     @Test
     public void testSaveAmountLimit() {
@@ -156,7 +207,7 @@ public class BankServiceImplTest {
         amountLimitDto.setLimit_currency_shortname("EUR");
         amountLimitDto.setExpense_category("Product");
 
-        // Create object amountLimitDto
+        // Create object amountLimitEntity
         AmountLimitEntity amountLimitEntity  = new AmountLimitEntity();
 
         amountLimitEntity.setAccountClient(amountLimitDto.getAccount_from());
@@ -170,51 +221,56 @@ public class BankServiceImplTest {
 
         // Checking Expense Category for a valid value
         String expenseCategory = amountLimitDto.getExpense_category();
-        assertTrue("Service".equals(expenseCategory) || "Product".equals(expenseCategory),
-                "Expense category should be 'Service' or 'Product'");
         amountLimitEntity.setExpenseCategory(expenseCategory);
 
         /* Act */
         amountLimitRepository.save(amountLimitEntity);
 
         /* Assert */
+        assertTrue("Service".equals(expenseCategory) || "Product".equals(expenseCategory),
+                "Expense category should be 'Service' or 'Product'");
+
+        // Verify that the service method was called
         verify(amountLimitRepository, times(1)).save(any(AmountLimitEntity.class));
     }
 
     @Test
-    public void testSaveAmountLimitDefaultValue() {
+    public void testSaveAmountLimitDefaultValue() throws NoSuchFieldException, IllegalAccessException {
 
         /* Arrange */
-        // Create object amountLimitDto
-        AmountLimitDto amountLimitDto = new AmountLimitDto();
+        // Getting Constant Values
+        Field defaultLimitSumField = BankServiceImpl.class.getDeclaredField("DEFAULT_LIMIT_SUM");
+        defaultLimitSumField.setAccessible(true);
+        double defaultLimitSum = (double) defaultLimitSumField.get(bankServiceImpl);
 
-        amountLimitDto.setAccount_from("0000000001");
-        amountLimitDto.setLimit_sum(500.0);
-        amountLimitDto.setLimit_currency_shortname("EUR");
-        amountLimitDto.setExpense_category("Product");
+        Field defaultLimitCurrencyCodeField = BankServiceImpl.class.getDeclaredField("DEFAULT_LIMIT_CURRENCY_CODE");
+        defaultLimitCurrencyCodeField.setAccessible(true);
+        String defaultLimitCurrencyCode = (String) defaultLimitCurrencyCodeField.get(bankServiceImpl);
 
-        // Create object amountLimitDto
+        // Create object amountLimitEntity
         AmountLimitEntity amountLimitEntity  = new AmountLimitEntity();
 
-        amountLimitEntity.setAccountClient(amountLimitDto.getAccount_from());
-        amountLimitEntity.setLimitSum(amountLimitDto.getLimit_sum());
+        amountLimitEntity.setAccountClient("0000000001");
+        amountLimitEntity.setLimitSum(defaultLimitSum);
 
         // Use the current date and time in the required format (trimming nanoseconds)
         LocalDateTime currentDateTime = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
         amountLimitEntity.setLimitDateTime(Timestamp.valueOf(currentDateTime));
 
-        amountLimitEntity.setLimitCurrencyCode(amountLimitDto.getLimit_currency_shortname());
-
-        // Checking Expense Category for a valid value
-        String expenseCategory = amountLimitDto.getExpense_category();
-        assertTrue("Service".equals(expenseCategory) || "Product".equals(expenseCategory),
-                "Expense category should be 'Service' or 'Product'");
-        amountLimitEntity.setExpenseCategory(expenseCategory);
+        amountLimitEntity.setLimitCurrencyCode(defaultLimitCurrencyCode);
+        amountLimitEntity.setExpenseCategory("Product");
 
         /* Act */
         amountLimitRepository.save(amountLimitEntity);
 
         /* Assert */
+        assertEquals(1000.0, defaultLimitSum, "Default limit sum should be 1000.0");
+        assertEquals("USD", defaultLimitCurrencyCode, "Default limit currency code should be USD");
+        assertTrue("Service".equals(amountLimitEntity.getExpenseCategory()) ||
+                    "Product".equals(amountLimitEntity.getExpenseCategory()),
+            "Expense category should be 'Service' or 'Product'");
+
+        // Verify that the service method was called
         verify(amountLimitRepository, times(1)).save(any(AmountLimitEntity.class));
     }
 }
