@@ -34,8 +34,8 @@ public class BankServiceImplTest {
     @Mock
     private AmountLimitRepository amountLimitRepository;
 
-    @Mock
-    private ExchangeService exchangeService;
+//    @Mock
+//    private ExchangeService exchangeService;
 
     @InjectMocks
     private BankServiceImpl bankServiceImpl;
