@@ -46,10 +46,10 @@ public class ClientController {
     @SuppressWarnings("unused")
     @PostMapping
     @Operation(description = "Setting and saving a Limit in the Database")
-    public ResponseEntity<Object> setAmountLimit(@RequestBody AmountLimitDto amountLimitDto){
+    public ResponseEntity<Object> saveAmountLimit(@RequestBody AmountLimitDto amountLimitDto){
 
         log.debug("!Call method setting and saving a Limit in the Database");
-        clientService.setAmountLimitDto(amountLimitDto);
+        clientService.saveAmountLimitDto(amountLimitDto);
 
         // Return amountLimitDto
         return ResponseEntity.ok(amountLimitDto);

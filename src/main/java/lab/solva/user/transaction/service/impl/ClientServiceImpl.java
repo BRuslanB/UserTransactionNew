@@ -58,7 +58,7 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
-    public void setAmountLimitDto(AmountLimitDto amountLimitDto) {
+    public void saveAmountLimitDto(AmountLimitDto amountLimitDto) {
 
         // Saving received data from amountLimitDto
         if (amountLimitDto != null) {

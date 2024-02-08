@@ -90,7 +90,7 @@ public class ClientControllerTest {
                         ZonedDateTime.parse("2024-01-30T15:35:34+06:00", DateTimeFormatter.ISO_OFFSET_DATE_TIME)),
                 createTransactionExceededLimitDto(accountClient, accountCounterparty,
                         "USD", 100.0, "Product",
-                        ZonedDateTime.parse("2024-02-30T14:30:45+06:00", DateTimeFormatter.ISO_OFFSET_DATE_TIME),
+                        ZonedDateTime.parse("2024-01-30T14:30:45+06:00", DateTimeFormatter.ISO_OFFSET_DATE_TIME),
                         200.0,"USD",
                         ZonedDateTime.parse("2024-01-30T15:35:34+06:00", DateTimeFormatter.ISO_OFFSET_DATE_TIME))
         );
@@ -124,7 +124,7 @@ public class ClientControllerTest {
     }
 
     @Test
-    public void testSetAmountLimit() throws Exception {
+    public void testSaveAmountLimit() throws Exception {
 
         /* Arrange */
         AmountLimitDto amountLimitDto = new AmountLimitDto();
@@ -145,7 +145,7 @@ public class ClientControllerTest {
                 .andExpect(jsonPath("$.expense_category", is("Product")));
 
         // Verify that the service method was called
-        verify(clientService, times(1)).setAmountLimitDto(ArgumentMatchers.any(AmountLimitDto.class));
+        verify(clientService, times(1)).saveAmountLimitDto(ArgumentMatchers.any(AmountLimitDto.class));
     }
 
     // Method to convert an object to a JSON string
@@ -174,7 +174,7 @@ public class ClientControllerTest {
         return amountLimitDateDto;
     }
 
-    // Method for create object of AmountLimitDateDto
+    // Method for create object of TransactionExceededLimitDto
     private TransactionExceededLimitDto createTransactionExceededLimitDto(String account_from, String account_to,
                 String currency_shortname, double Sum, String expense_category, ZonedDateTime datetime,
                 double limit_sum, String limit_currency_shortname, ZonedDateTime limit_datetime) {

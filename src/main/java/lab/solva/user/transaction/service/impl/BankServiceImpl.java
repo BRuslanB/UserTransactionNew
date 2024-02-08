@@ -234,12 +234,12 @@ public class BankServiceImpl implements BankService {
                 accountClient, expenseCategory, currentMonth, currentYear);
 
         // Getting a limit if there is a limit in the database, or saving the default limit
-        amountLimitEntity = lastAmountLimitOptional.orElseGet(() -> saveAmountLimit(accountClient, expenseCategory));
+        amountLimitEntity = lastAmountLimitOptional.orElseGet(() -> saveAmountDefaultLimit(accountClient, expenseCategory));
 
         return amountLimitEntity;
     }
 
-    protected AmountLimitEntity saveAmountLimit(String accountClient, String expenseCategory) {
+    protected AmountLimitEntity saveAmountDefaultLimit(String accountClient, String expenseCategory) {
 
         // Receiving the 1st day of the current month with the start time 00:00:00
         LocalDateTime firstDayOfMonth = LocalDateTime.now().withDayOfMonth(1).toLocalDate().atStartOfDay();

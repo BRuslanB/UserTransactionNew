@@ -12,7 +12,7 @@ public interface ClientService {
     List<AmountLimitDateDto> getAllAmountLimitDateDtoByAccountClient(String accountClient);
 
     // Setting and saving a limit in the database
-    void setAmountLimitDto(AmountLimitDto amountLimitDto);
+    void saveAmountLimitDto(AmountLimitDto amountLimitDto);
 
     // Obtaining a list of all transactions that exceeded the established limit from the database in Dto format
     List<TransactionExceededLimitDto> getAllTransactionExceededLimitDtoByAccountClient(String accountClient);
