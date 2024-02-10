@@ -53,7 +53,8 @@ public class BankControllerTest {
         expenseTransactionDto.setExpense_category("Service");
 
         // Converting a date and time string to the desired format
-        ZonedDateTime zonedDateTime = ZonedDateTime.parse("2024-02-01T15:15:20+06:00", DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+        ZonedDateTime zonedDateTime = ZonedDateTime.parse("2024-02-01T15:15:20+06:00",
+                DateTimeFormatter.ISO_OFFSET_DATE_TIME);
         expenseTransactionDto.setDatetime(zonedDateTime);
 
         /* Act & Assert */
@@ -70,8 +71,8 @@ public class BankControllerTest {
                 .andExpect(jsonPath("$.datetime", is("2024-02-01T09:15:20Z")));
 
         // Verify that the service method was called
-        verify(bankService, times(1)).saveExpenseTransactionDto(ArgumentMatchers.any(ExpenseTransactionDto.class));
-
+        verify(bankService, times(1)).
+                saveExpenseTransactionDto(ArgumentMatchers.any(ExpenseTransactionDto.class));
     }
 
     // Method to convert an object to a JSON string

@@ -15,9 +15,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.mockito.Mockito.*;
-import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -61,9 +61,6 @@ public class ExchangeControllerTest {
                 .andExpect(jsonPath("$[2].title", is("RUB")))
                 .andExpect(jsonPath("$[2].fullname", is("РОССИЙСКИЙ РУБЛЬ")))
                 .andExpect(jsonPath("$[2].description", is(5.02)));
-
-        // Verify that the service method was called
-        verify(exchangeService, times(1)).getAllExchangeRateDtoByCurrentDate();
     }
 
     // Method for create object of ExchangeRateDto

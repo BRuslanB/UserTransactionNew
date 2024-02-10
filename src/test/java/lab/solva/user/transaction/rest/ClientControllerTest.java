@@ -22,9 +22,9 @@ import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.mockito.Mockito.*;
-import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -95,7 +95,8 @@ public class ClientControllerTest {
                         ZonedDateTime.parse("2024-01-30T15:35:34+06:00", DateTimeFormatter.ISO_OFFSET_DATE_TIME))
         );
 
-        when(clientService.getAllTransactionExceededLimitDtoByAccountClient(accountClient)).thenReturn(transactionExceededLimitDtoList);
+        when(clientService.getAllTransactionExceededLimitDtoByAccountClient(accountClient)).
+                thenReturn(transactionExceededLimitDtoList);
 
         /* Act & Assert */
         mockMvc.perform(get("/api/client/transaction/{account_client}", accountClient)
@@ -145,7 +146,8 @@ public class ClientControllerTest {
                 .andExpect(jsonPath("$.expense_category", is("Product")));
 
         // Verify that the service method was called
-        verify(clientService, times(1)).saveAmountLimitDto(ArgumentMatchers.any(AmountLimitDto.class));
+        verify(clientService, times(1)).
+                saveAmountLimitDto(ArgumentMatchers.any(AmountLimitDto.class));
     }
 
     // Method to convert an object to a JSON string
