@@ -148,6 +148,7 @@ public class ExchangeServiceImpl implements ExchangeService {
     }
 
     private String fetchXmlData(String resourceUrl) {
+
         RestTemplate restTemplate = new RestTemplate();
 
         HttpHeaders headers = new HttpHeaders();
@@ -233,15 +234,28 @@ public class ExchangeServiceImpl implements ExchangeService {
     @Override
     public List<ExchangeRateDto> getAllExchangeRateDtoByCurrentDate() {
 
-        List<ExchangeRateDto> exchangeRateDtoList = new ArrayList<>();
-        List<ExchangeRateEntity> exchangeRateEntityList = gettingRates().stream().toList();
+        // Getting the current date
+        LocalDate currentDate = LocalDate.now();
 
-        for (ExchangeRateEntity exchangeRateEntity : exchangeRateEntityList) {
-            ExchangeRateDto exchangeRateDto = new ExchangeRateDto();
-            exchangeRateDto.setTitle(exchangeRateEntity.getCurrencyCode());
-            exchangeRateDto.setFullname(exchangeRateEntity.getCurrencyName());
-            exchangeRateDto.setDescription(exchangeRateEntity.getExchangeRate());
-            exchangeRateDtoList.add(exchangeRateDto);
+        List<ExchangeRateDto> exchangeRateDtoList = new ArrayList<>();
+
+        // Retrieving data for the current date from the database
+        Optional<ExchangeInfoEntity> currentExchangeInfoOptional =
+                exchangeInfoRepository.findCurrentExchangeInfo(currentDate);
+
+        if (currentExchangeInfoOptional.isPresent()) {
+            ExchangeInfoEntity exchangeInfoEntity = currentExchangeInfoOptional.get();
+
+            List<ExchangeRateEntity> exchangeRateEntityList =
+                    exchangeRateRepository.findAllExchangeRate(exchangeInfoEntity.getId()).stream().toList();
+
+            for (ExchangeRateEntity exchangeRateEntity : exchangeRateEntityList) {
+                ExchangeRateDto exchangeRateDto = new ExchangeRateDto();
+                exchangeRateDto.setTitle(exchangeRateEntity.getCurrencyCode());
+                exchangeRateDto.setFullname(exchangeRateEntity.getCurrencyName());
+                exchangeRateDto.setDescription(exchangeRateEntity.getExchangeRate());
+                exchangeRateDtoList.add(exchangeRateDto);
+            }
         }
 
         log.debug("!Getting all Exchange Rates");
