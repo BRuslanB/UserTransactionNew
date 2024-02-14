@@ -12,7 +12,7 @@ import java.util.Set;
 @Transactional
 public interface ExchangeRateRepository extends JpaRepository<ExchangeRateEntity, Long> {
 
-    // Возвращает курсы валют по указанной записи
+    // Returns exchange rates for the specified entry
     @Query("SELECT c FROM ExchangeRateEntity c WHERE c.exchangeInfoEntity.id = :exchangeInfoId")
     Set<ExchangeRateEntity> findAllExchangeRate(Long exchangeInfoId);
 }

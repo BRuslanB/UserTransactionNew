@@ -31,9 +31,7 @@ public class ExpenseTransactionDto {
     @Size(max = 3)
     public String expense_category;
 
-    // Формат с поддержкой часового пояса
+    // Time Zone Supported Format
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ssXXX")
     public ZonedDateTime datetime;
-
-//    public Timestamp datetime;
 }

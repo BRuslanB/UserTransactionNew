@@ -1,4 +1,4 @@
--- Вставка данных в таблицу t_amount_limit
+-- Inserting data into the t_amount_limit table
 INSERT INTO t_amount_limit (account_client, limit_sum, limit_date, limit_currency_code, expense_category)
 VALUES
     ('0000000123', 1000, '2024-01-01 00:00:00+06'::TIMESTAMP, 'RUB', 'Service'),
@@ -10,7 +10,7 @@ VALUES
     ('0000012345', 100, '2024-01-01 00:00:00+06'::TIMESTAMP, 'EUR', 'Service'),
     ('0000123456', 500, '2024-02-01 15:45:03+06'::TIMESTAMP, 'EUR', 'Product');
 
--- Вставка данных в таблицу t_expense_transaction
+-- Inserting data into the t_expense_transaction table
 INSERT INTO t_expense_transaction (account_client, account_counterparty, currency_code,
     transaction_sum, expense_category, transaction_date, limit_exceeded, amount_limit_id)
 VALUES
@@ -24,13 +24,13 @@ VALUES
     ('0000012345', '9870000000', 'USD', 99.99, 'Service', '2024-01-30 15:15:20+06', 'false', 7),
     ('0000123456', '9876500000', 'USD', 100.99, 'Product', '2024-01-31 15:15:20+06', 'false', 8);
 
--- Вставка данных в таблицу t_exchange_info
+-- Inserting data into the t_exchange_info table
 INSERT INTO t_exchange_info (request_date, resource)
 VALUES
     ('2024-01-30'::DATE, 'www.nationalbank.kz'),
     ('2024-01-31'::DATE, 'www.nationalbank.kz');
 
--- Вставка данных в таблицу t_exchange_rate
+-- Inserting data into the t_exchange_rate table
 INSERT INTO t_exchange_rate (currency_name, currency_code, exchange_rate, exchange_info_id)
 VALUES
     ('ДОЛЛАР США', 'USD', 449.74, 1),

@@ -29,12 +29,12 @@ public class TransactionExceededLimitDto {
 
     public String expense_category;
 
-    // Формат с поддержкой часового пояса
+    // Time Zone Supported Format
     public ZonedDateTime datetime;
 
     public double limit_sum;
 
-    // Формат с поддержкой часового пояса
+    // Time Zone Supported Format
     public ZonedDateTime limit_datetime;
 
     @Size(max = 3)

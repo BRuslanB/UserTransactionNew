@@ -8,9 +8,9 @@ import java.util.Set;
 
 public interface ExchangeService {
 
-    // Получение всех курсов валют на текущую дату из внешнего сервиса и сохранение в БД
+    // Receiving all exchange rates for the current date from an external service and saving in the database
     Set<ExchangeRateEntity> gettingRates();
 
-    // Получение всех курсов валют на текущую дату из БД в Dto формате
+    // Retrieving all exchange rates for the current date from the database in Dto format
     List<ExchangeRateDto> getAllExchangeRateDtoByCurrentDate();
 }

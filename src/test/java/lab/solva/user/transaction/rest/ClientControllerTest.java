@@ -46,7 +46,7 @@ public class ClientControllerTest {
     @Test
     public void testGetAllAmountLimitDateByAccountClient() throws Exception {
 
-        // Arrange
+        /* Arrange */
         String accountClient = "0000000001";
         List<AmountLimitDateDto> amountLimitDateDtoList = Arrays.asList(
                 createAmountLimitDateDto(accountClient, 1000.0,"RUB", "Service",
@@ -57,7 +57,7 @@ public class ClientControllerTest {
 
         when(clientService.getAllAmountLimitDateDtoByAccountClient(accountClient)).thenReturn(amountLimitDateDtoList);
 
-        // Act & Assert
+        /* Act & Assert */
         mockMvc.perform(get("/api/client/{account_client}", accountClient)
                 .param("account_client", accountClient)
                 .contentType(MediaType.APPLICATION_JSON))
@@ -78,10 +78,10 @@ public class ClientControllerTest {
     @Test
     public void testGetAllTransactionExceededLimitByAccountClient() throws Exception {
 
-        // Arrange
+        /* Arrange */
         String accountClient = "0000000001";
         String accountCounterparty = "9000000000";
-        // добавить еще одну запись в List
+        // add another entry to List
         List<TransactionExceededLimitDto> transactionExceededLimitDtoList = Arrays.asList(
                 createTransactionExceededLimitDto(accountClient, accountCounterparty,
                         "RUB", 1000.0, "Service",
@@ -90,14 +90,15 @@ public class ClientControllerTest {
                         ZonedDateTime.parse("2024-01-30T15:35:34+06:00", DateTimeFormatter.ISO_OFFSET_DATE_TIME)),
                 createTransactionExceededLimitDto(accountClient, accountCounterparty,
                         "USD", 100.0, "Product",
-                        ZonedDateTime.parse("2024-02-30T14:30:45+06:00", DateTimeFormatter.ISO_OFFSET_DATE_TIME),
+                        ZonedDateTime.parse("2024-01-30T14:30:45+06:00", DateTimeFormatter.ISO_OFFSET_DATE_TIME),
                         200.0,"USD",
                         ZonedDateTime.parse("2024-01-30T15:35:34+06:00", DateTimeFormatter.ISO_OFFSET_DATE_TIME))
         );
 
-        when(clientService.getAllTransactionExceededLimitDtoByAccountClient(accountClient)).thenReturn(transactionExceededLimitDtoList);
+        when(clientService.getAllTransactionExceededLimitDtoByAccountClient(accountClient)).
+                thenReturn(transactionExceededLimitDtoList);
 
-        // Act & Assert
+        /* Act & Assert */
         mockMvc.perform(get("/api/client/transaction/{account_client}", accountClient)
                 .param("account_client", accountClient)
                 .contentType(MediaType.APPLICATION_JSON))
@@ -124,9 +125,9 @@ public class ClientControllerTest {
     }
 
     @Test
-    public void testSetAmountLimit() throws Exception {
+    public void testSaveAmountLimit() throws Exception {
 
-        // Arrange
+        /* Arrange */
         AmountLimitDto amountLimitDto = new AmountLimitDto();
 
         amountLimitDto.setAccount_from("0000000001");
@@ -134,7 +135,7 @@ public class ClientControllerTest {
         amountLimitDto.setLimit_currency_shortname("EUR");
         amountLimitDto.setExpense_category("Product");
 
-        // Act & Assert
+        /* Act & Assert */
         mockMvc.perform(post("/api/client")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(asJsonString(amountLimitDto)))
@@ -145,10 +146,11 @@ public class ClientControllerTest {
                 .andExpect(jsonPath("$.expense_category", is("Product")));
 
         // Verify that the service method was called
-        verify(clientService, times(1)).setAmountLimitDto(ArgumentMatchers.any(AmountLimitDto.class));
+        verify(clientService, times(1)).
+                saveAmountLimitDto(ArgumentMatchers.any(AmountLimitDto.class));
     }
 
-    // Метод для преобразования объекта в строку JSON
+    // Method to convert an object to a JSON string
     private static String asJsonString(final Object obj) {
         try {
             final ObjectMapper objectMapper = new ObjectMapper();
@@ -174,7 +176,7 @@ public class ClientControllerTest {
         return amountLimitDateDto;
     }
 
-    // Method for create object of AmountLimitDateDto
+    // Method for create object of TransactionExceededLimitDto
     private TransactionExceededLimitDto createTransactionExceededLimitDto(String account_from, String account_to,
                 String currency_shortname, double Sum, String expense_category, ZonedDateTime datetime,
                 double limit_sum, String limit_currency_shortname, ZonedDateTime limit_datetime) {

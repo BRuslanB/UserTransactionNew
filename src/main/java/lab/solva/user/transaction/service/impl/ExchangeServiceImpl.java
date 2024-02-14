@@ -38,10 +38,10 @@ public class ExchangeServiceImpl implements ExchangeService {
     @Override
     public Set<ExchangeRateEntity> gettingRates() {
 
-        // Получение текущей даты
+        // Getting the current date
         LocalDate currentDate = LocalDate.now();
 
-        // Получение данных на текущую дата из БД
+        // Retrieving data for the current date from the database
         Optional<ExchangeInfoEntity> currentExchangeInfoOptional =
                 exchangeInfoRepository.findCurrentExchangeInfo(currentDate);
 
@@ -55,15 +55,16 @@ public class ExchangeServiceImpl implements ExchangeService {
 
         } else {
 
-            // Обработка случая, когда нет данных на текущую дату в БД
+            // Handling the case when there is no data for the current date in the database
             if (!requestExchange(currentDate)) {
                 log.debug("!Warning, Exchange Rates were not received for the Current Date from the Database, " +
                                 "currentDate={}", currentDate);
             }
         }
-        // Получение данных на последнюю имеющуюся дату из БД
-        // Если данные из внешнего сервиса на текущую даты были успешно сохраннны в БД, получаем эти данные
-        // Здесь предполагается, что данных позже текущей даты нет в БД
+
+        // Receiving data for the last available date from the database
+        // If data from an external service for the current date was successfully saved in the database, we obtain this data
+        // Here it is assumed that there is no data in the database after the current date
         Optional<ExchangeInfoEntity> latestExchangeInfoOptional = exchangeInfoRepository.findLatestExchangeInfo();
 
         if (latestExchangeInfoOptional.isPresent()) {
@@ -75,8 +76,9 @@ public class ExchangeServiceImpl implements ExchangeService {
             return exchangeRateRepository.findAllExchangeRate(exchangeInfoEntity.getId());
 
         } else {
-            // Обработка случая, когда нет данных в БД
-            // Дальнейшая работа приложения будет без данных о курсах валют
+
+            // Handling the case when there is no data in the database
+            // Further operation of the application will be without data on exchange rates
             log.error("!Attention, Exchange Rates were not received from the Database, " +
                     "currentDate={}", currentDate);
         }
@@ -86,7 +88,7 @@ public class ExchangeServiceImpl implements ExchangeService {
 
     private boolean requestExchange(LocalDate currentDate) {
 
-        // Преобразование в формат dd.MM.yyyy
+        // Convert to dd.MM.yyyy format
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
         String formattedDate = currentDate.format(formatter);
 
@@ -109,7 +111,7 @@ public class ExchangeServiceImpl implements ExchangeService {
             Element rootElement = document.getDocumentElement();
             ExchangeInfoDto exchangeInfoDto = parseExchangeInfo(rootElement, exchangeRateDtoList);
 
-            // Сохраним объекты exchangeInfoDTO и exchangeRateDtoList в БД
+            // Saving exchangeInfoDTO and exchangeRateDtoList objects in the database
             if (exchangeInfoDto != null && exchangeRateDtoList.size() > 0) {
                 ExchangeInfoEntity exchangeInfoEntity = new ExchangeInfoEntity();
                 exchangeInfoEntity.setResource(exchangeInfoDto.link);
@@ -123,7 +125,7 @@ public class ExchangeServiceImpl implements ExchangeService {
                     exchangeRateEntity.setCurrencyCode(exchangeRateDto.title);
                     exchangeRateEntity.setExchangeRate(exchangeRateDto.description);
 
-                    // Сохраняем ссылку на родительскую сущность
+                    // Saving a reference to a parent entity
                     exchangeRateEntity.setExchangeInfoEntity(exchangeInfoEntity);
                     exchangeRateEntitySet.add(exchangeRateEntity);
                 }
@@ -146,6 +148,7 @@ public class ExchangeServiceImpl implements ExchangeService {
     }
 
     private String fetchXmlData(String resourceUrl) {
+
         RestTemplate restTemplate = new RestTemplate();
 
         HttpHeaders headers = new HttpHeaders();
@@ -177,7 +180,7 @@ public class ExchangeServiceImpl implements ExchangeService {
                 Element itemElement = (Element) item.item(i);
                 String title = getTextContent(itemElement, "title");
 
-                // Выборка по необходимым валютам для хранение их в БД
+                // Selection of required currencies for storing them in the database
                 if (CurrencyType.USD.name().equals(title)||
                     CurrencyType.EUR.name().equals(title)||
                     CurrencyType.RUB.name().equals(title)) {
@@ -231,15 +234,28 @@ public class ExchangeServiceImpl implements ExchangeService {
     @Override
     public List<ExchangeRateDto> getAllExchangeRateDtoByCurrentDate() {
 
-        List<ExchangeRateDto> exchangeRateDtoList = new ArrayList<>();
-        List<ExchangeRateEntity> exchangeRateEntityList = gettingRates().stream().toList();
+        // Getting the current date
+        LocalDate currentDate = LocalDate.now();
 
-        for (ExchangeRateEntity exchangeRateEntity : exchangeRateEntityList) {
-            ExchangeRateDto exchangeRateDto = new ExchangeRateDto();
-            exchangeRateDto.setTitle(exchangeRateEntity.getCurrencyCode());
-            exchangeRateDto.setFullname(exchangeRateEntity.getCurrencyName());
-            exchangeRateDto.setDescription(exchangeRateEntity.getExchangeRate());
-            exchangeRateDtoList.add(exchangeRateDto);
+        List<ExchangeRateDto> exchangeRateDtoList = new ArrayList<>();
+
+        // Retrieving data for the current date from the database
+        Optional<ExchangeInfoEntity> currentExchangeInfoOptional =
+                exchangeInfoRepository.findCurrentExchangeInfo(currentDate);
+
+        if (currentExchangeInfoOptional.isPresent()) {
+            ExchangeInfoEntity exchangeInfoEntity = currentExchangeInfoOptional.get();
+
+            List<ExchangeRateEntity> exchangeRateEntityList =
+                    exchangeRateRepository.findAllExchangeRate(exchangeInfoEntity.getId()).stream().toList();
+
+            for (ExchangeRateEntity exchangeRateEntity : exchangeRateEntityList) {
+                ExchangeRateDto exchangeRateDto = new ExchangeRateDto();
+                exchangeRateDto.setTitle(exchangeRateEntity.getCurrencyCode());
+                exchangeRateDto.setFullname(exchangeRateEntity.getCurrencyName());
+                exchangeRateDto.setDescription(exchangeRateEntity.getExchangeRate());
+                exchangeRateDtoList.add(exchangeRateDto);
+            }
         }
 
         log.debug("!Getting all Exchange Rates");

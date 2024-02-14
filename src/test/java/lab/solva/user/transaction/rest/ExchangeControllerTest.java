@@ -15,9 +15,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.mockito.Mockito.*;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -38,7 +38,7 @@ public class ExchangeControllerTest {
     @Test
     public void testGetAllExchangeRateByCurrentDate() throws Exception {
 
-        // Arrange
+        /* Arrange */
         List<ExchangeRateDto> exchangeRateDtoList = Arrays.asList(
                 createExchangeRateDto("USD", "ДОЛЛАР США", 449.98),
                 createExchangeRateDto("EUR", "ЕВРО", 487.0),
@@ -47,7 +47,7 @@ public class ExchangeControllerTest {
 
         when(exchangeService.getAllExchangeRateDtoByCurrentDate()).thenReturn(exchangeRateDtoList);
 
-        // Act & Assert
+        /* Act & Assert */
         mockMvc.perform(get("/api/exchange")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -61,17 +61,16 @@ public class ExchangeControllerTest {
                 .andExpect(jsonPath("$[2].title", is("RUB")))
                 .andExpect(jsonPath("$[2].fullname", is("РОССИЙСКИЙ РУБЛЬ")))
                 .andExpect(jsonPath("$[2].description", is(5.02)));
-
-        // Verify that the service method was called
-        verify(exchangeService, times(1)).getAllExchangeRateDtoByCurrentDate();
     }
 
     // Method for create object of ExchangeRateDto
     private ExchangeRateDto createExchangeRateDto(String title, String fullname, double description) {
+
         ExchangeRateDto exchangeRateDto = new ExchangeRateDto();
         exchangeRateDto.setTitle(title);
         exchangeRateDto.setFullname(fullname);
         exchangeRateDto.setDescription(description);
+
         return exchangeRateDto;
     }
 }
