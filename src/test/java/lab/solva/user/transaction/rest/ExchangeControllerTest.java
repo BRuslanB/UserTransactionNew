@@ -65,10 +65,12 @@ public class ExchangeControllerTest {
 
     // Method for create object of ExchangeRateDto
     private ExchangeRateDto createExchangeRateDto(String title, String fullname, double description) {
+
         ExchangeRateDto exchangeRateDto = new ExchangeRateDto();
         exchangeRateDto.setTitle(title);
         exchangeRateDto.setFullname(fullname);
         exchangeRateDto.setDescription(description);
+
         return exchangeRateDto;
     }
 }

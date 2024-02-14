@@ -44,8 +44,6 @@ public class ClientServiceImplTest {
 
         /* Arrange */
         String accountClient = "0000000001";
-//        List<AmountLimitEntity> amountLimitEntityList = new ArrayList<>();
-//        List<AmountLimitDateDto> expectedDtoList = new ArrayList<>();
 
         // Use the current date and time in the required OffsetDateTime format
         OffsetDateTime currentOffsetDateTime = OffsetDateTime.now();
@@ -54,13 +52,11 @@ public class ClientServiceImplTest {
         AmountLimitEntity amountLimitEntity = createAmountLimitEntity(accountClient,
                 5000.0, "KZT", "Service",
                 ZonedDateTime.parse(currentOffsetDateTime.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)));
-//        amountLimitEntityList.add(amountLimitEntity);
         amountLimitRepository.save(amountLimitEntity);
 
         amountLimitEntity = createAmountLimitEntity(accountClient,
                 1000.0, "EUR", "Product",
                 ZonedDateTime.parse(currentOffsetDateTime.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)));
-//        amountLimitEntityList.add(amountLimitEntity);
         amountLimitRepository.save(amountLimitEntity);
 
         /* Act */
