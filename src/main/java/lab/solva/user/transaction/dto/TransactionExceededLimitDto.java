@@ -2,15 +2,13 @@ package lab.solva.user.transaction.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import javax.validation.constraints.Size;
 import java.time.ZonedDateTime;
 
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class TransactionExceededLimitDto {
@@ -25,7 +23,7 @@ public class TransactionExceededLimitDto {
     public String currency_shortname;
 
     @JsonProperty("Sum")
-    private double sum;
+    public double sum;
 
     public String expense_category;
 

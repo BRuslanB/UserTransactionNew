@@ -7,28 +7,32 @@ import lab.solva.user.transaction.repository.ExchangeInfoRepository;
 import lab.solva.user.transaction.repository.ExchangeRateRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@ExtendWith(MockitoExtension.class)
 @SpringBootTest
+@ActiveProfiles("test")
+@ExtendWith(SpringExtension.class)
+@SuppressWarnings("unused")
+@Transactional
 public class ExchangeServiceImplTest {
 
-    @Mock
+    @Autowired
     private ExchangeInfoRepository exchangeInfoRepository;
 
-    @Mock
+    @Autowired
     private ExchangeRateRepository exchangeRateRepository;
 
-    @InjectMocks
-    private ExchangeServiceImpl exchangeService;
+    @Autowired
+    private ExchangeServiceImpl exchangeServiceImpl;
 
     @Test
     public void testGettingRates_ExistCurrentDate() {
@@ -102,7 +106,7 @@ public class ExchangeServiceImplTest {
         createSampleExchangeRates(currentDate);
 
         /* Act */
-        List<ExchangeRateDto> actualDtoList = exchangeService.getAllExchangeRateDtoByCurrentDate();
+        List<ExchangeRateDto> actualDtoList = exchangeServiceImpl.getAllExchangeRateDtoByCurrentDate();
 
         /* Assert */
         assertNotNull(actualDtoList);

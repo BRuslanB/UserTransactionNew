@@ -9,35 +9,39 @@ import lab.solva.user.transaction.repository.AmountLimitRepository;
 import lab.solva.user.transaction.repository.ExpenseTransactionRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@ExtendWith(MockitoExtension.class)
 @SpringBootTest
+@ActiveProfiles("test")
+@ExtendWith(SpringExtension.class)
+@SuppressWarnings("unused")
+@Transactional
 public class ClientServiceImplTest {
 
-    @Mock
+    @Autowired
     private AmountLimitRepository amountLimitRepository;
 
-    @Mock
+    @Autowired
     private ExpenseTransactionRepository expenseTransactionRepository;
 
-    @InjectMocks
-    private ClientServiceImpl clientService;
+    @Autowired
+    private ClientServiceImpl clientServiceImpl;
 
     @Test
     public void testGetAllAmountLimitDateDtoByAccountClient() {
@@ -46,7 +50,7 @@ public class ClientServiceImplTest {
         String accountClient = "0000000001";
 
         // Use the current date and time in the required OffsetDateTime format
-        OffsetDateTime currentOffsetDateTime = OffsetDateTime.now();
+        OffsetDateTime currentOffsetDateTime = OffsetDateTime.now().withNano(0);
 
         // Setting any required values in amountLimitEntity
         AmountLimitEntity amountLimitEntity = createAmountLimitEntity(accountClient,
@@ -60,7 +64,7 @@ public class ClientServiceImplTest {
         amountLimitRepository.save(amountLimitEntity);
 
         /* Act */
-        List<AmountLimitDateDto> actualDtoList = clientService.getAllAmountLimitDateDtoByAccountClient(accountClient);
+        List<AmountLimitDateDto> actualDtoList = clientServiceImpl.getAllAmountLimitDateDtoByAccountClient(accountClient);
 
         /* Assert */
         assertNotNull(actualDtoList);
@@ -107,31 +111,38 @@ public class ClientServiceImplTest {
 
         /* Arrange */
         String accountClient = "0000000001";
-        List<ExpenseTransactionEntity> expenseTransactionEntityList = new ArrayList<>();
-        List<TransactionExceededLimitDto> expectedDtoList = new ArrayList<>();
 
         // Use the current date and time in the required OffsetDateTime format
-        OffsetDateTime currentOffsetDateTime = OffsetDateTime.now();
+        OffsetDateTime currentOffsetDateTime = OffsetDateTime.now().withNano(0);
 
         // Setting any required values in expenseTransactionEntity
-        ExpenseTransactionEntity expenseTransactionEntity = createExpenseTransactionEntity(accountClient,
+        ExpenseTransactionEntity expenseTransactionEntity1 = createExpenseTransactionEntity(accountClient,
                 "9000000000", "KZT", 123450.50, "Service",
                 "2024-02-01T15:15:20+06:00", true,
                 createAmountLimitEntity(accountClient,
                         50000.0, "KZT", "Service",
                         ZonedDateTime.parse(currentOffsetDateTime.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))));
-        expenseTransactionEntityList.add(expenseTransactionEntity);
-        expenseTransactionEntity = createExpenseTransactionEntity(accountClient,
+
+        // Added another expenseTransactionEntity in DB which should not be returned to the DTO
+        ExpenseTransactionEntity expenseTransactionEntity2 = createExpenseTransactionEntity(accountClient,
                 "8000000000", "EUR", 678.90, "Product",
                 "2024-02-03T12:30:45+06:00", false,
                 createAmountLimitEntity(accountClient,
                         1000.0, "EUR", "Product",
                         ZonedDateTime.parse(currentOffsetDateTime.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))));
-        expenseTransactionEntityList.add(expenseTransactionEntity);
+
+        // Make expectedDtoList
+        List<TransactionExceededLimitDto> expectedDtoList = List.of(
+                createTransactionExceededLimitDto(accountClient, "9000000000", "KZT",
+                        123450.50, "Service",
+                        ZonedDateTime.parse("2024-02-01T15:15:20+06:00", DateTimeFormatter.ISO_OFFSET_DATE_TIME),
+                        50000.0, "KZT",
+                        ZonedDateTime.parse(currentOffsetDateTime.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)))
+        );
 
         /* Act */
         List<TransactionExceededLimitDto> actualDtoList =
-                clientService.getAllTransactionExceededLimitDtoByAccountClient(accountClient);
+                clientServiceImpl.getAllTransactionExceededLimitDtoByAccountClient(accountClient);
 
         /* Assert */
         assertEquals(expectedDtoList, actualDtoList);
@@ -177,5 +188,24 @@ public class ClientServiceImplTest {
         expenseTransactionRepository.save(expenseTransactionEntity);
 
         return expenseTransactionEntity;
+    }
+
+    private TransactionExceededLimitDto createTransactionExceededLimitDto(String accountClient,
+                String accountCounterparty, String currencyCode, double transactionSum, String expenseCategory,
+                ZonedDateTime transactionDateTime, double limitSum, String limitCurrencyCode, ZonedDateTime limitDateTime) {
+
+        TransactionExceededLimitDto transactionExceededLimitDto = new TransactionExceededLimitDto();
+
+        transactionExceededLimitDto.account_from = accountClient;
+        transactionExceededLimitDto.account_to = accountCounterparty;
+        transactionExceededLimitDto.currency_shortname = currencyCode;
+        transactionExceededLimitDto.sum = transactionSum;
+        transactionExceededLimitDto.expense_category = expenseCategory;
+        transactionExceededLimitDto.datetime = transactionDateTime.withZoneSameInstant(ZoneId.systemDefault());
+        transactionExceededLimitDto.limit_sum = limitSum;
+        transactionExceededLimitDto.limit_currency_shortname = limitCurrencyCode;
+        transactionExceededLimitDto.limit_datetime = limitDateTime.withZoneSameInstant(ZoneId.systemDefault());
+
+        return transactionExceededLimitDto;
     }
 }

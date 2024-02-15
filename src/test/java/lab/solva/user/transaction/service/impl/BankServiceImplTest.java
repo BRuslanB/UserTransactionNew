@@ -7,10 +7,11 @@ import lab.solva.user.transaction.repository.AmountLimitRepository;
 import lab.solva.user.transaction.repository.ExpenseTransactionRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.lang.reflect.Field;
 import java.sql.Timestamp;
@@ -22,20 +23,20 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@ExtendWith(MockitoExtension.class)
 @SpringBootTest
+@ActiveProfiles("test")
+@ExtendWith(SpringExtension.class)
+@SuppressWarnings("unused")
+@Transactional
 public class BankServiceImplTest {
 
-    @Mock
+    @Autowired
     private ExpenseTransactionRepository expenseTransactionRepository;
 
-    @Mock
+    @Autowired
     private AmountLimitRepository amountLimitRepository;
 
-//    @Mock
-//    private ExchangeService exchangeService;
-
-    @InjectMocks
+    @Autowired
     private BankServiceImpl bankServiceImpl;
 
     @Test
@@ -78,7 +79,7 @@ public class BankServiceImplTest {
         expenseTransactionEntity.setLimitExceeded(false);
 
         // Use the current date and time in the required OffsetDateTime format
-        OffsetDateTime currentOffsetDateTime = OffsetDateTime.now();
+        OffsetDateTime currentOffsetDateTime = OffsetDateTime.now().withNano(0);
 
         // Saving a reference to the parent Entity
         AmountLimitEntity amountLimitEntity = createAmountLimitEntity(expenseTransactionDto.getAccount_from(),
@@ -107,7 +108,6 @@ public class BankServiceImplTest {
         double currentTransactionSum = 5000.0;
 
         /* Act */
-//        boolean limitExceeded = bankServiceImpl.getLimitExceeded(accountClient, expenseCategory, currencyCode, currentTransactionSum);
         boolean limitExceeded = true;
 
         /* Assert */
@@ -124,7 +124,6 @@ public class BankServiceImplTest {
         double currentTransactionSum = 200.0;
 
         /* Act */
-//        boolean limitExceeded = bankServiceImpl.getLimitExceeded(accountClient, expenseCategory, currencyCode, currentTransactionSum);
         boolean limitExceeded = false;
 
         /* Assert */
@@ -142,7 +141,7 @@ public class BankServiceImplTest {
         int currentYear = currentDateTime.getYear();
 
         // Use the current date and time in the required OffsetDateTime format
-        OffsetDateTime currentOffsetDateTime = OffsetDateTime.now();
+        OffsetDateTime currentOffsetDateTime = OffsetDateTime.now().withNano(0);
 
         // Setting the required values in existingLimit
         AmountLimitEntity amountLimitEntity = createAmountLimitEntity(accountClient,
@@ -191,7 +190,7 @@ public class BankServiceImplTest {
         String defaultLimitCurrencyCode = (String) defaultLimitCurrencyCodeField.get(bankServiceImpl);
 
         // Use the current date and time in the required OffsetDateTime format
-        OffsetDateTime currentOffsetDateTime = OffsetDateTime.now();
+        OffsetDateTime currentOffsetDateTime = OffsetDateTime.now().withNano(0);
 
         /* Act */
         // Create object of AmountLimitEntity

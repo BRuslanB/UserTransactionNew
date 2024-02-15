@@ -26,7 +26,7 @@ public class ExpenseTransactionDto {
     public String currency_shortname;
 
     @JsonProperty("Sum")
-    private double sum;
+    public double sum;
 
     @Size(max = 3)
     public String expense_category;
