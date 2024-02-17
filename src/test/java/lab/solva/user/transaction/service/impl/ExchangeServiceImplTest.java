@@ -7,28 +7,32 @@ import lab.solva.user.transaction.repository.ExchangeInfoRepository;
 import lab.solva.user.transaction.repository.ExchangeRateRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
-@ExtendWith(MockitoExtension.class)
 @SpringBootTest
+@ActiveProfiles("test")
+@ExtendWith(SpringExtension.class)
+@Transactional
+@SuppressWarnings("unused")
 public class ExchangeServiceImplTest {
 
-    @Mock
+    @Autowired
     private ExchangeInfoRepository exchangeInfoRepository;
 
-    @Mock
+    @Autowired
     private ExchangeRateRepository exchangeRateRepository;
 
-    @InjectMocks
-    private ExchangeServiceImpl exchangeService;
+    @Autowired
+    private ExchangeServiceImpl exchangeServiceImpl;
 
     @Test
     public void testGettingRates_ExistCurrentDate() {
@@ -50,6 +54,7 @@ public class ExchangeServiceImplTest {
         /* Assert */
         assertNotNull(existingExchangeInfo);
         assertNotNull(existingExchangeRateList);
+        assertNotEquals(0, existingExchangeRateList.size());
     }
 
     @Test
@@ -72,6 +77,7 @@ public class ExchangeServiceImplTest {
         /* Assert */
         assertNotNull(existingExchangeInfo);
         assertNotNull(existingExchangeRateList);
+        assertNotEquals(0, existingExchangeRateList.size());
     }
 
     @Test
@@ -80,15 +86,14 @@ public class ExchangeServiceImplTest {
         /* Arrange */
 
         /* Act */
-        Optional<ExchangeInfoEntity> existingExchangeInfo =
-                exchangeInfoRepository.findLatestExchangeInfo();
+        Optional<ExchangeInfoEntity> existingExchangeInfo = exchangeInfoRepository.findLatestExchangeInfo();
         List<ExchangeRateEntity> existingExchangeRateList = existingExchangeInfo.map(info ->
                 exchangeRateRepository.findAllExchangeRate(info.getId()).stream().toList()
         ).orElse(Collections.emptyList());
 
         /* Assert */
-        assertNotNull(existingExchangeInfo);
-        assertNotNull(existingExchangeRateList);
+        assertTrue(existingExchangeRateList.isEmpty());
+        assertTrue(existingExchangeInfo.isEmpty());
     }
 
     @Test
@@ -102,11 +107,11 @@ public class ExchangeServiceImplTest {
         createSampleExchangeRates(currentDate);
 
         /* Act */
-        List<ExchangeRateDto> actualDtoList = exchangeService.getAllExchangeRateDtoByCurrentDate();
+        List<ExchangeRateDto> actualDtoList = exchangeServiceImpl.getAllExchangeRateDtoByCurrentDate();
 
         /* Assert */
         assertNotNull(actualDtoList);
-//        assertEquals(3, actualDtoList.size());
+        assertNotEquals(0, actualDtoList.size());
     }
 
     private void createSampleExchangeRates(LocalDate paramDate) {
