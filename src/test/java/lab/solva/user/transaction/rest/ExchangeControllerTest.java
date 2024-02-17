@@ -26,8 +26,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @ActiveProfiles("test")
 @ExtendWith(SpringExtension.class)
-@SuppressWarnings("unused")
 @AutoConfigureMockMvc
+@SuppressWarnings("unused")
 public class ExchangeControllerTest {
 
     @Autowired

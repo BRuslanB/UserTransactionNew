@@ -91,7 +91,7 @@ public class BankServiceImpl implements BankService {
     }
 
     protected boolean getLimitExceeded(String accountClient, String expenseCategory, String currencyCode,
-                                     double currentTransactionSum){
+                                     double currentTransactionSum) {
 
         // Limit amount for the current month
         double currentLimit;

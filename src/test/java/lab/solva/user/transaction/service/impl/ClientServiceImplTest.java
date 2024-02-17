@@ -30,8 +30,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @SpringBootTest
 @ActiveProfiles("test")
 @ExtendWith(SpringExtension.class)
-@SuppressWarnings("unused")
 @Transactional
+@SuppressWarnings("unused")
 public class ClientServiceImplTest {
 
     @Autowired
@@ -68,7 +68,7 @@ public class ClientServiceImplTest {
 
         /* Assert */
         assertNotNull(actualDtoList);
-//        assertEquals(2, actualDtoList.size());
+        assertEquals(2, actualDtoList.size());
     }
 
     @Test
@@ -123,8 +123,15 @@ public class ClientServiceImplTest {
                         50000.0, "KZT", "Service",
                         ZonedDateTime.parse(currentOffsetDateTime.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))));
 
-        // Added another expenseTransactionEntity in DB which should not be returned to the DTO
         ExpenseTransactionEntity expenseTransactionEntity2 = createExpenseTransactionEntity(accountClient,
+                "9800000000", "EUR", 100.90, "Service",
+                "2024-02-02T16:15:20+06:00", true,
+                createAmountLimitEntity(accountClient,
+                        50000.0, "KZT", "Service",
+                        ZonedDateTime.parse(currentOffsetDateTime.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))));
+
+        // Added another expenseTransactionEntity in DB which should not be returned to the DTO
+        ExpenseTransactionEntity expenseTransactionEntity3 = createExpenseTransactionEntity(accountClient,
                 "8000000000", "EUR", 678.90, "Product",
                 "2024-02-03T12:30:45+06:00", false,
                 createAmountLimitEntity(accountClient,
@@ -134,9 +141,12 @@ public class ClientServiceImplTest {
         // Make expectedDtoList
         List<TransactionExceededLimitDto> expectedDtoList = List.of(
                 createTransactionExceededLimitDto(accountClient, "9000000000", "KZT",
-                        123450.50, "Service",
+                        123450.50,
                         ZonedDateTime.parse("2024-02-01T15:15:20+06:00", DateTimeFormatter.ISO_OFFSET_DATE_TIME),
-                        50000.0, "KZT",
+                        ZonedDateTime.parse(currentOffsetDateTime.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))),
+                createTransactionExceededLimitDto(accountClient, "9800000000", "EUR",
+                        100.90,
+                        ZonedDateTime.parse("2024-02-02T16:15:20+06:00", DateTimeFormatter.ISO_OFFSET_DATE_TIME),
                         ZonedDateTime.parse(currentOffsetDateTime.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)))
         );
 
@@ -146,6 +156,7 @@ public class ClientServiceImplTest {
 
         /* Assert */
         assertEquals(expectedDtoList, actualDtoList);
+        assertEquals(2, actualDtoList.size());
     }
 
     // Method for create object of AmountLimitEntity
@@ -191,8 +202,8 @@ public class ClientServiceImplTest {
     }
 
     private TransactionExceededLimitDto createTransactionExceededLimitDto(String accountClient,
-                String accountCounterparty, String currencyCode, double transactionSum, String expenseCategory,
-                ZonedDateTime transactionDateTime, double limitSum, String limitCurrencyCode, ZonedDateTime limitDateTime) {
+                                               String accountCounterparty, String currencyCode, double transactionSum,
+                                               ZonedDateTime transactionDateTime, ZonedDateTime limitDateTime) {
 
         TransactionExceededLimitDto transactionExceededLimitDto = new TransactionExceededLimitDto();
 
@@ -200,10 +211,11 @@ public class ClientServiceImplTest {
         transactionExceededLimitDto.account_to = accountCounterparty;
         transactionExceededLimitDto.currency_shortname = currencyCode;
         transactionExceededLimitDto.sum = transactionSum;
-        transactionExceededLimitDto.expense_category = expenseCategory;
+        transactionExceededLimitDto.expense_category = "Service";
         transactionExceededLimitDto.datetime = transactionDateTime.withZoneSameInstant(ZoneId.systemDefault());
-        transactionExceededLimitDto.limit_sum = limitSum;
-        transactionExceededLimitDto.limit_currency_shortname = limitCurrencyCode;
+        // Limit is the same for all transactions
+        transactionExceededLimitDto.limit_sum = 50000.0;
+        transactionExceededLimitDto.limit_currency_shortname = "KZT";
         transactionExceededLimitDto.limit_datetime = limitDateTime.withZoneSameInstant(ZoneId.systemDefault());
 
         return transactionExceededLimitDto;

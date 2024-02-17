@@ -16,13 +16,13 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @ActiveProfiles("test")
 @ExtendWith(SpringExtension.class)
-@SuppressWarnings("unused")
 @Transactional
+@SuppressWarnings("unused")
 public class ExchangeServiceImplTest {
 
     @Autowired
@@ -54,6 +54,7 @@ public class ExchangeServiceImplTest {
         /* Assert */
         assertNotNull(existingExchangeInfo);
         assertNotNull(existingExchangeRateList);
+        assertNotEquals(0, existingExchangeRateList.size());
     }
 
     @Test
@@ -76,6 +77,7 @@ public class ExchangeServiceImplTest {
         /* Assert */
         assertNotNull(existingExchangeInfo);
         assertNotNull(existingExchangeRateList);
+        assertNotEquals(0, existingExchangeRateList.size());
     }
 
     @Test
@@ -84,15 +86,14 @@ public class ExchangeServiceImplTest {
         /* Arrange */
 
         /* Act */
-        Optional<ExchangeInfoEntity> existingExchangeInfo =
-                exchangeInfoRepository.findLatestExchangeInfo();
+        Optional<ExchangeInfoEntity> existingExchangeInfo = exchangeInfoRepository.findLatestExchangeInfo();
         List<ExchangeRateEntity> existingExchangeRateList = existingExchangeInfo.map(info ->
                 exchangeRateRepository.findAllExchangeRate(info.getId()).stream().toList()
         ).orElse(Collections.emptyList());
 
         /* Assert */
-        assertNotNull(existingExchangeInfo);
-        assertNotNull(existingExchangeRateList);
+        assertTrue(existingExchangeRateList.isEmpty());
+        assertTrue(existingExchangeInfo.isEmpty());
     }
 
     @Test
@@ -110,7 +111,7 @@ public class ExchangeServiceImplTest {
 
         /* Assert */
         assertNotNull(actualDtoList);
-//        assertEquals(3, actualDtoList.size());
+        assertNotEquals(0, actualDtoList.size());
     }
 
     private void createSampleExchangeRates(LocalDate paramDate) {
