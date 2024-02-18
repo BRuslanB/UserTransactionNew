@@ -24,6 +24,7 @@ The User Transaction Service is built using the following technologies:
 * PostgreSQL
 * FlyWay
 * Log4j2
+* Swagger
 * JUnit
 * H2
 
