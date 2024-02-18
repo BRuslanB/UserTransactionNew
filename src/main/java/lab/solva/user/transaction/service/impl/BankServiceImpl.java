@@ -40,10 +40,10 @@ public class BankServiceImpl implements BankService {
         // Saving received data from expenseTransactionDto
         if (expenseTransactionDto != null) {
             ExpenseTransactionEntity expenseTransactionEntity = new ExpenseTransactionEntity();
-            expenseTransactionEntity.setAccountClient(expenseTransactionDto.getAccount_from());
-            expenseTransactionEntity.setAccountCounterparty(expenseTransactionDto.getAccount_to());
-            expenseTransactionEntity.setCurrencyCode(expenseTransactionDto.getCurrency_shortname());
-            expenseTransactionEntity.setTransactionSum(expenseTransactionDto.getSum());
+            expenseTransactionEntity.setAccountClient(expenseTransactionDto.account_from);
+            expenseTransactionEntity.setAccountCounterparty(expenseTransactionDto.account_to);
+            expenseTransactionEntity.setCurrencyCode(expenseTransactionDto.currency_shortname);
+            expenseTransactionEntity.setTransactionSum(expenseTransactionDto.sum);
 
             // Checking Expense Category for a valid value
             String expenseCategory = expenseTransactionDto.expense_category;
@@ -58,7 +58,7 @@ public class BankServiceImpl implements BankService {
             }
 
             // Checking Date and Time for valid values
-            ZonedDateTime transactionZonedDateTime = expenseTransactionDto.getDatetime();
+            ZonedDateTime transactionZonedDateTime = expenseTransactionDto.datetime;
             LocalDateTime transactionDateTime = transactionZonedDateTime.toLocalDateTime();
             LocalDateTime currentDateTime = LocalDateTime.now();
 
@@ -75,13 +75,13 @@ public class BankServiceImpl implements BankService {
             }
 
             // Calculating the value for the limitExceeded field
-            expenseTransactionEntity.setLimitExceeded(getLimitExceeded(expenseTransactionDto.getAccount_from(),
-                    expenseTransactionDto.getExpense_category(), expenseTransactionDto.getCurrency_shortname(),
-                    expenseTransactionDto.getSum()));
+            expenseTransactionEntity.setLimitExceeded(getLimitExceeded(expenseTransactionDto.account_from,
+                    expenseTransactionDto.expense_category, expenseTransactionDto.currency_shortname,
+                    expenseTransactionDto.sum));
 
             // Saving a reference to the parent Entity
-            expenseTransactionEntity.setAmountLimitEntity(getAmountLimit(expenseTransactionDto.getAccount_from(),
-                    expenseTransactionDto.getExpense_category()));
+            expenseTransactionEntity.setAmountLimitEntity(getAmountLimit(expenseTransactionDto.account_from,
+                    expenseTransactionDto.expense_category));
 
             expenseTransactionRepository.save(expenseTransactionEntity);
 
@@ -95,6 +95,7 @@ public class BankServiceImpl implements BankService {
 
         // Limit amount for the current month
         double currentLimit;
+
         // The total amount of all transactions for the month, converted into the limit currency
         double sumTransactionResult = 0.0;
 

@@ -47,31 +47,30 @@ public class BankServiceImplTest {
         // Create object of ExpenseTransactionDto
         ExpenseTransactionDto expenseTransactionDto = new ExpenseTransactionDto();
 
-        expenseTransactionDto.setAccount_from("0000000001");
-        expenseTransactionDto.setAccount_to("9000000000");
-        expenseTransactionDto.setCurrency_shortname("USD");
-        expenseTransactionDto.setSum(100.0);
-        expenseTransactionDto.setExpense_category("Service");
+        expenseTransactionDto.account_from = "0000000001";
+        expenseTransactionDto.account_to = "9000000000";
+        expenseTransactionDto.currency_shortname = "USD";
+        expenseTransactionDto.sum = 100.0;
+        expenseTransactionDto.expense_category = "Service";
 
         // Converting a date and time string to the desired format
-        ZonedDateTime zonedDateTime = ZonedDateTime.parse("2024-02-01T15:15:20+06:00",
+        expenseTransactionDto.datetime = ZonedDateTime.parse("2024-02-01T15:15:20+06:00",
                 DateTimeFormatter.ISO_OFFSET_DATE_TIME);
-        expenseTransactionDto.setDatetime(zonedDateTime);
 
         // Create object of ExpenseTransactionEntity
         ExpenseTransactionEntity expenseTransactionEntity = new ExpenseTransactionEntity();
 
-        expenseTransactionEntity.setAccountClient(expenseTransactionDto.getAccount_from());
-        expenseTransactionEntity.setAccountCounterparty(expenseTransactionDto.getAccount_to());
-        expenseTransactionEntity.setCurrencyCode(expenseTransactionDto.getCurrency_shortname());
-        expenseTransactionEntity.setTransactionSum(expenseTransactionDto.getSum());
+        expenseTransactionEntity.setAccountClient(expenseTransactionDto.account_from);
+        expenseTransactionEntity.setAccountCounterparty(expenseTransactionDto.account_to);
+        expenseTransactionEntity.setCurrencyCode(expenseTransactionDto.currency_shortname);
+        expenseTransactionEntity.setTransactionSum(expenseTransactionDto.sum);
 
         // Checking Expense Category for a valid value
-        String expenseCategory = expenseTransactionDto.getExpense_category();
+        String expenseCategory = expenseTransactionDto.expense_category;
         expenseTransactionEntity.setExpenseCategory(expenseCategory);
 
         // Checking Date and Time for valid values
-        ZonedDateTime transactionZonedDateTime = expenseTransactionDto.getDatetime();
+        ZonedDateTime transactionZonedDateTime = expenseTransactionDto.datetime;
         LocalDateTime transactionDateTime = transactionZonedDateTime.toLocalDateTime();
         Timestamp transactionTimestamp = Timestamp.from(transactionZonedDateTime.toInstant());
         expenseTransactionEntity.setTransactionDateTime(transactionTimestamp);
@@ -83,9 +82,9 @@ public class BankServiceImplTest {
         OffsetDateTime currentOffsetDateTime = OffsetDateTime.now().withNano(0);
 
         // Saving a reference to the parent Entity
-        AmountLimitEntity amountLimitEntity = createAmountLimitEntity(expenseTransactionDto.getAccount_from(),
-                expenseTransactionDto.getSum() + 100.0, expenseTransactionDto.getCurrency_shortname(),
-                expenseTransactionDto.getExpense_category(),
+        AmountLimitEntity amountLimitEntity = createAmountLimitEntity(expenseTransactionDto.account_from,
+                expenseTransactionDto.sum + 100.0, expenseTransactionDto.currency_shortname,
+                expenseTransactionDto.expense_category,
                 ZonedDateTime.parse(currentOffsetDateTime.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)));
         expenseTransactionEntity.setAmountLimitEntity(amountLimitEntity);
 

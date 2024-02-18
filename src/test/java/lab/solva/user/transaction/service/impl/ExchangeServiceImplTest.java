@@ -84,6 +84,7 @@ public class ExchangeServiceImplTest {
     public void testGettingRates_NoDataInDatabase() {
 
         /* Arrange */
+        // None
 
         /* Act */
         Optional<ExchangeInfoEntity> existingExchangeInfo = exchangeInfoRepository.findLatestExchangeInfo();

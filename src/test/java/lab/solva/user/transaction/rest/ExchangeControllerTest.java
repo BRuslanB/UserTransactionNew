@@ -69,9 +69,9 @@ public class ExchangeControllerTest {
 
         ExchangeRateDto exchangeRateDto = new ExchangeRateDto();
 
-        exchangeRateDto.setTitle(title);
-        exchangeRateDto.setFullname(fullname);
-        exchangeRateDto.setDescription(description);
+        exchangeRateDto.title = title;
+        exchangeRateDto.fullname = fullname;
+        exchangeRateDto.description = description;
 
         return exchangeRateDto;
     }

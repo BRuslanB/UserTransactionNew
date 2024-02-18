@@ -33,9 +33,14 @@ out/
 /nbdist/
 /.nb-gradle/
 
-### VS Code ###
+# VS Code
 .vscode/
 
-### log file ###
-*.log
-*.gz
+# Logging
+/logs/
+
+# Data
+/data/
+
+# File-txt format
+*.txt

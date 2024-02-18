@@ -251,9 +251,11 @@ public class ExchangeServiceImpl implements ExchangeService {
 
             for (ExchangeRateEntity exchangeRateEntity : exchangeRateEntityList) {
                 ExchangeRateDto exchangeRateDto = new ExchangeRateDto();
-                exchangeRateDto.setTitle(exchangeRateEntity.getCurrencyCode());
-                exchangeRateDto.setFullname(exchangeRateEntity.getCurrencyName());
-                exchangeRateDto.setDescription(exchangeRateEntity.getExchangeRate());
+
+                exchangeRateDto.title = exchangeRateEntity.getCurrencyCode();
+                exchangeRateDto.fullname = exchangeRateEntity.getCurrencyName();
+                exchangeRateDto.description = exchangeRateEntity.getExchangeRate();
+
                 exchangeRateDtoList.add(exchangeRateDto);
             }
         }

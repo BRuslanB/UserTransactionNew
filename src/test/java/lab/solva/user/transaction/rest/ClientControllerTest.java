@@ -131,10 +131,10 @@ public class ClientControllerTest {
         /* Arrange */
         AmountLimitDto amountLimitDto = new AmountLimitDto();
 
-        amountLimitDto.setAccount_from("0000000001");
-        amountLimitDto.setLimit_sum(500.0);
-        amountLimitDto.setLimit_currency_shortname("EUR");
-        amountLimitDto.setExpense_category("Product");
+        amountLimitDto.account_from = "0000000001";
+        amountLimitDto.limit_sum = 500.0;
+        amountLimitDto.limit_currency_shortname = "EUR";
+        amountLimitDto.expense_category = "Product";
 
         /* Act & Assert */
         mockMvc.perform(post("/api/client")
@@ -168,11 +168,11 @@ public class ClientControllerTest {
 
         AmountLimitDateDto amountLimitDateDto = new AmountLimitDateDto();
 
-        amountLimitDateDto.setAccount_from(account_from);
-        amountLimitDateDto.setLimit_sum(limit_sum);
-        amountLimitDateDto.setLimit_currency_shortname(limit_currency_shortname);
-        amountLimitDateDto.setExpense_category(expense_category);
-        amountLimitDateDto.setLimit_datetime(limit_datetime);
+        amountLimitDateDto.account_from = account_from;
+        amountLimitDateDto.limit_sum = limit_sum;
+        amountLimitDateDto.limit_currency_shortname = limit_currency_shortname;
+        amountLimitDateDto.expense_category = expense_category;
+        amountLimitDateDto.limit_datetime = limit_datetime;
 
         return amountLimitDateDto;
     }
@@ -184,15 +184,15 @@ public class ClientControllerTest {
 
         TransactionExceededLimitDto transactionExceededLimitDto = new TransactionExceededLimitDto();
 
-        transactionExceededLimitDto.setAccount_from(account_from);
-        transactionExceededLimitDto.setAccount_to(account_to);
-        transactionExceededLimitDto.setCurrency_shortname(currency_shortname);
-        transactionExceededLimitDto.setSum(Sum);
-        transactionExceededLimitDto.setExpense_category(expense_category);
-        transactionExceededLimitDto.setDatetime(datetime);
-        transactionExceededLimitDto.setLimit_sum(limit_sum);
-        transactionExceededLimitDto.setLimit_currency_shortname(limit_currency_shortname);
-        transactionExceededLimitDto.setLimit_datetime(limit_datetime);
+        transactionExceededLimitDto.account_from = account_from;
+        transactionExceededLimitDto.account_to = account_to;
+        transactionExceededLimitDto.currency_shortname = currency_shortname;
+        transactionExceededLimitDto.sum = Sum;
+        transactionExceededLimitDto.expense_category = expense_category;
+        transactionExceededLimitDto.datetime = datetime;
+        transactionExceededLimitDto.limit_sum = limit_sum;
+        transactionExceededLimitDto.limit_currency_shortname = limit_currency_shortname;
+        transactionExceededLimitDto.limit_datetime = limit_datetime;
 
         return transactionExceededLimitDto;
     }
