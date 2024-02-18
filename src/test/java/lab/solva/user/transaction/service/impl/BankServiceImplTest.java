@@ -54,9 +54,8 @@ public class BankServiceImplTest {
         expenseTransactionDto.expense_category = "Service";
 
         // Converting a date and time string to the desired format
-        ZonedDateTime zonedDateTime = ZonedDateTime.parse("2024-02-01T15:15:20+06:00",
+        expenseTransactionDto.datetime = ZonedDateTime.parse("2024-02-01T15:15:20+06:00",
                 DateTimeFormatter.ISO_OFFSET_DATE_TIME);
-        expenseTransactionDto.datetime = zonedDateTime;
 
         // Create object of ExpenseTransactionEntity
         ExpenseTransactionEntity expenseTransactionEntity = new ExpenseTransactionEntity();
