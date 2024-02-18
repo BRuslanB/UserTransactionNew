@@ -78,25 +78,25 @@ public class ClientServiceImplTest {
         // Create object of AmountLimitDto
         AmountLimitDto amountLimitDto = new AmountLimitDto();
 
-        amountLimitDto.setAccount_from("0000000001");
-        amountLimitDto.setLimit_sum(500.0);
-        amountLimitDto.setLimit_currency_shortname("EUR");
-        amountLimitDto.setExpense_category("Product");
+        amountLimitDto.account_from = "0000000001";
+        amountLimitDto.limit_sum = 500.0;
+        amountLimitDto.limit_currency_shortname = "EUR";
+        amountLimitDto.expense_category = "Product";
 
         // Create object of AmountLimitEntity
         AmountLimitEntity amountLimitEntity  = new AmountLimitEntity();
 
-        amountLimitEntity.setAccountClient(amountLimitDto.getAccount_from());
-        amountLimitEntity.setLimitSum(amountLimitDto.getLimit_sum());
+        amountLimitEntity.setAccountClient(amountLimitDto.account_from);
+        amountLimitEntity.setLimitSum(amountLimitDto.limit_sum);
 
         // Use the current date and time in the required format (trimming nanoseconds)
         LocalDateTime currentDateTime = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
         amountLimitEntity.setLimitDateTime(Timestamp.valueOf(currentDateTime));
 
-        amountLimitEntity.setLimitCurrencyCode(amountLimitDto.getLimit_currency_shortname());
+        amountLimitEntity.setLimitCurrencyCode(amountLimitDto.limit_currency_shortname);
 
         // Checking Expense Category for a valid value
-        String expenseCategory = amountLimitDto.getExpense_category();
+        String expenseCategory = amountLimitDto.expense_category;
         amountLimitEntity.setExpenseCategory(expenseCategory);
 
         /* Act */
@@ -213,6 +213,7 @@ public class ClientServiceImplTest {
         transactionExceededLimitDto.sum = transactionSum;
         transactionExceededLimitDto.expense_category = "Service";
         transactionExceededLimitDto.datetime = transactionDateTime.withZoneSameInstant(ZoneId.systemDefault());
+
         // Limit is the same for all transactions
         transactionExceededLimitDto.limit_sum = 50000.0;
         transactionExceededLimitDto.limit_currency_shortname = "KZT";

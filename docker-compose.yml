@@ -1,0 +1,26 @@
+version: '3.9'
+services:
+  app:
+    image: 'bruslanb/app-user-transaction-image:1.0.1'
+    container_name: app-user-transaction-container
+    user: '1001:1001' # Specify the UID and GID of the user you want to run the container as
+    depends_on:
+      - db
+    environment:
+      - SERVER_PORT=8088
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/transaction_db
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
+    ports:
+      - '8000:8088'
+  db:
+    image: 'postgres:alpine'
+    container_name: db-pg-server-container
+    environment:
+      POSTGRES_DB: transaction_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - '5440:5432'
+    volumes:
+      - ./data:/var/lib/postgresql/data
