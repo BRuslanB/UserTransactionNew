@@ -1,0 +1,87 @@
+type AmountLimitEntity {
+  id: ID!
+  accountClient: String!
+  limitSum: Float!
+  limitDateTime: String! # можно заменить на специфичный GraphQL тип для даты и времени
+  limitCurrencyCode: String!
+  expenseCategory: String!
+  expenseTransactionEntities: [ExpenseTransactionEntity]!
+}
+
+type ExpenseTransactionEntity {
+  id: ID!
+  accountClient: String!
+  accountCounterparty: String!
+  currencyCode: String!
+  transactionSum: Float!
+  expenseCategory: String!
+  transactionDateTime: String! # можно заменить на специфичный GraphQL тип для даты и времени
+  limitExceeded: Boolean!
+  amountLimitEntity: AmountLimitEntity!
+}
+
+input AmountLimitDto {
+  account_from: String!
+  limit_sum: Float!
+  limit_currency_shortname: String!
+  expense_category: String!
+}
+
+input ExpenseTransactionDto {
+  account_from: String!
+  account_to: String!
+  currency_shortname: String!
+  Sum: Float
+  expense_category: String!
+  datetime: String! # можно заменить на специфичный GraphQL тип для даты и времени
+}
+
+type AmountLimitDateDto {
+  account_from: String!
+  limit_sum: Float!
+  limit_currency_shortname: String!
+  expense_category: String!
+  limit_datetime: String! # можно заменить на специфичный GraphQL тип для даты и времени
+}
+
+type TransactionExceededLimitDto {
+  account_from: String!
+  account_to: String!
+  currency_shortname: String!
+  Sum: Float!
+  expense_category: String!
+  datetime: String! # можно заменить на специфичный GraphQL тип для даты и времени
+  limit_sum: Float!
+  limit_datetime: String! # можно заменить на специфичный GraphQL тип для даты и времени
+  limit_currency_shortname: String!
+}
+
+type Query {
+  getAllAmountLimitDateByAccountClient(accountClient: String): [AmountLimitDateDto]!
+  getAllTransactionExceededLimitByAccountClient(accountClient: String): [TransactionExceededLimitDto]!
+}
+
+#interface MutationResponse {
+#  success: Boolean!
+#  message: String
+#}
+#
+#type SuccessMutation implements MutationResponse {
+#  success: Boolean!
+#  message: String
+#}
+#
+#type ErrorMutation implements MutationResponse {
+#  success: Boolean!
+#  message: String
+#}
+#
+#type Mutation {
+#  saveAmountLimit(amountLimitDto: AmountLimitDto): MutationResponse!
+#  saveExpenseTransaction(expenseTransactionDto: ExpenseTransactionDto): MutationResponse!
+#}
+
+type Mutation {
+  saveAmountLimit(amountLimitDto: AmountLimitDto): AmountLimitEntity!
+  saveExpenseTransaction(expenseTransactionDto: ExpenseTransactionDto): ExpenseTransactionEntity!
+}

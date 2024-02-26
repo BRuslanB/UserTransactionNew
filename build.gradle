@@ -1,18 +1,18 @@
 plugins {
-	id 'org.springframework.boot' version '2.7.18'
-	id 'io.spring.dependency-management' version '1.0.14.RELEASE'
 	id 'java'
+	id 'org.springframework.boot' version '3.2.3'
+	id 'io.spring.dependency-management' version '1.1.4'
 }
 
 ext {
-	set('springBootVersion', '2.7.18')
+	set('springBootVersion', '3.2.3')
 }
 
 group = 'lab.solva'
 version = '0.0.1-SNAPSHOT'
 
 java {
-	sourceCompatibility = '17'
+	sourceCompatibility = '21'
 }
 
 configurations {
@@ -26,24 +26,34 @@ repositories {
 }
 
 dependencies {
+//	implementation 'org.springframework.boot:spring-boot-starter-data-cassandra'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+//	implementation 'org.springframework.boot:spring-boot-starter-graphql'
+//	implementation 'org.springframework.boot:graphql-java-tools'
 	implementation 'org.flywaydb:flyway-core'
-	implementation 'javax.xml.bind:jaxb-api'
-	implementation 'org.hibernate:hibernate-core'
-	implementation 'org.hibernate:hibernate-entitymanager'
-	implementation 'org.hibernate.validator:hibernate-validator'
+//	implementation 'javax.xml.bind:jaxb-api'
+	implementation 'jakarta.xml.bind:jakarta.xml.bind-api:4.0.1'
 	implementation 'org.springdoc:springdoc-openapi-ui:1.7.0'
 	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+	implementation 'com.graphql-java-kickstart:graphql-spring-boot-starter:15.1.0'
+	implementation 'com.graphql-java-kickstart:graphql-java-servlet:15.1.0'
+	implementation 'com.graphql-java-kickstart:graphql-java-tools:13.1.1'
+//	implementation 'user.java.time:user.java.time:2020.267.10158'
 	compileOnly 'org.projectlombok:lombok'
+//	compileOnly 'jakarta.servlet:jakarta.servlet-api:6.0.0'
+//	developmentOnly 'org.springframework.boot:spring-boot-docker-compose'
 	runtimeOnly 'org.postgresql:postgresql'
 	annotationProcessor 'org.projectlombok:lombok'
 	testAnnotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'com.h2database:h2'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+//	testImplementation 'org.springframework:spring-webflux'
+	testImplementation 'org.springframework.graphql:spring-graphql-test'
 	testImplementation 'org.junit.jupiter:junit-jupiter'
 }
 
-tasks.named('test') {
-	useJUnitPlatform()
-}
+//tasks.named('test') {
+//	useJUnitPlatform()
+//}

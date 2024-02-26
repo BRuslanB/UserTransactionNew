@@ -1,11 +1,11 @@
 package lab.solva.user.transaction.repository;
 
+import jakarta.transaction.Transactional;
 import lab.solva.user.transaction.model.ExchangeRateEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import javax.transaction.Transactional;
 import java.util.Set;
 
 @Repository

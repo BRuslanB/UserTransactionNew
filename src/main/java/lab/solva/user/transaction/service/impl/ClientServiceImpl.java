@@ -14,9 +14,8 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
 import java.time.ZoneId;
-import java.time.temporal.ChronoUnit;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,7 +57,7 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
-    public void saveAmountLimitDto(AmountLimitDto amountLimitDto) {
+    public AmountLimitEntity saveAmountLimitDto(AmountLimitDto amountLimitDto) {
 
         // Saving received data from amountLimitDto
         if (amountLimitDto != null) {
@@ -68,7 +67,7 @@ public class ClientServiceImpl implements ClientService {
             amountLimitEntity.setLimitSum(amountLimitDto.limit_sum);
 
             // Use the current date and time in the required format (trimming nanoseconds)
-            LocalDateTime currentDateTime = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
+            LocalDateTime currentDateTime = LocalDateTime.now().withSecond(0).withNano(0);
             amountLimitEntity.setLimitDateTime(Timestamp.valueOf(currentDateTime));
             amountLimitEntity.setLimitCurrencyCode(amountLimitDto.limit_currency_shortname);
 
@@ -82,14 +81,18 @@ public class ClientServiceImpl implements ClientService {
                 log.error("!Invalid value, Expense Category not found in the list of valid values, " +
                         "accountClient={}, expenseCategory={}", amountLimitDto.account_from, expenseCategory);
 
-                return;
+                return null;
             }
 
             amountLimitRepository.save(amountLimitEntity);
 
             log.debug("!Amount Limit save successfully, id={}, accountClient={}, expenseCategory={}",
                     amountLimitEntity.getId(), amountLimitEntity.getAccountClient(), amountLimitEntity.getExpenseCategory());
+
+            return amountLimitEntity;
         }
+
+        return null;
     }
 
     @Override

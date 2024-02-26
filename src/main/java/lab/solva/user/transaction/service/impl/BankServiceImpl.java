@@ -35,7 +35,7 @@ public class BankServiceImpl implements BankService {
     private final ExchangeService exchangeService;
 
     @Override
-    public void saveExpenseTransactionDto(ExpenseTransactionDto expenseTransactionDto) {
+    public ExpenseTransactionEntity saveExpenseTransactionDto(ExpenseTransactionDto expenseTransactionDto) {
 
         // Saving received data from expenseTransactionDto
         if (expenseTransactionDto != null) {
@@ -54,7 +54,7 @@ public class BankServiceImpl implements BankService {
             } else {
                 log.error("!Invalid value, Expense Category not found in the list of valid values, " +
                           "accountClient={}, expenseCategory={}", expenseTransactionDto.account_from, expenseCategory);
-                return;
+                return null;
             }
 
             // Checking Date and Time for valid values
@@ -71,7 +71,7 @@ public class BankServiceImpl implements BankService {
                         "accountClient={}, transactionDateTime={}, currentDateTime={}",
                         expenseTransactionDto.account_from, transactionDateTime.toString(), currentDateTime.toString());
 
-                return;
+                return null;
             }
 
             // Calculating the value for the limitExceeded field
@@ -87,7 +87,11 @@ public class BankServiceImpl implements BankService {
 
             log.debug("!Expense Transaction save successfully, id={}, accountClient={}",
                     expenseTransactionEntity.getId(), expenseTransactionEntity.getAccountClient());
+
+            return expenseTransactionEntity;
         }
+
+        return null;
     }
 
     protected boolean getLimitExceeded(String accountClient, String expenseCategory, String currencyCode,
