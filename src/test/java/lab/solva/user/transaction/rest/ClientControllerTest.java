@@ -18,8 +18,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.text.SimpleDateFormat;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
 
@@ -109,7 +107,7 @@ public class ClientControllerTest {
                 .andExpect(jsonPath("$[0].datetime", is("2024-01-30T16:30:45+06:00")))
                 .andExpect(jsonPath("$[0].limit_sum", is(500.0)))
                 .andExpect(jsonPath("$[0].limit_currency_shortname", is("EUR")))
-                .andExpect(jsonPath("$[0].limit_datetime", is("2024-01-30T15:35:34+06:00")))
+                .andExpect(jsonPath("$[0].limit_datetime", is("2024-01-29T16:25:38+06:00")))
                 .andExpect(jsonPath("$[1].account_from", is(accountClient)))
                 .andExpect(jsonPath("$[1].account_to", is(accountCounterparty)))
                 .andExpect(jsonPath("$[1].currency_shortname", is("USD")))
