@@ -84,7 +84,7 @@ public class ClientControllerTest {
         List<TransactionExceededLimitDto> transactionExceededLimitDtoList = Arrays.asList(
                 createTransactionExceededLimitDto(accountClient, accountCounterparty,
                         "RUB", 1000.0, "Service", "2024-01-30T16:30:45+06:00",
-                        500.0,"EUR", "2024-01-30T15:35:34+06:00"),
+                        500.0,"EUR", "2024-01-28T12:48:12+06:00"),
                 createTransactionExceededLimitDto(accountClient, accountCounterparty,
                         "USD", 100.0, "Product", "2024-01-30T14:30:45+06:00",
                         200.0,"USD", "2024-01-30T15:35:34+06:00")
