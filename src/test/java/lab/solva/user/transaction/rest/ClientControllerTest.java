@@ -149,7 +149,8 @@ public class ClientControllerTest {
     private static String asJsonString(final Object obj) {
         try {
             final ObjectMapper objectMapper = new ObjectMapper();
-            objectMapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX"));
+//            objectMapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX"));
+            objectMapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.ssXXX"));
             return objectMapper.writeValueAsString(obj);
         } catch (Exception e) {
             throw new RuntimeException(e);
