@@ -13,9 +13,8 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import java.time.*;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,9 +43,12 @@ public class ClientServiceImpl implements ClientService {
                 amountLimitDateDto.limit_currency_shortname = amountLimitEntity.getLimitCurrencyCode();
                 amountLimitDateDto.expense_category = amountLimitEntity.getExpenseCategory();
 
-                // Convert Timestamp to ZonedDateTime
-                amountLimitDateDto.limit_datetime = amountLimitEntity.getLimitDateTime().
-                        toInstant().atZone(ZoneId.systemDefault());
+                // Convert Timestamp to String with TimeZone
+                OffsetDateTime offsetDateTime = amountLimitEntity.getLimitDateTime().toInstant().atOffset(
+                        ZoneOffset.ofTotalSeconds(ZoneId.systemDefault().getRules().
+                        getOffset(amountLimitEntity.getLimitDateTime().toInstant()).getTotalSeconds()));
+                amountLimitDateDto.limit_datetime = offsetDateTime.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+
                 amountLimitDateDtoList.add(amountLimitDateDto);
             }
         }
@@ -109,14 +111,22 @@ public class ClientServiceImpl implements ClientService {
             Double transactionSum = (Double) objects[3];
             String expenseCategory = (String) objects[4];
 
-            // Convert Timestamp to ZonedDateTime
+            // Convert Timestamp to String with TimeZone
             Timestamp transactionDateTimeTimestamp = (Timestamp) objects[5];
-            ZonedDateTime transactionDateTime = transactionDateTimeTimestamp.toInstant().atZone(ZoneId.systemDefault());
+            OffsetDateTime offsetDateTime = transactionDateTimeTimestamp.toInstant().atOffset(
+                    ZoneOffset.ofTotalSeconds(ZoneId.systemDefault().getRules().
+                    getOffset(transactionDateTimeTimestamp.toInstant()).getTotalSeconds()));
+            String transactionDateTime = offsetDateTime.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+
             Double limitSum = (Double) objects[6];
 
-            // Convert Timestamp to ZonedDateTime
+            // Convert Timestamp to String with TimeZone
             Timestamp limitDateTimeTimestamp = (Timestamp) objects[7];
-            ZonedDateTime limitDateTime = limitDateTimeTimestamp.toInstant().atZone(ZoneId.systemDefault());
+            OffsetDateTime limitOffsetDateTime = limitDateTimeTimestamp.toInstant().atOffset(
+                    ZoneOffset.ofTotalSeconds(ZoneId.systemDefault().getRules().
+                    getOffset(limitDateTimeTimestamp.toInstant()).getTotalSeconds()));
+            String limitDateTime = limitOffsetDateTime.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+
             String limitCurrencyCode = (String) objects[8];
 
             TransactionExceededLimitDto transactionExceededLimitDto = new TransactionExceededLimitDto(

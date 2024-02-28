@@ -21,7 +21,6 @@ import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -90,7 +89,7 @@ public class ClientServiceImplTest {
         amountLimitEntity.setLimitSum(amountLimitDto.limit_sum);
 
         // Use the current date and time in the required format (trimming nanoseconds)
-        LocalDateTime currentDateTime = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
+        LocalDateTime currentDateTime = LocalDateTime.now().withDayOfMonth(1).toLocalDate().atStartOfDay();
         amountLimitEntity.setLimitDateTime(Timestamp.valueOf(currentDateTime));
 
         amountLimitEntity.setLimitCurrencyCode(amountLimitDto.limit_currency_shortname);
@@ -190,7 +189,8 @@ public class ClientServiceImplTest {
         expenseTransactionEntity.setTransactionSum(transaction_sum);
 
         // Checking Date and Time for valid values
-        ZonedDateTime transactionZonedDateTime = ZonedDateTime.parse(transaction_date);
+        ZonedDateTime transactionZonedDateTime = ZonedDateTime.parse(transaction_date,
+                DateTimeFormatter.ISO_OFFSET_DATE_TIME);
         expenseTransactionEntity.setTransactionDateTime(Timestamp.from(transactionZonedDateTime.toInstant()));
 
         expenseTransactionEntity.setLimitExceeded(limit_exceeded);
@@ -212,12 +212,12 @@ public class ClientServiceImplTest {
         transactionExceededLimitDto.currency_shortname = currencyCode;
         transactionExceededLimitDto.sum = transactionSum;
         transactionExceededLimitDto.expense_category = "Service";
-        transactionExceededLimitDto.datetime = transactionDateTime.withZoneSameInstant(ZoneId.systemDefault());
+        transactionExceededLimitDto.datetime = transactionDateTime.withZoneSameInstant(ZoneId.systemDefault()).toString();
 
         // Limit is the same for all transactions
         transactionExceededLimitDto.limit_sum = 50000.0;
         transactionExceededLimitDto.limit_currency_shortname = "KZT";
-        transactionExceededLimitDto.limit_datetime = limitDateTime.withZoneSameInstant(ZoneId.systemDefault());
+        transactionExceededLimitDto.limit_datetime = limitDateTime.withZoneSameInstant(ZoneId.systemDefault()).toString();
 
         return transactionExceededLimitDto;
     }

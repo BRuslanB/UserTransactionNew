@@ -1,12 +1,12 @@
 package lab.solva.user.transaction.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.Size;
-import java.time.ZonedDateTime;
 
 @Data
 @AllArgsConstructor
@@ -27,13 +27,13 @@ public class TransactionExceededLimitDto {
 
     public String expense_category;
 
-    // Time Zone Supported Format
-    public ZonedDateTime datetime;
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ssXXX")
+    public String datetime;
 
     public double limit_sum;
 
-    // Time Zone Supported Format
-    public ZonedDateTime limit_datetime;
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ssXXX")
+    public String limit_datetime;
 
     @Size(max = 3)
     public String limit_currency_shortname;

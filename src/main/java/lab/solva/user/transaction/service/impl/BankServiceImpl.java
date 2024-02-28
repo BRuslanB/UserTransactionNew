@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -58,7 +59,8 @@ public class BankServiceImpl implements BankService {
             }
 
             // Checking Date and Time for valid values
-            ZonedDateTime transactionZonedDateTime = expenseTransactionDto.datetime;
+            ZonedDateTime transactionZonedDateTime = ZonedDateTime.parse(expenseTransactionDto.datetime,
+                    DateTimeFormatter.ISO_OFFSET_DATE_TIME);
             LocalDateTime transactionDateTime = transactionZonedDateTime.toLocalDateTime();
             LocalDateTime currentDateTime = LocalDateTime.now();
 

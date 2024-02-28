@@ -52,10 +52,7 @@ public class BankServiceImplTest {
         expenseTransactionDto.currency_shortname = "USD";
         expenseTransactionDto.sum = 100.0;
         expenseTransactionDto.expense_category = "Service";
-
-        // Converting a date and time string to the desired format
-        expenseTransactionDto.datetime = ZonedDateTime.parse("2024-02-01T15:15:20+06:00",
-                DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+        expenseTransactionDto.datetime = "2024-02-01T15:15:20+06:00";
 
         // Create object of ExpenseTransactionEntity
         ExpenseTransactionEntity expenseTransactionEntity = new ExpenseTransactionEntity();
@@ -70,7 +67,8 @@ public class BankServiceImplTest {
         expenseTransactionEntity.setExpenseCategory(expenseCategory);
 
         // Checking Date and Time for valid values
-        ZonedDateTime transactionZonedDateTime = expenseTransactionDto.datetime;
+        ZonedDateTime transactionZonedDateTime = ZonedDateTime.parse(expenseTransactionDto.datetime,
+                DateTimeFormatter.ISO_OFFSET_DATE_TIME);
         LocalDateTime transactionDateTime = transactionZonedDateTime.toLocalDateTime();
         Timestamp transactionTimestamp = Timestamp.from(transactionZonedDateTime.toInstant());
         expenseTransactionEntity.setTransactionDateTime(transactionTimestamp);

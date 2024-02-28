@@ -53,10 +53,7 @@ public class BankControllerTest {
         expenseTransactionDto.currency_shortname = "USD";
         expenseTransactionDto.sum = 100.0;
         expenseTransactionDto.expense_category = "Service";
-
-        // Converting a date and time string to the desired format
-        expenseTransactionDto.datetime = ZonedDateTime.parse("2024-02-01T15:15:20+06:00",
-                DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+        expenseTransactionDto.datetime = "2024-02-01T15:15:20+06:00";
 
         /* Act & Assert */
         mockMvc.perform(post("/api/bank")

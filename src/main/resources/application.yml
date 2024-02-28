@@ -22,9 +22,9 @@ spring:
     baseline-on-migrate: true
   resources:
     static-locations: classpath:/resources/,classpath:/static/,classpath:/public/,classpath:/resources/graphql/
-#  graphql:
-#    graphiql:
-#      mapping: /graphiql
+
+graphql:
+  timeoutMillis: 300000 # for debugging
 
 # springdoc settings
 springdoc:
@@ -38,7 +38,7 @@ springdoc:
 # logging setting
 logging:
   level:
-    root: INFO
+    root: INFO #ERROR
     lab.solva.user.transaction: DEBUG
     org.springframework.boot.autoconfigure.logging: WARN
   file:

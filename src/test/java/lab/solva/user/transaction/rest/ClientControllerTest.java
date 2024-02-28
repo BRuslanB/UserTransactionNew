@@ -51,9 +51,9 @@ public class ClientControllerTest {
         String accountClient = "0000000001";
         List<AmountLimitDateDto> amountLimitDateDtoList = Arrays.asList(
                 createAmountLimitDateDto(accountClient, 1000.0,"RUB", "Service",
-                        ZonedDateTime.parse("2024-01-01T00:00:00+06:00", DateTimeFormatter.ISO_OFFSET_DATE_TIME)),
+                        "2024-01-01T00:00:00+06:00"),
                 createAmountLimitDateDto(accountClient, 500.0,"EUR", "Product",
-                        ZonedDateTime.parse("2024-01-30T15:35:34+06:00", DateTimeFormatter.ISO_OFFSET_DATE_TIME))
+                        "2024-01-30T15:35:34+06:00")
         );
 
         when(clientService.getAllAmountLimitDateDtoByAccountClient(accountClient)).thenReturn(amountLimitDateDtoList);
@@ -85,15 +85,11 @@ public class ClientControllerTest {
         // add another entry to List
         List<TransactionExceededLimitDto> transactionExceededLimitDtoList = Arrays.asList(
                 createTransactionExceededLimitDto(accountClient, accountCounterparty,
-                        "RUB", 1000.0, "Service",
-                        ZonedDateTime.parse("2024-01-30T16:30:45+06:00", DateTimeFormatter.ISO_OFFSET_DATE_TIME),
-                        500.0,"EUR",
-                        ZonedDateTime.parse("2024-01-30T15:35:34+06:00", DateTimeFormatter.ISO_OFFSET_DATE_TIME)),
+                        "RUB", 1000.0, "Service", "2024-01-30T16:30:45+06:00",
+                        500.0,"EUR", "2024-01-30T15:35:34+06:00"),
                 createTransactionExceededLimitDto(accountClient, accountCounterparty,
-                        "USD", 100.0, "Product",
-                        ZonedDateTime.parse("2024-01-30T14:30:45+06:00", DateTimeFormatter.ISO_OFFSET_DATE_TIME),
-                        200.0,"USD",
-                        ZonedDateTime.parse("2024-01-30T15:35:34+06:00", DateTimeFormatter.ISO_OFFSET_DATE_TIME))
+                        "USD", 100.0, "Product", "2024-01-30T14:30:45+06:00",
+                        200.0,"USD", "2024-01-30T15:35:34+06:00")
         );
 
         when(clientService.getAllTransactionExceededLimitDtoByAccountClient(accountClient)).
@@ -164,7 +160,7 @@ public class ClientControllerTest {
 
     // Method for create object of AmountLimitDateDto
     private AmountLimitDateDto createAmountLimitDateDto(String account_from, double limit_sum,
-                String limit_currency_shortname, String expense_category, ZonedDateTime limit_datetime) {
+                String limit_currency_shortname, String expense_category, String limit_datetime) {
 
         AmountLimitDateDto amountLimitDateDto = new AmountLimitDateDto();
 
@@ -179,8 +175,8 @@ public class ClientControllerTest {
 
     // Method for create object of TransactionExceededLimitDto
     private TransactionExceededLimitDto createTransactionExceededLimitDto(String account_from, String account_to,
-                String currency_shortname, double Sum, String expense_category, ZonedDateTime datetime,
-                double limit_sum, String limit_currency_shortname, ZonedDateTime limit_datetime) {
+                String currency_shortname, double Sum, String expense_category, String datetime,
+                double limit_sum, String limit_currency_shortname, String limit_datetime) {
 
         TransactionExceededLimitDto transactionExceededLimitDto = new TransactionExceededLimitDto();
 

@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.validation.constraints.Size;
-import java.time.ZonedDateTime;
 
 @Getter
 @Setter
@@ -31,7 +30,6 @@ public class ExpenseTransactionDto {
     @Size(max = 3)
     public String expense_category;
 
-    // Time Zone Supported Format
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ssXXX")
-    public ZonedDateTime datetime;
+    public String datetime;
 }

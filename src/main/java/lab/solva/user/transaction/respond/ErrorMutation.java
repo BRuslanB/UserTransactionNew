@@ -8,6 +8,8 @@ import org.springframework.stereotype.Component;
 @Getter
 @Setter
 public class ErrorMutation implements MutationResponse {
+
     private Boolean success;
+
     private String message;
 }
