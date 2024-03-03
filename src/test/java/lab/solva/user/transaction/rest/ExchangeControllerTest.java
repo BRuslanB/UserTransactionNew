@@ -46,7 +46,7 @@ public class ExchangeControllerTest {
                 createExchangeRateDto("RUB", "РОССИЙСКИЙ РУБЛЬ", 5.02)
         );
 
-        when(exchangeService.getAllExchangeRateDtoByCurrentDate()).thenReturn(exchangeRateDtoList);
+//        when(exchangeService.getAllExchangeRateDtoByCurrentDate()).thenReturn(exchangeRateDtoList);
 
         /* Act & Assert */
         mockMvc.perform(get("/api/exchange")

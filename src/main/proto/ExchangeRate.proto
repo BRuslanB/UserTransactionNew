@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+option java_package = "lab.solva.user.transaction";
+option java_multiple_files = true;
+
+message ExchangeRateProto {
+  string currency_name = 1;
+  string currency_code = 2;
+  double exchange_rate = 3;
+  ExchangeInfoProto exchange_info = 4;
+}
+
+message ExchangeInfoProto {
+  int64 id = 1;
+  // Other fields from ExchangeInfoEntity if needed
+}
+
+service ExchangeService {
+  rpc gettingRates (ExchangeRatesRequest) returns (ExchangeRatesResponse);
+}
+
+message ExchangeRatesRequest {
+
+}
+
+message ExchangeRatesResponse {
+  repeated ExchangeRateProto exchangeRates = 1;
+}

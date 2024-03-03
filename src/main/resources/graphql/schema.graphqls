@@ -2,7 +2,7 @@ type AmountLimitEntity {
   id: ID!
   accountClient: String!
   limitSum: Float!
-  limitDateTime: String! # можно заменить на специфичный GraphQL тип для даты и времени
+  limitDateTime: String!
   limitCurrencyCode: String!
   expenseCategory: String!
   expenseTransactionEntities: [ExpenseTransactionEntity]!
@@ -15,7 +15,7 @@ type ExpenseTransactionEntity {
   currencyCode: String!
   transactionSum: Float!
   expenseCategory: String!
-  transactionDateTime: String! # можно заменить на специфичный GraphQL тип для даты и времени
+  transactionDateTime: String!
   limitExceeded: Boolean!
   amountLimitEntity: AmountLimitEntity!
 }
@@ -33,7 +33,7 @@ input ExpenseTransactionDto {
   currency_shortname: String!
   Sum: Float
   expense_category: String!
-  datetime: String! # можно заменить на специфичный GraphQL тип для даты и времени
+  datetime: String!
 }
 
 type AmountLimitDateDto {
@@ -41,7 +41,7 @@ type AmountLimitDateDto {
   limit_sum: Float!
   limit_currency_shortname: String!
   expense_category: String!
-  limit_datetime: String! # можно заменить на специфичный GraphQL тип для даты и времени
+  limit_datetime: String!
 }
 
 type TransactionExceededLimitDto {
@@ -50,9 +50,9 @@ type TransactionExceededLimitDto {
   currency_shortname: String!
   Sum: Float!
   expense_category: String!
-  datetime: String! # можно заменить на специфичный GraphQL тип для даты и времени
+  datetime: String!
   limit_sum: Float!
-  limit_datetime: String! # можно заменить на специфичный GraphQL тип для даты и времени
+  limit_datetime: String!
   limit_currency_shortname: String!
 }
 
