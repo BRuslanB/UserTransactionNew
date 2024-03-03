@@ -1,6 +1,5 @@
 package lab.solva.user.transaction.service.impl;
 
-import lab.solva.user.transaction.dto.ExchangeRateDto;
 import lab.solva.user.transaction.model.ExchangeInfoEntity;
 import lab.solva.user.transaction.model.ExchangeRateEntity;
 import lab.solva.user.transaction.repository.ExchangeInfoRepository;
