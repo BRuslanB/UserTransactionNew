@@ -2,9 +2,9 @@ package lab.solva.user.transaction.service.impl;
 
 import io.grpc.stub.StreamObserver;
 import lab.solva.user.transaction.ExchangeInfoProto;
+import lab.solva.user.transaction.ExchangeInfoRequest;
+import lab.solva.user.transaction.ExchangeInfoResponse;
 import lab.solva.user.transaction.ExchangeRateProto;
-import lab.solva.user.transaction.ExchangeRatesRequest;
-import lab.solva.user.transaction.ExchangeRatesResponse;
 import lab.solva.user.transaction.dto.ExchangeInfoDto;
 import lab.solva.user.transaction.dto.ExchangeRateDto;
 import lab.solva.user.transaction.enumeration.CurrencyType;
@@ -41,10 +41,10 @@ public class ExchangeServiceImpl implements ExchangeService {
     private final ExchangeRateRepository exchangeRateRepository;
 
     @Override
-    public void gettingRates(ExchangeRatesRequest request, StreamObserver<ExchangeRatesResponse> responseObserver) {
+    public void gettingRates(ExchangeInfoRequest request, StreamObserver<ExchangeInfoResponse> responseObserver) {
 
         // Using to construct Responses
-        ExchangeRatesResponse.Builder responseBuilder = ExchangeRatesResponse.newBuilder();
+        ExchangeInfoResponse.Builder responseBuilder = ExchangeInfoResponse.newBuilder();
 
         // Getting the current date
         LocalDate currentDate = LocalDate.now();
@@ -54,18 +54,15 @@ public class ExchangeServiceImpl implements ExchangeService {
                 exchangeInfoRepository.findCurrentExchangeInfo(currentDate);
 
         if (currentExchangeInfoOptional.isPresent()) {
+
             ExchangeInfoEntity exchangeInfoEntity = currentExchangeInfoOptional.get();
 
             log.debug("!Exchange Rates obtained from the Database, id={}, currentDate={}",
                     exchangeInfoEntity.getId(), currentDate);
 
-            Set<ExchangeRateEntity> exchangeRates = exchangeRateRepository.findAllExchangeRate(exchangeInfoEntity.getId());
-            // Adding an exchange rate to a response
-            exchangeRates.forEach(exchangeRate -> {
-                // Converting ExchangeRateEntity to ExchangeRateProto
-                ExchangeRateProto exchangeRateProto = convertToExchangeRateProto(exchangeRate);
-                responseBuilder.addExchangeRates(exchangeRateProto);
-            });
+            // Adding an exchange info to a response
+            ExchangeInfoProto exchangeInfoProto = convertToExchangeInfoProto(exchangeInfoEntity);
+            responseBuilder.setExchangeInfo(exchangeInfoProto);
 
         } else {
 
@@ -74,40 +71,37 @@ public class ExchangeServiceImpl implements ExchangeService {
                 log.debug("!Warning, Exchange Rates were not received for the Current Date from the Database, " +
                         "currentDate={}", currentDate);
             }
-        }
 
-        // Receiving data for the last available date from the database
-        // If data from an external service for the current date was successfully saved in the database, we obtain this data
-        // Here it is assumed that there is no data in the database after the current date
-        Optional<ExchangeInfoEntity> latestExchangeInfoOptional = exchangeInfoRepository.findLatestExchangeInfo();
+            // Receiving data for the last available date from the database
+            // If data from an external service for the current date was successfully saved in the database, we obtain this data
+            // Here it is assumed that there is no data in the database after the current date
+            Optional<ExchangeInfoEntity> latestExchangeInfoOptional = exchangeInfoRepository.findLatestExchangeInfo();
 
-        if (latestExchangeInfoOptional.isPresent()) {
-            ExchangeInfoEntity exchangeInfoEntity = latestExchangeInfoOptional.get();
+            if (latestExchangeInfoOptional.isPresent()) {
 
-            log.debug("!Exchange Rates obtained from the Database, id={}, requestDate={}",
-                    exchangeInfoEntity.getId(), exchangeInfoEntity.getRequestDate());
+                ExchangeInfoEntity exchangeInfoEntity = latestExchangeInfoOptional.get();
 
-            Set<ExchangeRateEntity> exchangeRates = exchangeRateRepository.findAllExchangeRate(exchangeInfoEntity.getId());
-            // Adding an exchange rate to a response
-            exchangeRates.forEach(exchangeRate -> {
-                // Converting ExchangeRateEntity to ExchangeRateProto
-                ExchangeRateProto exchangeRateProto = convertToExchangeRateProto(exchangeRate);
-                responseBuilder.addExchangeRates(exchangeRateProto);
-            });
+                log.debug("!Exchange Rates obtained from the Database, id={}, requestDate={}",
+                        exchangeInfoEntity.getId(), exchangeInfoEntity.getRequestDate());
 
-        } else {
+                // Adding an exchange info to a response
+                ExchangeInfoProto exchangeInfoProto = convertToExchangeInfoProto(exchangeInfoEntity);
+                responseBuilder.setExchangeInfo(exchangeInfoProto);
 
-            // Handling the case when there is no data in the database
-            // Further operation of the application will be without data on exchange rates
-            log.error("!Attention, Exchange Rates were not received from the Database, " +
-                    "currentDate={}", currentDate);
+            } else {
+
+                // Handling the case when there is no data in the database
+                // Further operation of the application will be without data on exchange rates
+                log.error("!Attention, Exchange Rates were not received from the Database, " +
+                        "currentDate={}", currentDate);
+            }
         }
 
         // Build the ExchangeRatesResponse
-        ExchangeRatesResponse exchangeRatesResponse = responseBuilder.build();
+        ExchangeInfoResponse exchangeInfoResponse = responseBuilder.build();
 
         // Send Response
-        responseObserver.onNext(exchangeRatesResponse);
+        responseObserver.onNext(exchangeInfoResponse);
         responseObserver.onCompleted();
     }
 
@@ -307,19 +301,28 @@ public class ExchangeServiceImpl implements ExchangeService {
         }
     }
 
+    private ExchangeInfoProto convertToExchangeInfoProto(ExchangeInfoEntity exchangeInfoEntity) {
+
+        ExchangeInfoProto.Builder builder = ExchangeInfoProto.newBuilder()
+                .setResource(exchangeInfoEntity.getResource())
+
+                // Set date format yyyy-MM-dd
+                .setRequestDate(exchangeInfoEntity.getRequestDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+
+                // Convert ExchangeRateEntity to ExchangeRateProto for each entity in the set
+                exchangeInfoEntity.getExchangeRateEntities().forEach(exchangeRateEntity -> {
+                    builder.addExchangeRates(convertToExchangeRateProto(exchangeRateEntity));
+        });
+
+        return builder.build();
+    }
+
     private ExchangeRateProto convertToExchangeRateProto(ExchangeRateEntity exchangeRateEntity) {
+
         return ExchangeRateProto.newBuilder()
                 .setCurrencyName(exchangeRateEntity.getCurrencyName())
                 .setCurrencyCode(exchangeRateEntity.getCurrencyCode())
                 .setExchangeRate(exchangeRateEntity.getExchangeRate())
-                .setExchangeInfo(convertToExchangeInfoEntityProto(exchangeRateEntity.getExchangeInfoEntity()))
-                .build();
-    }
-
-    private ExchangeInfoProto convertToExchangeInfoEntityProto(ExchangeInfoEntity exchangeInfoEntity) {
-        return ExchangeInfoProto.newBuilder()
-                .setId(exchangeInfoEntity.getId())
-                // Add other fields as needed
                 .build();
     }
 }
