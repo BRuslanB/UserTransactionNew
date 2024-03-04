@@ -305,14 +305,12 @@ public class ExchangeServiceImpl implements ExchangeService {
 
         ExchangeInfoProto.Builder builder = ExchangeInfoProto.newBuilder()
                 .setResource(exchangeInfoEntity.getResource())
-
                 // Set date format yyyy-MM-dd
                 .setRequestDate(exchangeInfoEntity.getRequestDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
 
-                // Convert ExchangeRateEntity to ExchangeRateProto for each entity in the set
-                exchangeInfoEntity.getExchangeRateEntities().forEach(exchangeRateEntity -> {
-                    builder.addExchangeRates(convertToExchangeRateProto(exchangeRateEntity));
-        });
+        // Convert ExchangeRateEntity to ExchangeRateProto for each entity in the set
+        exchangeInfoEntity.getExchangeRateEntities().forEach(exchangeRateEntity ->
+                builder.addExchangeRates(convertToExchangeRateProto(exchangeRateEntity)));
 
         return builder.build();
     }
