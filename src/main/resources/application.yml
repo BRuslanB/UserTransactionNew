@@ -3,6 +3,15 @@ server:
   port: 8080
 
 spring:
+  data:
+    # DataSource Configuration for Cassandra
+    cassandra:
+      keyspace-name: mykeyspace
+      contact-points: localhost
+      local-datacenter: datacenter1
+      schema-act: create_if_not_exists
+      port: 9042
+  # additional DataSource Configuration for PostgreSQL
   datasource:
     url: jdbc:postgresql://localhost:5432/transaction_db
     username: postgres
@@ -15,6 +24,7 @@ spring:
       format_sql: true
       properties:
         hibernate.jdbc.time_zone: UTC
+  # migration settings
   flyway:
     enabled: true
     locations: classpath:db/migration
@@ -41,6 +51,7 @@ logging:
     root: INFO #ERROR
     lab.solva.user.transaction: DEBUG
     org.springframework.boot.autoconfigure.logging: WARN
+    org.springframework.boot.autoconfigure.cassandra: DEBUG
   file:
     name: logs/app.log
     append: true
