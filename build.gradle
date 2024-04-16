@@ -24,11 +24,18 @@ configurations {
 
 repositories {
 	mavenCentral()
+	maven {
+		url 'https://repo.spring.io/milestone'
+	}
 }
+
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-//	implementation 'org.springframework.boot:spring-boot-starter-data-cassandra'
+	implementation 'org.springframework.boot:spring-boot-starter-data-cassandra'
+//	implementation 'org.springframework.boot:spring-boot-starter-data-cassandra:3.2.4'
+//	implementation 'org.springframework.data:spring-data-cassandra:4.2.4'
+//	implementation 'com.datastax.oss:java-driver-core:4.17.0'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 //	implementation 'org.springframework.data:spring-data-cassandra:4.2.4'
@@ -45,13 +52,15 @@ dependencies {
 	implementation 'com.graphql-java-kickstart:graphql-java-tools:13.1.1'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	compileOnly 'org.projectlombok:lombok'
+//	compileOnly 'org.springframework.boot:spring-boot-starter-data-cassandra'
 //	compileOnly 'jakarta.servlet:jakarta.servlet-api:6.0.0'
 	runtimeOnly 'org.postgresql:postgresql'
 	annotationProcessor 'org.projectlombok:lombok'
 	testAnnotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'com.h2database:h2'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testImplementation 'org.springframework.boot:spring-boot-starter-data-cassandra:3.2.3'
+//	testImplementation 'org.springframework.boot:spring-boot-starter-test:2.5.3'
+//	testImplementation 'org.springframework.boot:spring-boot-starter-data-cassandra:3.2.4'
 //	testImplementation 'org.springframework.boot:spring-boot-starter-data-cassandra'
 //	testImplementation 'org.springframework:spring-webflux'
 	testImplementation 'org.springframework.graphql:spring-graphql-test'

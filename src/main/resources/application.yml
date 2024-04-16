@@ -3,14 +3,14 @@ server:
   port: 8080
 
 spring:
-  data:
-    # DataSource Configuration for Cassandra
-    cassandra:
-      keyspace-name: mykeyspace
-      contact-points: localhost
-      local-datacenter: datacenter1
-      schema-act: create_if_not_exists
-      port: 9042
+#  data:
+#    # DataSource Configuration for Cassandra
+#    cassandra:
+#      keyspace-name: mykeyspace
+#      contact-points: 127.0.0.1
+#      local-datacenter: datacenter1
+#      schema-act: CREATE_IF_NOT_EXISTS
+#      port: 9042
   # additional DataSource Configuration for PostgreSQL
   datasource:
     url: jdbc:postgresql://localhost:5432/transaction_db
