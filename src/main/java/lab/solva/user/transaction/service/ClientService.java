@@ -4,7 +4,6 @@ import lab.solva.user.transaction.dto.AmountLimitDateDto;
 import lab.solva.user.transaction.dto.AmountLimitDto;
 import lab.solva.user.transaction.dto.TransactionExceededLimitDto;
 import lab.solva.user.transaction.model.AmountLimitEntity;
-import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 

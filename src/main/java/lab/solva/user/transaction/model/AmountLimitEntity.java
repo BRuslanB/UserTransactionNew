@@ -11,11 +11,11 @@ import java.sql.Timestamp;
 import java.util.Set;
 
 @Entity
-@Table(name = "t_amount_limit")
 @Setter
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "t_amount_limit")
 public class AmountLimitEntity extends BaseEntity {
 
     @Size(max = 10)

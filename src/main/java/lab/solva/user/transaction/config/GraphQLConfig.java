@@ -5,28 +5,18 @@ import graphql.kickstart.tools.SchemaParser;
 import graphql.schema.GraphQLSchema;
 import lab.solva.user.transaction.resolver.MutationResolver;
 import lab.solva.user.transaction.resolver.QueryResolver;
-import lombok.RequiredArgsConstructor;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@RequiredArgsConstructor
 public class GraphQLConfig {
-
-//    private final MutationResolver mutationResolver;
-//    private final QueryResolver queryResolver;
-
     @Bean
     public GraphQLSchema graphQLSchema(MutationResolver mutationResolver, QueryResolver queryResolver) {
-//        SchemaParserDictionary dictionary = new SchemaParserDictionary();
-//        dictionary.add(ErrorMutation.class);
-//        dictionary.add(SuccessMutation.class);
 
         return SchemaParser.newParser()
-                .files("graphql/schema.graphqls") // Указываем путь к схеме
+                .files("graphql/schema.graphqls") // Specify the path to the schema
                 .resolvers(mutationResolver, queryResolver)
-//                .dictionary(dictionary.getDictionary())
                 .build()
                 .makeExecutableSchema();
     }

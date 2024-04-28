@@ -3,14 +3,6 @@ server:
   port: 8080
 
 spring:
-#  data:
-#    # DataSource Configuration for Cassandra
-#    cassandra:
-#      keyspace-name: mykeyspace
-#      contact-points: 127.0.0.1
-#      local-datacenter: datacenter1
-#      schema-act: CREATE_IF_NOT_EXISTS
-#      port: 9042
   # additional DataSource Configuration for PostgreSQL
   datasource:
     url: jdbc:postgresql://localhost:5432/transaction_db
@@ -26,7 +18,7 @@ spring:
         hibernate.jdbc.time_zone: UTC
   # migration settings
   flyway:
-    enabled: true
+    enabled: false # true
     locations: classpath:db/migration
     clean-disabled: false
     baseline-on-migrate: true
@@ -35,15 +27,6 @@ spring:
 
 graphql:
   timeoutMillis: 300000 # for debugging
-
-# springdoc settings
-springdoc:
-  swagger-ui:
-    path: /swagger-ui.html
-    enabled: true
-  api-docs:
-    path: /api-docs
-    enabled: true
 
 # logging setting
 logging:
