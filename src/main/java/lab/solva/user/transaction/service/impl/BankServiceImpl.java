@@ -4,7 +4,6 @@ import lab.solva.user.transaction.dto.ExpenseTransactionDto;
 import lab.solva.user.transaction.enumeration.CurrencyType;
 import lab.solva.user.transaction.enumeration.ExpenseCategory;
 import lab.solva.user.transaction.model.AmountLimitEntity;
-import lab.solva.user.transaction.model.ExchangeRateEntity;
 import lab.solva.user.transaction.model.ExpenseTransactionEntity;
 import lab.solva.user.transaction.repository.AmountLimitRepository;
 import lab.solva.user.transaction.repository.ExpenseTransactionRepository;
@@ -138,13 +137,7 @@ public class BankServiceImpl implements BankService {
         }
 
         // Getting the current exchange rate from the database
-        List<ExchangeRateEntity> exchangeRateEntityList = exchangeService.gettingRates().stream().toList();
-
-        // Create and fill a HashMap with exchange rates
-        Map<String, Double> exchangeRateMap = new HashMap<>();
-        for (ExchangeRateEntity exchangeRateEntity : exchangeRateEntityList) {
-            exchangeRateMap.put(exchangeRateEntity.getCurrencyCode(), exchangeRateEntity.getExchangeRate());
-        }
+        Map<String, Double> exchangeRateMap = exchangeService.gettingRates();
 
         // Getting the limit from the database
         AmountLimitEntity amountLimitEntity = getAmountLimit(accountClient, expenseCategory);

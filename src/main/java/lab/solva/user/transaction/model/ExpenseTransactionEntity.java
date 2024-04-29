@@ -10,11 +10,11 @@ import javax.validation.constraints.Size;
 import java.sql.Timestamp;
 
 @Entity
-@Table(name = "t_expense_transaction")
 @Setter
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "t_expense_transaction")
 public class ExpenseTransactionEntity extends BaseEntity {
 
     @Size(max = 10)
