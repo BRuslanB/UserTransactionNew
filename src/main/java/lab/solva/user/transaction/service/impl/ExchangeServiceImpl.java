@@ -68,8 +68,8 @@ public class ExchangeServiceImpl implements ExchangeService {
             // Receiving data for the last available date from the database
             // If data from an external service for the current date was successfully saved in the database, we obtain this data
             // Here it is assumed that there is no data in the database after the current date
-            // Before that calculate the latest Request Date
-            LocalDate latestRequestDate = exchangeInfoRateRepository.findLatestRequestDate();
+            // Before doing this, calculate the last date of the request but not later than the current date
+            LocalDate latestRequestDate = exchangeInfoRateRepository.findLatestRequestDate(currentDate);
             Optional<ExchangeInfoRateEntity> latestExchangeInfoRateOptional =
                     exchangeInfoRateRepository.findLatestExchangeInfoRate(latestRequestDate);
 
@@ -130,8 +130,8 @@ public class ExchangeServiceImpl implements ExchangeService {
         // Receiving data for the last available date from the database
         // If data from an external service for the current date was successfully saved in the database, we obtain this data
         // Here it is assumed that there is no data in the database after the current date
-        // Before that calculate the latest Request Date
-        LocalDate latestRequestDate = exchangeInfoRateRepository.findLatestRequestDate();
+        // Before doing this, calculate the last date of the request but not later than the current date
+        LocalDate latestRequestDate = exchangeInfoRateRepository.findLatestRequestDate(currentDate);
         Optional<ExchangeInfoRateEntity> latestExchangeInfoRateOptional =
                 exchangeInfoRateRepository.findLatestExchangeInfoRate(latestRequestDate);
 
@@ -189,7 +189,7 @@ public class ExchangeServiceImpl implements ExchangeService {
                 exchangeInfoRateEntity.setExchangeRates(exchangeRateMap);
 
                 if (exchangeRateMap.isEmpty()) {
-                    exchangeInfoRateEntity.setLatest(false);
+                    exchangeInfoRateEntity.setClosed(false);
                     exchangeInfoRateRepository.save(exchangeInfoRateEntity);
 
                     log.debug("!Exchange Rates are not available on currentDate={}", currentDate);
@@ -198,7 +198,7 @@ public class ExchangeServiceImpl implements ExchangeService {
 
                 } else {
 
-                    exchangeInfoRateEntity.setLatest(true);
+                    exchangeInfoRateEntity.setClosed(true);
                     exchangeInfoRateRepository.save(exchangeInfoRateEntity);
 
                     log.debug("!Exchange Rates save successfully, currentDate={}", currentDate);

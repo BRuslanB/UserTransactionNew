@@ -22,8 +22,8 @@ public class ExchangeInfoRateEntity {
     @PrimaryKeyColumn(name = "request_date", ordinal = 0, type = PrimaryKeyType.PARTITIONED)
     private LocalDate requestDate;
 
-    @PrimaryKeyColumn(name = "is_latest", ordinal = 1, type = PrimaryKeyType.CLUSTERED)
-    private boolean isLatest;
+    @PrimaryKeyColumn(name = "is_closed", ordinal = 1, type = PrimaryKeyType.CLUSTERED)
+    private boolean isClosed;
 
     @Column(value = "resource")
     private String resource;
