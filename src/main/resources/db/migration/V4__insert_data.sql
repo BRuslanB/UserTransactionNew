@@ -23,19 +23,3 @@ VALUES
     ('0000012345', '9876500000', 'USD', 100.1, 'Product', '2024-01-30 15:15:20+06', 'false', 6),
     ('0000012345', '9870000000', 'USD', 99.99, 'Service', '2024-01-30 15:15:20+06', 'false', 7),
     ('0000123456', '9876500000', 'USD', 100.99, 'Product', '2024-01-31 15:15:20+06', 'false', 8);
-
--- Inserting data into the t_exchange_info table
-INSERT INTO t_exchange_info (request_date, resource)
-VALUES
-    ('2024-01-30'::DATE, 'www.nationalbank.kz'),
-    ('2024-01-31'::DATE, 'www.nationalbank.kz');
-
--- Inserting data into the t_exchange_rate table
-INSERT INTO t_exchange_rate (currency_name, currency_code, exchange_rate, exchange_info_id)
-VALUES
-    ('ДОЛЛАР США', 'USD', 449.74, 1),
-    ('РОССИЙСКИЙ РУБЛЬ', 'RUB', 5.03, 1),
-    ('ЕВРО', 'EUR', 487.7, 1),
-    ('ДОЛЛАР США', 'USD', 449.98, 2),
-    ('РОССИЙСКИЙ РУБЛЬ', 'RUB', 5.02, 2),
-    ('ЕВРО', 'EUR', 487.01, 2);
