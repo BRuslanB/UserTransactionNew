@@ -6,10 +6,14 @@ services:
       dockerfile: docker_cassandra/Dockerfile
     image: 'my-cassandra-image'
     container_name: db-nosql-cassandra-server-container
-#    user: cassandra
     environment:
       - CASSANDRA_KEYSPACE=my_keyspace
       - CASSANDRA_LOCAL_DATACENTER=datacenter1
+      - CASSANDRA_SEEDS= # it needs only IP-address
+      - CASSANDRA_LISTEN_ADDRESS=db_cassandra
+      - CASSANDRA_BROADCAST_ADDRESS=db_cassandra
+      - CASSANDRA_RPC_ADDRESS=0.0.0.0
+      - CASSANDRA_BROADCAST_RPC_ADDRESS=db_cassandra
     ports:
       - '9043:9042'
     volumes:
@@ -30,25 +34,25 @@ services:
     volumes:
       - ./data/postgres:/var/lib/postgresql/data
 
-#  app:
-#    build:
-#      context: .
-#      dockerfile: docker_app/Dockerfile
-#    image: 'app-user-transaction-new-image'
-#    container_name: app-user-transaction-new-container
-#    user: '1001:1001' # Specify the UID and GID of the user you want to run the container as
-#    depends_on:
-#      - db_cassandra
-#      - db_postgres
-#    environment:
-#      - SERVER_PORT=8000
-#      - SPRING_DATASOURCE_URL=jdbc:postgresql://db_postgres:5432/transaction_db
-#      - SPRING_DATASOURCE_USERNAME=postgres
-#      - SPRING_DATASOURCE_PASSWORD=postgres
-#      - CASSANDRA_CONTACT_POINTS=db_cassandra
-#      - CASSANDRA_KEYSPACE=my_keyspace
-#      - CASSANDRA_LOCAL_DATACENTER=datacenter1
-#      - CASSANDRA_PORT=9042
-#    ports:
-#      - '8080:8000'
-#      - '9090:9090'
+  app:
+    build:
+      context: .
+      dockerfile: docker_app/Dockerfile
+    image: 'app-user-transaction-new-image'
+    container_name: app-user-transaction-new-container
+    user: '1001:1001' # Specify the UID and GID of the user you want to run the container as
+    depends_on:
+      - db_cassandra
+      - db_postgres
+    environment:
+      - SERVER_PORT=8000
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db_postgres:5432/transaction_db
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
+      - CASSANDRA_CONTACT_POINTS=db_cassandra
+      - CASSANDRA_KEYSPACE=my_keyspace
+      - CASSANDRA_LOCAL_DATACENTER=datacenter1
+      - CASSANDRA_PORT=9042
+    ports:
+      - '8080:8000'
+      - '9090:9090'

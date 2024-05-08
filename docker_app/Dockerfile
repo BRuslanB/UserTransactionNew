@@ -23,4 +23,4 @@ WORKDIR /app
 COPY --from=resources /app/build/libs/*.jar app.jar
 
 # Delay befory application launch
-ENTRYPOINT ["sh", "-c", "sleep 180 && java -jar app.jar"]
+ENTRYPOINT ["sh", "-c", "sleep 120 && java -jar app.jar"]

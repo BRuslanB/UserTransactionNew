@@ -10,22 +10,14 @@ COPY ../src/main/resources/cassandra/init_script.cql /docker-entrypoint-initdb.d
 # This is the script that will patch the already existing entrypoint from cassandra image
 COPY ../src/main/resources/cassandra/entrypoint.sh /
 
-# Create cassandra user
-#RUN useradd -m cassandra
-
-# Change owner of initialization script and entrypoint script to cassandra
-#RUN chown cassandra:cassandra /docker-entrypoint-initdb.d/init_script.cql /entrypoint.sh
-
 # Adding a chmod command after the copy command
 RUN ["chmod", "+x", "/entrypoint.sh"]
-#RUN ["chmod", "+x", "/run-init-scripts.sh"]
-#RUN ["chmod", "+x", "/patched-entrypoint.sh"]
 
-# Устанавливаем права на запись для файла patched-entrypoint.sh
-#RUN chown cassandra:cassandra /patched-entrypoint.sh && \
-#    chmod u+x /patched-entrypoint.sh
+# Exposing ports
+EXPOSE 7000 7001 7199 9042 9160
 
 # Override ENTRYPOINT, keep CMD
 ENTRYPOINT ["/entrypoint.sh"]
+
+# Keep CMD
 CMD ["cassandra", "-f", "-R"]
-#CMD ["cassandra", "-f"]

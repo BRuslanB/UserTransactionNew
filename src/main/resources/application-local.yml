@@ -31,6 +31,11 @@ CASSANDRA_CONTACT_POINTS: 127.0.0.1
 CASSANDRA_KEYSPACE: my_keyspace
 CASSANDRA_LOCAL_DATACENTER: datacenter1
 CASSANDRA_PORT: 9043  # for local application launch but with use Cassandra container
+CASSANDRA_SEEDS:  # it needs only IP-address
+CASSANDRA_LISTEN_ADDRESS: db_cassandra
+CASSANDRA_BROADCAST_ADDRESS: db_cassandra
+CASSANDRA_RPC_ADDRESS: 0.0.0.0
+CASSANDRA_BROADCAST_RPC_ADDRESS: db_cassandra
 
 # graphql settings
 graphql:
