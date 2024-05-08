@@ -17,11 +17,12 @@ The User Transaction Service allows you to process two subtypes of services (ban
 ## Technologies Used
 The User Transaction Service is built using the following technologies:
 
-* Java 17
+* Java 21
 * Spring Boot
 * Spring Data JPA
 * Hibernate
 * PostgreSQL
+* Cassandra NoSql
 * FlyWay
 * Log4j2
 * Swagger
@@ -39,7 +40,7 @@ To run the Service locally, follow these steps:
 
 1. Clone the repository to your local machine:
 ```bash
-git clone https://github.com/BRuslanB/UserTransaction.git
+git clone https://github.com/BRuslanB/UserTransactionNew.git
 ```
 2. Launch:
 ```bash

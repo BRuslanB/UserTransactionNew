@@ -1,13 +1,13 @@
 # general settings
 server:
-  port: 8080
+  port: ${SERVER_PORT} # 8000
 
 spring:
-  # additional DataSource Configuration for PostgreSQL
+  # DataSource Configuration for PostgreSQL
   datasource:
-    url: jdbc:postgresql://localhost:5432/transaction_db
-    username: postgres
-    password: postgres
+    url: ${SPRING_DATASOURCE_URL} # jdbc:postgresql://db_postgres:5432/transaction_db
+    username: ${SPRING_DATASOURCE_USERNAME} # postgres
+    password: ${SPRING_DATASOURCE_PASSWORD} # postgres
   jpa:
     show-sql: true
     hibernate:
@@ -18,20 +18,17 @@ spring:
         hibernate.jdbc.time_zone: UTC
   # migration settings
   flyway:
-    enabled: false # true
+    enabled: true
     locations: classpath:db/migration
     clean-disabled: false
     baseline-on-migrate: true
   resources:
     static-locations: classpath:/resources/,classpath:/static/,classpath:/public/,classpath:/resources/graphql/
 
-graphql:
-  timeoutMillis: 300000 # for debugging
-
 # logging setting
 logging:
   level:
-    root: INFO #ERROR
+    root: ERROR
     lab.solva.user.transaction: DEBUG
     org.springframework.boot.autoconfigure.logging: WARN
     org.springframework.boot.autoconfigure.cassandra: DEBUG
