@@ -5,7 +5,7 @@ server:
 spring:
   # DataSource Configuration for PostgreSQL
   datasource:
-    url: ${SPRING_DATASOURCE_URL} # jdbc:postgresql://db_postgres:5432/transaction_db
+    url: ${SPRING_DATASOURCE_URL} # jdbc:postgresql://db_postgres:5432/transaction_new_db
     username: ${SPRING_DATASOURCE_USERNAME} # postgres
     password: ${SPRING_DATASOURCE_PASSWORD} # postgres
   jpa:

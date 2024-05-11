@@ -1,6 +1,7 @@
-# User Transaction Service
-This Java-based service is backed by a REST API for storing and processing expense transactions, as well as setting custom spending limits.
-Note. This custom transaction service was created as a test task for an internship at one of the IT companies.
+# User Transaction Service (version 2)
+This Java-based service for storing and processing spending transactions and setting custom spending limits.
+
+Note: This custom transaction service was created as a test task for an internship at one of the IT companies. For experimental purposes, REST API services were grounded in GraphQL and a call to the gRPC method.
 
 ## Features
 The User Transaction Service allows you to process two subtypes of services (banking and user):
@@ -25,14 +26,13 @@ The User Transaction Service is built using the following technologies:
 * Cassandra NoSql
 * FlyWay
 * Log4j2
-* Swagger
 * JUnit
 * H2
 
 ## Prerequisites
 Before running the Service, you will need to have the following software installed on your machine:
 
-* Java Development Kit (JDK) 17 or higher
+* Java Development Kit (JDK) 21 or higher
 * Docker
 
 ## Getting Started
