@@ -72,12 +72,10 @@ else
 fi
 
 if [ -n "$CASSANDRA_LISTEN_ADDRESS" ]; then
-#   sed -i -e "s/^listen_address: .*/listen_address: $CURRENT_IP/" /etc/cassandra/cassandra.yaml
     sed -i -e "s/^listen_address: .*/listen_address: $CASSANDRA_LISTEN_ADDRESS/" /etc/cassandra/cassandra.yaml
 fi
 
 if [ -n "$CASSANDRA_BROADCAST_ADDRESS" ]; then
-#   sed -i -e "s/^# broadcast_address: .*/broadcast_address: $CURRENT_IP/" /etc/cassandra/cassandra.yaml
     sed -i -e "s/^# broadcast_address: .*/broadcast_address: $CASSANDRA_BROADCAST_ADDRESS/" /etc/cassandra/cassandra.yaml
 fi
 
@@ -86,7 +84,6 @@ if [ -n "$CASSANDRA_RPC_ADDRESS" ]; then
 fi
 
 if [ -n "$CASSANDRA_BROADCAST_RPC_ADDRESS" ]; then
-#   sed -i -e "s/^# broadcast_rpc_address: .*/broadcast_rpc_address: $CURRENT_IP/" /etc/cassandra/cassandra.yaml
     sed -i -e "s/^# broadcast_rpc_address: .*/broadcast_rpc_address: $CASSANDRA_BROADCAST_RPC_ADDRESS/" /etc/cassandra/cassandra.yaml
 fi
 
