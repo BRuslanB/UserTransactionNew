@@ -5,8 +5,8 @@ server:
 spring:
   # DataSource Configuration for PostgreSQL
   datasource:
-#    url: jdbc:postgresql://localhost:5432/transaction_db # for use local PostgreSQL
-    url: jdbc:postgresql://localhost:5440/transaction_db # for use PostgreSQL container
+#    url: jdbc:postgresql://localhost:5432/transaction_new_db # for use local PostgreSQL
+    url: jdbc:postgresql://localhost:5440/transaction_new_db # for use PostgreSQL container
     username: postgres
     password: postgres
   jpa:
