@@ -3,6 +3,7 @@ package lab.solva.user.transaction.service;
 import io.grpc.stub.StreamObserver;
 import lab.solva.user.transaction.ExchangeInfoRequest;
 import lab.solva.user.transaction.ExchangeInfoResponse;
+import lab.solva.user.transaction.enumeration.CurrencyType;
 
 import java.util.Map;
 
@@ -12,5 +13,5 @@ public interface ExchangeService {
     void gettingRates(ExchangeInfoRequest request, StreamObserver<ExchangeInfoResponse> responseObserver);
 
     // Receiving all exchange rates for the latest date from the database
-    Map<String, Double> gettingRates();
+    Map<CurrencyType, Double> gettingRates();
 }

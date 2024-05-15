@@ -1,5 +1,6 @@
 package lab.solva.user.transaction.model;
 
+import lab.solva.user.transaction.enumeration.CurrencyType;
 import org.springframework.data.cassandra.core.cql.PrimaryKeyType;
 import org.springframework.data.cassandra.core.mapping.Column;
 import org.springframework.data.cassandra.core.mapping.PrimaryKeyColumn;
@@ -29,5 +30,5 @@ public class ExchangeInfoRateEntity {
     private String resource;
 
     @Column(value = "exchange_rates")
-    private Map<String, Double> exchangeRates; // currencyCode -> exchangeRate
+    private Map<CurrencyType, Double> exchangeRates; // currencyCode -> exchangeRate
 }
