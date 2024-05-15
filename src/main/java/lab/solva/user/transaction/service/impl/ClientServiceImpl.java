@@ -24,6 +24,7 @@ import java.util.List;
 public class ClientServiceImpl implements ClientService {
 
     private final AmountLimitRepository amountLimitRepository;
+
     private final ExpenseTransactionRepository expenseTransactionRepository;
 
     @Override

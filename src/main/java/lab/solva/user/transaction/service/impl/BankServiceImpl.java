@@ -17,10 +17,11 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @Service
 @RequiredArgsConstructor
@@ -31,7 +32,9 @@ public class BankServiceImpl implements BankService {
     private final static String DEFAULT_LIMIT_CURRENCY_CODE = CurrencyType.USD.name();
 
     private final ExpenseTransactionRepository expenseTransactionRepository;
+
     private final AmountLimitRepository amountLimitRepository;
+
     private final ExchangeService exchangeService;
 
     @Override
@@ -96,126 +99,79 @@ public class BankServiceImpl implements BankService {
     }
 
     protected boolean getLimitExceeded(String accountClient, String expenseCategory, String currencyCode,
-                                     double currentTransactionSum) {
-
-        // Limit amount for the current month
-        double currentLimit;
-
-        // The total amount of all transactions for the month, converted into the limit currency
-        double sumTransactionResult = 0.0;
+                                       double currentTransactionSum) {
 
         // Getting the current month and year
         LocalDateTime currentDateTime = LocalDateTime.now();
         int currentMonth = currentDateTime.getMonthValue();
         int currentYear = currentDateTime.getYear();
 
-        // Calculation of the amount of all transactions for a month for each currency
-        double sumTransactionKZT = expenseTransactionRepository.calcTransactionSum(
-                accountClient, expenseCategory, CurrencyType.KZT.name(), currentMonth, currentYear);
-        double sumTransactionUSD = expenseTransactionRepository.calcTransactionSum(
-                accountClient, expenseCategory, CurrencyType.USD.name(), currentMonth, currentYear);
-        double sumTransactionEUR = expenseTransactionRepository.calcTransactionSum(
-                accountClient, expenseCategory, CurrencyType.EUR.name(), currentMonth, currentYear);
-        double sumTransactionRUB = expenseTransactionRepository.calcTransactionSum(
-                accountClient, expenseCategory, CurrencyType.RUB.name(), currentMonth, currentYear);
-
-        // Adding the current transaction amount to a specific amount
-        switch (CurrencyType.valueOf(currencyCode)) {
-            case KZT -> sumTransactionKZT += currentTransactionSum;
-            case USD -> sumTransactionUSD += currentTransactionSum;
-            case EUR -> sumTransactionEUR += currentTransactionSum;
-            case RUB -> sumTransactionRUB += currentTransactionSum;
-
-            // Other cases for other types of currencies (if necessary)
-
-            default -> {
-                // An unknown type of currency was received that is not in the database
-                log.error("!Invalid value, received an unknown Currency Code, " +
-                        "accountClient={}, currencyCode={}", accountClient, currencyCode);
-                return false;
-            }
-        }
-
-        // Getting the current exchange rate from the database
-        Map<String, Double> exchangeRateMap = exchangeService.gettingRates();
-
         // Getting the limit from the database
         AmountLimitEntity amountLimitEntity = getAmountLimit(accountClient, expenseCategory);
-        if (amountLimitEntity != null) {
-            currentLimit = amountLimitEntity.getLimitSum();
-            String limitCurrencyCode = amountLimitEntity.getLimitCurrencyCode();
-
-            // Converting all transaction amounts to the Currency Code of the set limit
-            switch (CurrencyType.valueOf(limitCurrencyCode)) {
-                case KZT -> {
-                    sumTransactionResult = sumTransactionKZT;
-                    if (exchangeRateMap.get(CurrencyType.USD.name()) != null) {
-                        sumTransactionResult += sumTransactionUSD * exchangeRateMap.get(CurrencyType.USD.name());
-                    }
-                    if (exchangeRateMap.get(CurrencyType.EUR.name()) != null) {
-                        sumTransactionResult += sumTransactionEUR * exchangeRateMap.get(CurrencyType.EUR.name());
-                    }
-                    if (exchangeRateMap.get(CurrencyType.RUB.name()) != null) {
-                        sumTransactionResult += sumTransactionRUB * exchangeRateMap.get(CurrencyType.RUB.name());
-                    }
-                }
-                case USD -> {
-                    sumTransactionResult = sumTransactionUSD;
-                    if (exchangeRateMap.get(CurrencyType.USD.name()) != null) {
-                        sumTransactionResult += sumTransactionKZT / exchangeRateMap.get(CurrencyType.USD.name());
-                    }
-                    if (exchangeRateMap.get(CurrencyType.EUR.name()) != null &&
-                            exchangeRateMap.get(CurrencyType.USD.name()) != null) {
-                        sumTransactionResult += sumTransactionEUR *
-                                (exchangeRateMap.get(CurrencyType.EUR.name()) / exchangeRateMap.get(CurrencyType.USD.name()));
-                    }
-                    if (exchangeRateMap.get(CurrencyType.RUB.name()) != null &&
-                            exchangeRateMap.get(CurrencyType.USD.name()) != null) {
-                        sumTransactionResult += sumTransactionRUB *
-                                (exchangeRateMap.get(CurrencyType.RUB.name()) / exchangeRateMap.get(CurrencyType.USD.name()));
-                    }
-                }
-                case EUR -> {
-                    sumTransactionResult = sumTransactionEUR;
-                    if (exchangeRateMap.get(CurrencyType.EUR.name()) != null) {
-                        sumTransactionResult += sumTransactionKZT / exchangeRateMap.get(CurrencyType.EUR.name());
-                    }
-                    if (exchangeRateMap.get(CurrencyType.USD.name()) != null &&
-                            exchangeRateMap.get(CurrencyType.EUR.name()) != null) {
-                        sumTransactionResult += sumTransactionUSD *
-                                (exchangeRateMap.get(CurrencyType.USD.name()) / exchangeRateMap.get(CurrencyType.EUR.name()));
-                    }
-                    if (exchangeRateMap.get(CurrencyType.RUB.name()) != null &&
-                            exchangeRateMap.get(CurrencyType.EUR.name()) != null) {
-                        sumTransactionResult += sumTransactionRUB *
-                                (exchangeRateMap.get(CurrencyType.RUB.name()) / exchangeRateMap.get(CurrencyType.EUR.name()));
-                    }
-                }
-                case RUB -> {
-                    sumTransactionResult = sumTransactionRUB;
-                    if (exchangeRateMap.get(CurrencyType.RUB.name()) != null) {
-                        sumTransactionResult += sumTransactionKZT / exchangeRateMap.get(CurrencyType.RUB.name());
-                    }
-                    if (exchangeRateMap.get(CurrencyType.USD.name()) != null &&
-                            exchangeRateMap.get(CurrencyType.RUB.name()) != null) {
-                        sumTransactionResult += sumTransactionUSD *
-                                (exchangeRateMap.get(CurrencyType.USD.name()) / exchangeRateMap.get(CurrencyType.RUB.name()));
-                    }
-                    if (exchangeRateMap.get(CurrencyType.EUR.name()) != null &&
-                            exchangeRateMap.get(CurrencyType.RUB.name()) != null) {
-                        sumTransactionResult += sumTransactionEUR *
-                                (exchangeRateMap.get(CurrencyType.EUR.name()) / exchangeRateMap.get(CurrencyType.RUB.name()));
-                    }
-                }
-
-                // Other cases for other types of currencies (if necessary)
-            }
-        } else {
+        if (amountLimitEntity == null) {
             log.error("!Attention, Limit is not set and not received from the Database, " +
                     "accountClient={}, expenseCategory={}", accountClient, expenseCategory);
-
             return false;
         }
+
+        double currentLimit = amountLimitEntity.getLimitSum();
+        String limitCurrencyCode = amountLimitEntity.getLimitCurrencyCode();
+
+        // Creating a map to hold the results for each currency
+        Map<CurrencyType, Double> sumTransactionsMap = new ConcurrentHashMap<>();
+
+        // Getting the current exchange rate from the database
+        Map<CurrencyType, Double> exchangeRateMap = exchangeService.gettingRates();
+
+        // Create ExecutorService with try-with-resources statement
+        try (ExecutorService executor = Executors.newFixedThreadPool(4)) {
+            List<Callable<Void>> tasks = new ArrayList<>();
+
+            // Creating tasks to calculate the transaction sums for each currency
+            for (CurrencyType currency : CurrencyType.values()) {
+                tasks.add(() -> {
+                    double sumTransaction = expenseTransactionRepository.calcTransactionSum(
+                            accountClient, expenseCategory, currency.name(), currentMonth, currentYear);
+                    sumTransactionsMap.put(currency, sumTransaction);
+                    return null;
+                });
+            }
+
+            // Execute all tasks in parallel for each CurrencyType.values()
+            executor.invokeAll(tasks);
+
+        } catch (InterruptedException e) {
+
+            log.error("Error occurred while executing tasks: {}", e.getMessage());
+            Thread.currentThread().interrupt();
+            return false;
+        }
+
+        // Calculate the sumTransactionResult using the map
+        double sumTransactionResult = sumTransactionsMap.entrySet().parallelStream()
+                .mapToDouble(entry -> {
+                    CurrencyType currencyType = entry.getKey();
+                    double sumTransaction = entry.getValue();
+
+                    // Add the initial transaction sum for the current currency
+                    if (currencyType == CurrencyType.valueOf(currencyCode)) {
+                        sumTransaction += currentTransactionSum;
+                    }
+
+                    // Converting the sumTransaction to the limitCurrencyCode
+                    if (!CurrencyType.valueOf(limitCurrencyCode).equals(currencyType)) {
+                        double exchangeRate = exchangeRateMap.getOrDefault(currencyType, 1.0);
+
+                        if (!CurrencyType.valueOf(limitCurrencyCode).equals(CurrencyType.KZT)) {
+                            exchangeRate /= exchangeRateMap.getOrDefault(
+                                    CurrencyType.valueOf(limitCurrencyCode), 1.0);
+                        }
+                        sumTransaction *= exchangeRate;
+                    }
+                    return sumTransaction;
+
+                })
+                .sum();
 
         return currentLimit < sumTransactionResult;
     }

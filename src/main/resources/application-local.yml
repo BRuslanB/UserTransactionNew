@@ -5,8 +5,8 @@ server:
 spring:
   # DataSource Configuration for PostgreSQL
   datasource:
-#    url: jdbc:postgresql://localhost:5432/transaction_new_db # for use local PostgreSQL
-    url: jdbc:postgresql://localhost:5440/transaction_new_db # for use PostgreSQL container
+    url: jdbc:postgresql://localhost:5432/transaction_new_db # for use local PostgreSQL
+    #    url: jdbc:postgresql://localhost:5440/transaction_new_db # for use PostgreSQL container
     username: postgres
     password: postgres
   jpa:
@@ -19,7 +19,7 @@ spring:
         hibernate.jdbc.time_zone: UTC
   # migration settings
   flyway:
-    enabled: false # for local application launch
+    enabled: true # false # for local application launch
     locations: classpath:db/migration
     clean-disabled: false
     baseline-on-migrate: true
@@ -39,7 +39,8 @@ CASSANDRA_BROADCAST_RPC_ADDRESS: db_cassandra
 
 # graphql settings
 graphql:
-  timeoutMillis: 300000 # for debugging
+  servlet:
+    request-timeout: 300s # for debugging
 
 # logging setting
 logging:

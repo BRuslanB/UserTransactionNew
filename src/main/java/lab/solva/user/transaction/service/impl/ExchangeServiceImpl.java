@@ -26,6 +26,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 @RequiredArgsConstructor
@@ -102,7 +103,7 @@ public class ExchangeServiceImpl implements ExchangeService {
     }
 
     @Override
-    public Map<String, Double> gettingRates() {
+    public Map<CurrencyType, Double> gettingRates() {
 
         // Getting the current date
         LocalDate currentDate = LocalDate.now();
@@ -175,7 +176,7 @@ public class ExchangeServiceImpl implements ExchangeService {
             Element rootElement = document.getDocumentElement();
 
             NodeList item = document.getElementsByTagName("item");
-            Map<String, Double> exchangeRateMap = parseExchangeRates(item);
+            Map<CurrencyType, Double> exchangeRateMap = parseExchangeRates(item);
 
             // Saving data from an external service in the database
             try {
@@ -246,9 +247,9 @@ public class ExchangeServiceImpl implements ExchangeService {
         return null;
     }
 
-    private Map<String, Double> parseExchangeRates(NodeList item) {
+    private Map<CurrencyType, Double> parseExchangeRates(NodeList item) {
 
-        Map<String, Double> exchangeRateMap = new HashMap<>();
+        Map<CurrencyType, Double> exchangeRateMap = new ConcurrentHashMap<>();
 
         try {
             for (int i = 0; i < item.getLength(); i++) {
@@ -256,14 +257,19 @@ public class ExchangeServiceImpl implements ExchangeService {
                 String title = getTextContent(itemElement, "title");
 
                 // Selection of required currencies for storing them in the database
-                if (CurrencyType.USD.name().equals(title)||
-                    CurrencyType.EUR.name().equals(title)||
-                    CurrencyType.RUB.name().equals(title)) {
-                    double description = Double.parseDouble(Objects.requireNonNull(
-                            getTextContent(itemElement, "description")));
+                Arrays.stream(CurrencyType.values())
+                        .parallel() // enable parallel stream
+                        .forEach(currencyType -> {
+                            if (currencyType.name().equals(title)) {
+                                double description = Double.parseDouble(
+                                        Objects.requireNonNull(getTextContent(itemElement, "description")));
+                                int quant = Integer.parseInt(
+                                        Objects.requireNonNull(getTextContent(itemElement, "quant")));
+                                double rate = description / quant;
 
-                    exchangeRateMap.put(title, description);
-                }
+                                exchangeRateMap.put(currencyType, rate);
+                            }
+                        });
             }
 
         } catch (Exception e) {
@@ -289,7 +295,7 @@ public class ExchangeServiceImpl implements ExchangeService {
 
     private ExchangeInfoProto convertToExchangeInfoProto(ExchangeInfoRateEntity exchangeInfoRateEntity) {
 
-        Map<String, Double> exchangeRates = exchangeInfoRateEntity.getExchangeRates();
+        Map<CurrencyType, Double> exchangeRates = exchangeInfoRateEntity.getExchangeRates();
 
         ExchangeInfoProto.Builder builder = ExchangeInfoProto.newBuilder()
                 .setResource(exchangeInfoRateEntity.getResource())
@@ -297,8 +303,8 @@ public class ExchangeServiceImpl implements ExchangeService {
                 .setRequestDate(exchangeInfoRateEntity.getRequestDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
 
         // Create list of object ExchangeRateProto foreach key-value in Map
-        for (Map.Entry<String, Double> entry : exchangeRates.entrySet()) {
-            String currencyCode = entry.getKey();
+        for (Map.Entry<CurrencyType, Double> entry : exchangeRates.entrySet()) {
+            String currencyCode = String.valueOf(entry.getKey());
             Double exchangeRate = entry.getValue();
             ExchangeRateProto exchangeRateProto = ExchangeRateProto.newBuilder()
                     .setCurrencyCode(currencyCode)
