@@ -17,7 +17,10 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
@@ -78,10 +81,13 @@ public class BankServiceImpl implements BankService {
                 return null;
             }
 
+            // Getting the current exchange rate from the database
+            Map<CurrencyType, Double> exchangeRateMap = exchangeService.gettingRates();
+
             // Calculating the value for the limitExceeded field
             expenseTransactionEntity.setLimitExceeded(getLimitExceeded(expenseTransactionDto.account_from,
                     expenseTransactionDto.expense_category, expenseTransactionDto.currency_shortname,
-                    expenseTransactionDto.sum));
+                    expenseTransactionDto.sum, exchangeRateMap));
 
             // Saving a reference to the parent Entity
             expenseTransactionEntity.setAmountLimitEntity(getAmountLimit(expenseTransactionDto.account_from,
@@ -99,7 +105,7 @@ public class BankServiceImpl implements BankService {
     }
 
     protected boolean getLimitExceeded(String accountClient, String expenseCategory, String currencyCode,
-                                       double currentTransactionSum) {
+                                       double currentTransactionSum, Map<CurrencyType, Double> exchangeRateMap) {
 
         // Getting the current month and year
         LocalDateTime currentDateTime = LocalDateTime.now();
@@ -117,32 +123,39 @@ public class BankServiceImpl implements BankService {
         double currentLimit = amountLimitEntity.getLimitSum();
         String limitCurrencyCode = amountLimitEntity.getLimitCurrencyCode();
 
+        log.info("!Amount Limit when limitCurrencyCode={} and currentLimit={}", limitCurrencyCode, currentLimit);
+
         // Creating a map to hold the results for each currency
         Map<CurrencyType, Double> sumTransactionsMap = new ConcurrentHashMap<>();
 
-        // Getting the current exchange rate from the database
-        Map<CurrencyType, Double> exchangeRateMap = exchangeService.gettingRates();
-
         // Create ExecutorService with try-with-resources statement
-        try (ExecutorService executor = Executors.newFixedThreadPool(4)) {
+        int maxThreads = 10;  // maximum number of threads, can be changed
+        int threadPoolSize = Math.min(CurrencyType.values().length, maxThreads);
+
+        try (ExecutorService executor = Executors.newFixedThreadPool(threadPoolSize)) {
             List<Callable<Void>> tasks = new ArrayList<>();
 
             // Creating tasks to calculate the transaction sums for each currency
             for (CurrencyType currency : CurrencyType.values()) {
                 tasks.add(() -> {
+                    log.info("!Task for currency {} started", currency.name());
+
                     double sumTransaction = expenseTransactionRepository.calcTransactionSum(
                             accountClient, expenseCategory, currency.name(), currentMonth, currentYear);
-                    sumTransactionsMap.put(currency, sumTransaction);
+
+                    log.info("!Task for currency {} completed. Result: {}", currency.name(), sumTransaction);
+
+                    synchronized (sumTransactionsMap) {
+                        sumTransactionsMap.put(currency, sumTransaction);
+                    }
                     return null;
                 });
             }
-
             // Execute all tasks in parallel for each CurrencyType.values()
             executor.invokeAll(tasks);
 
         } catch (InterruptedException e) {
-
-            log.error("Error occurred while executing tasks: {}", e.getMessage());
+            log.error("!Error occurred while executing tasks: {}", e.getMessage());
             Thread.currentThread().interrupt();
             return false;
         }
@@ -156,6 +169,9 @@ public class BankServiceImpl implements BankService {
                     // Add the initial transaction sum for the current currency
                     if (currencyType == CurrencyType.valueOf(currencyCode)) {
                         sumTransaction += currentTransactionSum;
+
+                        log.info("!Added currentTransactionSum={} for currencyType={}, now sumTransaction={}",
+                                currentTransactionSum, currencyType, sumTransaction);
                     }
 
                     // Converting the sumTransaction to the limitCurrencyCode

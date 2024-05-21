@@ -16,10 +16,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -160,7 +157,7 @@ public class ClientServiceImplTest {
 
     // Method for create object of AmountLimitEntity
     private AmountLimitEntity createAmountLimitEntity(String account_from, double limit_sum,
-               String limit_currency_shortname, String expense_category, ZonedDateTime limit_datetime) {
+                                                      String limit_currency_shortname, String expense_category, ZonedDateTime limit_datetime) {
 
         AmountLimitEntity amountLimitEntity = new AmountLimitEntity();
 
@@ -177,8 +174,8 @@ public class ClientServiceImplTest {
 
     // Method for create object of ExpenseTransactionEntity
     private ExpenseTransactionEntity createExpenseTransactionEntity(String account_client, String account_counterparty,
-                            String currency_code, double transaction_sum, String expense_category,
-                            String transaction_date, boolean limit_exceeded, AmountLimitEntity amount_limit) {
+                                                                    String currency_code, double transaction_sum, String expense_category,
+                                                                    String transaction_date, boolean limit_exceeded, AmountLimitEntity amount_limit) {
 
         ExpenseTransactionEntity expenseTransactionEntity = new ExpenseTransactionEntity();
 
@@ -202,8 +199,10 @@ public class ClientServiceImplTest {
     }
 
     private TransactionExceededLimitDto createTransactionExceededLimitDto(String accountClient,
-                                               String accountCounterparty, String currencyCode, double transactionSum,
-                                               ZonedDateTime transactionDateTime, ZonedDateTime limitDateTime) {
+                                                                          String accountCounterparty, String currencyCode, double transactionSum,
+                                                                          ZonedDateTime transactionDateTime, ZonedDateTime limitDateTime) {
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX");
 
         TransactionExceededLimitDto transactionExceededLimitDto = new TransactionExceededLimitDto();
 
@@ -212,12 +211,12 @@ public class ClientServiceImplTest {
         transactionExceededLimitDto.currency_shortname = currencyCode;
         transactionExceededLimitDto.sum = transactionSum;
         transactionExceededLimitDto.expense_category = "Service";
-        transactionExceededLimitDto.datetime = transactionDateTime.withZoneSameInstant(ZoneId.systemDefault()).toString();
+        transactionExceededLimitDto.datetime = transactionDateTime.withZoneSameInstant(ZoneId.systemDefault()).format(formatter);
 
         // Limit is the same for all transactions
         transactionExceededLimitDto.limit_sum = 50000.0;
         transactionExceededLimitDto.limit_currency_shortname = "KZT";
-        transactionExceededLimitDto.limit_datetime = limitDateTime.withZoneSameInstant(ZoneId.systemDefault()).toString();
+        transactionExceededLimitDto.limit_datetime = limitDateTime.withZoneSameInstant(ZoneId.systemDefault()).format(formatter);
 
         return transactionExceededLimitDto;
     }
