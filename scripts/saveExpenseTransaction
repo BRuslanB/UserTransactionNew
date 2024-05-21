@@ -1,0 +1,19 @@
+Скрипт для проверки метода saveExpenseTransaction в Insomnia
+
+Ссылка для проверки:
+http://localhost:8080/graphql
+
+Создайте GraphQL request метод POST:
+{
+  "query": "mutation ($expenseTransactionDto: ExpenseTransactionDto!) { saveExpenseTransaction(expenseTransactionDto: $expenseTransactionDto) { id, accountClient, accountCounterparty, currencyCode, transactionSum, expenseCategory, transactionDateTime, limitExceeded, amountLimitEntity { id, accountClient, limitSum, limitDateTime, limitCurrencyCode, expenseCategory } } }",
+  "variables": {
+    "expenseTransactionDto": {
+      "account_from": "0000012345",
+      "account_to": "1200000000",
+      "currency_shortname": "USD",
+      "Sum": 100.0,
+      "expense_category": "Service",
+      "datetime": "2024-05-19T20:45:26+06:00"
+    }
+  }
+}

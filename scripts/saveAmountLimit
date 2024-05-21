@@ -1,0 +1,17 @@
+Script to test the saveAmountLimit method in Insomnia
+
+Check link:
+http://localhost:8080/graphql
+
+Create a GraphQL request POST method:
+{
+  "query": "mutation ($amountLimitDto: AmountLimitDto!) { saveAmountLimit(amountLimitDto: $amountLimitDto) { id, accountClient, limitSum, limitDateTime, limitCurrencyCode, expenseCategory } }",
+  "variables": {
+    "amountLimitDto": {
+      "account_from": "0000012345",
+      "limit_sum": 100.0,
+      "limit_currency_shortname": "EUR",
+      "expense_category": "Service"
+    }
+  }
+}

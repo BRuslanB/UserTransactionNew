@@ -1,0 +1,17 @@
+Script to test getAllAmountLimitDateByAccountClient method in Insomnia
+
+Check link:
+http://localhost:8080/graphql
+
+Create a GraphQL request POST method:
+{
+  "query": "query {
+    getAllAmountLimitDateByAccountClient(accountClient: \"0000012345\") {
+      account_from,
+      limit_sum,
+      limit_currency_shortname,
+      expense_category,
+      limit_datetime
+    }
+  }"
+}
