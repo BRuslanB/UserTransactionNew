@@ -1,0 +1,21 @@
+Скрипт для проверки метода getAllTransactionExceededLimitByAccountClient в Insomnia
+
+Ссылка для проверки:
+http://localhost:8080/graphql
+
+Создайте GraphQL request метод POST:
+{
+  "query": "query {
+    getAllTransactionExceededLimitByAccountClient(accountClient: \"0000012345\") {
+      account_from,
+      account_to,
+      currency_shortname,
+      Sum,
+      expense_category,
+      datetime,
+      limit_sum,
+      limit_datetime,
+      limit_currency_shortname
+    }
+  }"
+}

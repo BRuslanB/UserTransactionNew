@@ -1,0 +1,7 @@
+Script to check gRPC method gettingRates in Insomnia
+You must first download ExchangeInfo.proto (UserTransactionNew\src\main\proto)
+
+Check link:
+localhost:9090/ExchangeService/gettingRates
+
+Create a gRPC request.
