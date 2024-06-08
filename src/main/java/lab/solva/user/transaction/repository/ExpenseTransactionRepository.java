@@ -38,10 +38,4 @@ public interface ExpenseTransactionRepository extends JpaRepository<ExpenseTrans
                 "AND c.currencyCode = :currencyCode " +
                 "AND MONTH(c.transactionDateTime) = :month AND YEAR(c.transactionDateTime) = :year")
     double calcTransactionSum(String accountClient, String expenseCategory, String currencyCode, int month, int year);
-//    double calcTransactionSum(String accountClient, String expenseCategory, String currencyCode, int month, int year) {
-//        log.info("Вызван метод calcTransactionSum с параметрами: " +
-//                        "accountClient={}, expenseCategory={}, currencyCode={}, month={}, year={}",
-//                accountClient, expenseCategory, currencyCode, month, year);
-//        // Остальной код метода...
-//    };
 }

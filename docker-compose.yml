@@ -18,12 +18,16 @@ services:
       - '9043:9042'
     volumes:
       - ./data/cassandra:/var/lib/cassandra
+    healthcheck:
+      test: ["CMD-SHELL", "cqlsh db_cassandra 9042 -e 'describe keyspaces;'"]
+      interval: 10s
+      timeout: 20s
+      retries: 10
 
   db_postgres:
     build:
       context: .
       dockerfile: docker_postgres/Dockerfile
-#    image: 'my-postgres-image'
     image: 'postgres:alpine'
     container_name: db-pg-sql-server-container
     environment:
@@ -33,19 +37,26 @@ services:
     ports:
       - '5440:5432'
     volumes:
+      - ./docker_postgres/init_test_db.sh:/docker-entrypoint-initdb.d/init_test_db.sh
       - ./data/postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
   app:
     build:
       context: .
       dockerfile: docker_app/Dockerfile
     image: 'app-user-transaction-new-image'
-#    image: 'bruslanb/app-user-transaction-image:2.0.1'
     container_name: app-user-transaction-new-container
     user: '1001:1001' # Specify the UID and GID of the user you want to run the container as
     depends_on:
-      - db_cassandra
-      - db_postgres
+      db_cassandra:
+        condition: service_healthy
+      db_postgres:
+        condition: service_healthy
     environment:
       - SERVER_PORT=8000
       - SPRING_DATASOURCE_URL=jdbc:postgresql://db_postgres:5432/transaction_new_db

@@ -1,12 +1,9 @@
 #!/usr/bin/env bash
-##
+
 ## This script will generate a patched docker-entrypoint.sh that:
 ## - executes any *.sh script found in /docker-entrypoint-initdb.d
 ## - boots cassandra up
 ## - executes any *.cql script found in docker-entrypoint-initdb.d
-##
-## It is compatible with any cassandra:* image
-##
 
 set -e
 

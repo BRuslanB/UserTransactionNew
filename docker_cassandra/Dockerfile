@@ -8,7 +8,7 @@ ENV LANG C.UTF-8
 COPY ../src/main/resources/cassandra/init_script.cql /docker-entrypoint-initdb.d/init_script.cql
 
 # This is the script that will patch the already existing entrypoint from cassandra image
-COPY ../src/main/resources/cassandra/entrypoint.sh /
+COPY ../docker_cassandra/entrypoint.sh /
 
 # Adding a chmod command after the copy command
 RUN ["chmod", "+x", "/entrypoint.sh"]

@@ -15,6 +15,7 @@ import org.springframework.data.cassandra.core.mapping.CassandraMappingContext;
 import org.springframework.data.cassandra.core.mapping.SimpleUserTypeResolver;
 
 @Configuration
+//@ConditionalOnProperty(name = "spring.data.cassandra.enabled", havingValue = "true", matchIfMissing = true)
 public class CassandraConfig {
 
     @Value("${CASSANDRA_CONTACT_POINTS}")

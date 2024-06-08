@@ -1,11 +1,19 @@
-# ---_---------------- Spring settings ------------------
+#---------------------- Spring settings ------------------
 spring:
-  #--------------------- DB Connection ------------------
+  config:
+    activate:
+      on-profile: test
+  #------------------- Cassandra Connection --------------
+  data:
+    cassandra:
+      enabled: false
+  #------------------- PostgreSQL DB Connection -----------
   datasource:
-    url: jdbc:h2:mem:testdb;DB_CLOSE_ON_EXIT=FALSE
-    username: sa
-    password: sa
-    driver-class-name: org.h2.Driver
+    url: jdbc:postgresql://db_postgres:5432/transaction_new_db_test
+#    url: jdbc:postgresql://localhost:5432/transaction_new_db_test # for use local PostgreSQL
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
   #----------------------- Migration ---------------------
   flyway:
     enabled: false
@@ -16,8 +24,15 @@ spring:
       ddl-auto: create-drop
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.H2Dialect
+        dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
+
+#---- Environment variables for CassandraConfig class ----
+SERVER_PORT: 8000 # 8080 # for local application launch
+CASSANDRA_CONTACT_POINTS: 127.0.0.1
+CASSANDRA_KEYSPACE: test_keyspace
+CASSANDRA_LOCAL_DATACENTER: datacenter1
+CASSANDRA_PORT: 9042 # 9043  # for local application launch but with use Cassandra container
 
 #--------------------- Logging ------------------
 logging:

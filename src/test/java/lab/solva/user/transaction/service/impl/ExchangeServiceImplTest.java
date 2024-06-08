@@ -12,9 +12,11 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -25,9 +27,6 @@ public class ExchangeServiceImplTest {
 
     @Autowired
     private ExchangeInfoRateRepository exchangeInfoRateRepository;
-
-    @Autowired
-    private ExchangeServiceImpl exchangeServiceImpl;
 
     @Test
     public void testGettingRates_ExistCurrentDate() {
