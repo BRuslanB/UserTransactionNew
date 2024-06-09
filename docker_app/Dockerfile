@@ -22,14 +22,14 @@ COPY --from=code /app/src /app/src
 COPY gradle ./gradle/
 COPY build.gradle settings.gradle ./
 COPY gradlew gradlew.bat ./
-COPY docker_app/wait-for-cassandra.sh ./
+COPY docker_app/wait-for-databases_ready.sh ./
 COPY docker_app/entrypoint.sh ./
 
 # Install netcat-openbsd for waiting script
 RUN apt-get update && apt-get install -y netcat-openbsd
 
 # Ensure the scripts are executable
-RUN chmod +x ./wait-for-cassandra.sh && chmod +x ./gradlew && chmod +x ./entrypoint.sh
+RUN chmod +x ./wait-for-databases_ready.sh && chmod +x ./gradlew && chmod +x ./entrypoint.sh
 
 # Create directory and change permissions access (e.g., 777)
 RUN chmod -R 777 /app

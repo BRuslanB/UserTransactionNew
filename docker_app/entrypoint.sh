@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Wait Cassandra and Postgres
-./wait-for-cassandra.sh
+./wait-for-databases_ready.sh
 
 # Launch tests
 ./gradlew test
