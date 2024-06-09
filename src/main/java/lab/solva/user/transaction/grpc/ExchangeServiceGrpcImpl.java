@@ -14,8 +14,6 @@ import net.devh.boot.grpc.server.service.GrpcService;
 @Log4j2
 public class ExchangeServiceGrpcImpl extends ExchangeServiceGrpc.ExchangeServiceImplBase {
 
-//    private final ExchangeService exchangeService;
-
     private final ExchangeServiceImpl exchangeServiceIml;
 
     @Override

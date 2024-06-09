@@ -28,24 +28,12 @@ COPY docker_app/entrypoint.sh ./
 # Install netcat-openbsd for waiting script
 RUN apt-get update && apt-get install -y netcat-openbsd
 
-# Ensure the script is executable
-#RUN chmod +x ./wait-for-cassandra.sh && chmod +x ./gradlew
-
 # Ensure the scripts are executable
 RUN chmod +x ./wait-for-cassandra.sh && chmod +x ./gradlew && chmod +x ./entrypoint.sh
 
 # Create directory and change permissions access (e.g., 777)
 RUN chmod -R 777 /app
 RUN mkdir -p /.gradle && chmod -R 777 /.gradle
-
-# Создайте том для .gradle внутри папки /app
-#VOLUME /app/.gradle
-
-# Delay before application launch
-#ENTRYPOINT ["./wait-for-cassandra.sh", "java", "-jar", "app.jar"]
-
-# Set the entrypoint to execute tests
-#ENTRYPOINT ["bash", "-c", "./gradlew test && ./wait-for-cassandra.sh java -jar app.jar"]
 
 # Set the entrypoint to execute the script
 ENTRYPOINT ["./entrypoint.sh"]

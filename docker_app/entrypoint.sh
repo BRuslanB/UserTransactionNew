@@ -3,9 +3,6 @@
 # Wait Cassandra and Postgres
 ./wait-for-cassandra.sh
 
-# Wait additional 30 sec
-#sleep 30
-
 # Launch tests
 ./gradlew test
 
