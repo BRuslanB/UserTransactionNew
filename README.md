@@ -1,8 +1,7 @@
 # User Transaction Service (version 2)
-This Java-based service for storing and processing spending transactions and setting custom spending limits.
+This backend Java-based service for storing and processing spending transactions and setting custom spending limits.
 
-Note: This custom transaction service was created as a test task for an internship at one of the IT companies. For experimental purposes, REST API services were grounded in GraphQL and a call to the gRPC method (You will find scripts for verification in the folder UserTransactionNew\scripts).
-
+Note: This custom transaction service was created as a test task for an internship at one of the IT companies. For experimental purposes, the REST API services were replaced with GraphQL and a call to the gRPC method (examples of scripts for checking can be found in the UserTransactionNew\scripts folder).
 
 ## Features
 The User Transaction Service allows you to process two subtypes of services (banking and user):

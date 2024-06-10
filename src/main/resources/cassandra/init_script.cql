@@ -1,3 +1,17 @@
+-- Create the test keyspace and table
+CREATE KEYSPACE IF NOT EXISTS test_keyspace WITH replication = {'class': 'SimpleStrategy', 'replication_factor': 1} AND durable_writes = true;
+
+USE test_keyspace;
+
+CREATE TABLE IF NOT EXISTS exchange_info_rate (
+    request_date DATE,
+    is_closed BOOLEAN,
+    resource TEXT,
+    exchange_rates MAP<Text, Double>,
+    PRIMARY KEY (request_date, is_closed)
+);
+
+-- Create the prod keyspace and table
 CREATE KEYSPACE IF NOT EXISTS my_keyspace WITH replication = {'class': 'SimpleStrategy', 'replication_factor': 1} AND durable_writes = true;
 
 USE my_keyspace;
@@ -10,6 +24,7 @@ CREATE TABLE IF NOT EXISTS exchange_info_rate (
     PRIMARY KEY (request_date, is_closed)
 );
 
+-- Insert to some records
 INSERT INTO exchange_info_rate (request_date, is_closed, resource, exchange_rates)
     VALUES ('2024-04-30', False, 'www.nationalbank.kz', {});
 

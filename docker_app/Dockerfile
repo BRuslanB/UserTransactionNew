@@ -1,26 +1,44 @@
 # Base layer with dependencies
-FROM openjdk:21 as base
+FROM openjdk:21-slim as base
 WORKDIR /app
-COPY ../gradle ./gradle/
-COPY ../build.gradle settings.gradle ./
-COPY ../gradlew gradlew.bat ./
-#RUN ./gradlew dependencies
+COPY gradle ./gradle/
+COPY build.gradle settings.gradle ./
+COPY gradlew gradlew.bat ./
+RUN chmod +x gradlew && ./gradlew dependencies
 
 # Layer with application code
 FROM base as code
-COPY ../src ./src/
-#RUN ./gradlew build
-
-# Layer with application resources and generated protobuf files
-FROM code as resources
-COPY ../src/main/resources/ ./resources/
-COPY ../build/libs/*.jar /app/build/libs/
-COPY ../build/generated/source/proto/main/java/ /app/generated/proto/
+WORKDIR /app
+COPY src ./src/
+# build app excluded test (-x test)
+RUN ./gradlew build -x test && ls -la build/libs && ls -la build/generated/source/proto/main/java/
 
 # Final layer with runtime environment
-FROM openjdk:21
+FROM openjdk:21-slim
 WORKDIR /app
-COPY --from=resources /app/build/libs/*.jar app.jar
+# Copy Base layer
+COPY --from=base /app/gradle ./gradle/
+COPY --from=base /app/build.gradle ./
+COPY --from=base /app/settings.gradle ./
+COPY --from=base /app/gradlew ./
+COPY --from=base /app/gradlew.bat ./
+# Copy Code layer
+COPY --from=code /app/build/libs/*.jar app.jar
+COPY --from=code /app/build/generated/source/proto/main/java/ /app/generated/proto/
+COPY --from=code /app/src /app/src
+# Copy scripts
+COPY docker_app/wait-for-databases_ready.sh ./
+COPY docker_app/entrypoint.sh ./
 
-# Delay befory application launch
-ENTRYPOINT ["sh", "-c", "sleep 180 && java -jar app.jar"]
+# Install netcat-openbsd for waiting script
+RUN apt-get update && apt-get install -y netcat-openbsd
+
+# Ensure the scripts are executable
+RUN chmod +x ./wait-for-databases_ready.sh && chmod +x ./gradlew && chmod +x ./entrypoint.sh
+
+# Create directory and change permissions access (e.g., 777)
+RUN chmod -R 777 /app
+RUN mkdir -p /.gradle && chmod -R 777 /.gradle
+
+# Set the entrypoint to execute the script
+ENTRYPOINT ["./entrypoint.sh"]

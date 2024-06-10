@@ -4,6 +4,7 @@ import com.datastax.oss.driver.api.core.CqlSession;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.cassandra.SessionFactory;
 import org.springframework.data.cassandra.config.CqlSessionFactoryBean;
 import org.springframework.data.cassandra.config.SessionFactoryFactoryBean;
@@ -15,6 +16,8 @@ import org.springframework.data.cassandra.core.mapping.CassandraMappingContext;
 import org.springframework.data.cassandra.core.mapping.SimpleUserTypeResolver;
 
 @Configuration
+@Profile({"default", "test"})
+@SuppressWarnings("unused")
 public class CassandraConfig {
 
     @Value("${CASSANDRA_CONTACT_POINTS}")

@@ -10,9 +10,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ActiveProfiles("test")
 @ExtendWith(SpringExtension.class)
 class UserTransactionNewApplicationTests {
-
 	@Test
 	void contextLoads() {
 	}
-
 }
