@@ -1,3 +1,8 @@
+# general settings
+server:
+  port: 8000
+#  port: 8080 # for local application launch
+
 #---------------------- Spring settings ------------------
 spring:
   config:
@@ -27,9 +32,8 @@ spring:
     enabled: false
 
 #---- Environment variables for CassandraConfig class ----
-SERVER_PORT: 8000
-#SERVER_PORT: 8080 # for local application launch
-CASSANDRA_CONTACT_POINTS: 127.0.0.1
+CASSANDRA_CONTACT_POINTS: db_cassandra
+#CASSANDRA_CONTACT_POINTS: localhost # 127.0.0.1 # for local application launch but with use Cassandra container
 CASSANDRA_KEYSPACE: test_keyspace
 CASSANDRA_LOCAL_DATACENTER: datacenter1
 CASSANDRA_PORT: 9042

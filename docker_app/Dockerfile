@@ -16,12 +16,17 @@ RUN ./gradlew build -x test && ls -la build/libs && ls -la build/generated/sourc
 # Final layer with runtime environment
 FROM openjdk:21-slim
 WORKDIR /app
+# Copy Base layer
+COPY --from=base /app/gradle ./gradle/
+COPY --from=base /app/build.gradle ./
+COPY --from=base /app/settings.gradle ./
+COPY --from=base /app/gradlew ./
+COPY --from=base /app/gradlew.bat ./
+# Copy Code layer
 COPY --from=code /app/build/libs/*.jar app.jar
 COPY --from=code /app/build/generated/source/proto/main/java/ /app/generated/proto/
 COPY --from=code /app/src /app/src
-COPY gradle ./gradle/
-COPY build.gradle settings.gradle ./
-COPY gradlew gradlew.bat ./
+# Copy scripts
 COPY docker_app/wait-for-databases_ready.sh ./
 COPY docker_app/entrypoint.sh ./
 
