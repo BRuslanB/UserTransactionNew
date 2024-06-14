@@ -20,4 +20,3 @@ CREATE TABLE t_expense_transaction (
     limit_exceeded BOOLEAN NOT NULL,
     amount_limit_id INT
 );
-
