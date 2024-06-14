@@ -2,8 +2,10 @@
 FROM openjdk:21-slim as base
 WORKDIR /app
 COPY gradle ./gradle/
-COPY build.gradle settings.gradle ./
-COPY gradlew gradlew.bat ./
+COPY build.gradle ./
+COPY settings.gradle ./
+COPY gradlew ./
+COPY gradlew.bat ./
 RUN chmod +x gradlew && ./gradlew dependencies
 
 # Layer with application code
