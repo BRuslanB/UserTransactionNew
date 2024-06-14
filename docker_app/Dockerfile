@@ -1,18 +1,25 @@
 # Base layer with dependencies
 FROM openjdk:21-slim as base
 WORKDIR /app
+# Copy gradle files
 COPY gradle ./gradle/
 COPY build.gradle ./
 COPY settings.gradle ./
 COPY gradlew ./
 COPY gradlew.bat ./
-RUN chmod +x gradlew && ./gradlew dependencies
+
+# Check the ending line (LF) in the gradlew file
+RUN sed -i 's/\r$//' gradlew
+
+# Execute the command to install dependencies
+RUN chmod +x ./gradlew && ./gradlew dependencies
 
 # Layer with application code
 FROM base as code
 WORKDIR /app
 COPY src ./src/
-# build app excluded test (-x test)
+
+# Build app excluded test (-x test)
 RUN ./gradlew build -x test && ls -la build/libs && ls -la build/generated/source/proto/main/java/
 
 # Final layer with runtime environment
@@ -31,6 +38,12 @@ COPY --from=code /app/src /app/src
 # Copy scripts
 COPY docker_app/wait-for-databases_ready.sh ./
 COPY docker_app/entrypoint.sh ./
+
+# Check the ending line (LF) in the wait-for-databases_ready.sh file
+RUN sed -i 's/\r$//' wait-for-databases_ready.sh
+
+# Check the ending line (LF) in the entrypoint.sh file
+RUN sed -i 's/\r$//' entrypoint.sh
 
 # Install netcat-openbsd for waiting script
 RUN apt-get update && apt-get install -y netcat-openbsd
