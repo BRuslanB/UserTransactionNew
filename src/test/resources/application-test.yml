@@ -1,6 +1,6 @@
 # general settings
 server:
-  port: 8000
+  port: ${SERVER_PORT} # 8000
 #  port: 8080 # for local application launch
 
 #---------------------- Spring settings ------------------

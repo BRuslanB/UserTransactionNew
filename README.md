@@ -27,7 +27,6 @@ The User Transaction Service is built using the following technologies:
 * FlyWay
 * Log4j2
 * JUnit
-* H2
 
 ## Prerequisites
 Before running the Service, you will need to have the following software installed on your machine:
@@ -44,7 +43,7 @@ git clone https://github.com/BRuslanB/UserTransactionNew.git
 ```
 2. Launch:
 ```bash
-docker-compose up -d
+docker-compose up -d --build
 ```
 
 ## Contributing
