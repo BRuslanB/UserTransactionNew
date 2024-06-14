@@ -7,7 +7,7 @@ services:
     image: 'cassandra-image'
     container_name: db-nosql-cassandra-server-container
     environment:
-#      - CASSANDRA_KEYSPACE=my_keyspace
+      - CASSANDRA_KEYSPACE=my_keyspace
       - CASSANDRA_LOCAL_DATACENTER=datacenter1
       - CASSANDRA_SEEDS= # it needs only IP-address
       - CASSANDRA_LISTEN_ADDRESS=db_cassandra
@@ -59,9 +59,6 @@ services:
         condition: service_healthy
     environment:
       - SERVER_PORT=8000
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db_postgres:5432/transaction_new_db
-      - SPRING_DATASOURCE_USERNAME=postgres
-      - SPRING_DATASOURCE_PASSWORD=postgres
     ports:
       - '8080:8000'
       - '9090:9090'
