@@ -4,7 +4,7 @@ services:
     # build:
     #   context: .
     #   dockerfile: docker_cassandra/Dockerfile
-    image: bruslanb/cassandra:latest
+    image: bruslanb/cassandra-image:latest
     container_name: db-nosql-cassandra-server-container
     environment:
       - CASSANDRA_KEYSPACE=my_keyspace
