@@ -1,10 +1,10 @@
 version: '3.9'
 services:
   db_cassandra:
-    build:
-      context: .
-      dockerfile: docker_cassandra/Dockerfile
-    image: 'cassandra-image'
+    # build:
+    #   context: .
+    #   dockerfile: docker_cassandra/Dockerfile
+    image: bruslanb/cassandra:latest
     container_name: db-nosql-cassandra-server-container
     environment:
       - CASSANDRA_KEYSPACE=my_keyspace
@@ -25,10 +25,10 @@ services:
       retries: 10
 
   db_postgres:
-    build:
-      context: .
-      dockerfile: docker_postgres/Dockerfile
-    image: 'postgres:alpine'
+    # build:
+    #   context: .
+    #   dockerfile: docker_postgres/Dockerfile
+    image: bruslanb/postgres:alpine
     container_name: db-pg-sql-server-container
     environment:
       POSTGRES_DB: transaction_new_db
@@ -45,10 +45,10 @@ services:
       retries: 5
 
   app:
-    build:
-      context: .
-      dockerfile: docker_app/Dockerfile
-    image: 'app-user-transaction-new-image'
+    # build:
+    #   context: .
+    #   dockerfile: docker_app/Dockerfile
+    image: bruslanb/app-user-transaction-new-image
     container_name: app-user-transaction-new-container
     user: '1001:1001' # Specify the UID and GID of the user you want to run the container as
     depends_on:

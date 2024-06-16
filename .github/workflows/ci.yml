@@ -44,5 +44,8 @@ jobs:
     - name: Run Docker Compose
       run: docker-compose up -d --build
 
+    - name: Run tests in the app container
+      run: docker exec app-user-transaction-new-container ./gradlew test      
+
     - name: Stop Docker Compose
       run: docker-compose down
