@@ -48,7 +48,7 @@ services:
     # build:
     #   context: .
     #   dockerfile: docker_app/Dockerfile
-    image: bruslanb/app-user-transaction-new-image
+    image: bruslanb/app-user-transaction-new-image:1.0.1
     container_name: app-user-transaction-new-container
     user: '1001:1001' # Specify the UID and GID of the user you want to run the container as
     depends_on:

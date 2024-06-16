@@ -28,8 +28,8 @@ jobs:
 
     - name: Build and push Cassandra image
       run: |
-        docker build -t bruslanb/cassandra-image -f docker_cassandra/Dockerfile .
-        docker push bruslanb/cassandra-image
+        docker build -t bruslanb/cassandra-image:latest -f docker_cassandra/Dockerfile .
+        docker push bruslanb/cassandra-image:latest
 
     - name: Build and push Postgres image
       run: |
@@ -38,8 +38,8 @@ jobs:
 
     - name: Build and push App image
       run: |
-        docker build -t bruslanb/app-user-transaction-new-image -f docker_app/Dockerfile .
-        docker push bruslanb/app-user-transaction-new-image
+        docker build -t bruslanb/app-user-transaction-new-image:1.0.1 -f docker_app/Dockerfile .
+        docker push bruslanb/app-user-transaction-new-image:1.0.1
 
     - name: Run Docker Compose
       run: docker-compose up -d --build
