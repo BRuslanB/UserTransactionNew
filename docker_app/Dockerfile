@@ -3,7 +3,7 @@ FROM openjdk:21-slim as base
 WORKDIR /app
 
 # Add user and group with specific UID and GID
-RUN groupadd -g 1001 myusergroup && useradd -u 1001 -g myuser
+RUN groupadd -g 1001 myusergroup && useradd -u 1001 -g myusergroup myuser
 
 # Copy gradle files
 COPY gradle ./gradle/
