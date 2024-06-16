@@ -61,7 +61,7 @@ RUN chmod +x ./wait-for-databases_ready.sh && chmod +x ./gradlew && chmod +x ./e
 
 # Create necessary directories and set permissions
 RUN mkdir -p /.gradle && chmod -R 777 /.gradle && chown -R myuser:myusergroup /.gradle
-RUN mkdir -p /.gradle && chmod -R 777 /home/myuser && chown -R myuser:myusergroup /home/myuser
+RUN mkdir -p /home/myuser && chmod -R 777 /home/myuser && chown -R myuser:myusergroup /home/myuser
 
 # Set permissions for /app directory
 RUN chown -R myuser:myusergroup /app && chmod -R 777 /app
