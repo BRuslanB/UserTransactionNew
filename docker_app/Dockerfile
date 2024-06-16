@@ -30,6 +30,9 @@ RUN ./gradlew build -x test && ls -la build/libs && ls -la build/generated/sourc
 FROM openjdk:21-slim
 WORKDIR /app
 
+# Add user and group with specific UID and GID
+RUN groupadd -g 1001 myusergroup && useradd -u 1001 -g myusergroup myuser
+
 # Copy base layer
 COPY --from=base /app/gradle ./gradle/
 COPY --from=base /app/build.gradle ./
