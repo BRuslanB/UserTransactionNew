@@ -44,14 +44,14 @@ jobs:
     - name: Run Docker Compose
       run: docker-compose up -d --build
 
-    - name: Change permissions for build directory
-      run: docker exec app-user-transaction-new-container chown -R 1001:1001 /app/build && chmod -R 777 /app/build
+    # - name: Change permissions for build directory
+    #   run: docker exec app-user-transaction-new-container chown -R 1001:1001 /app/build && chmod -R 777 /app/build
 
     - name: Run tests in the app container
       run: docker exec app-user-transaction-new-container ./gradlew test --stacktrace --info -Dorg.gradle.vfs.watch=true
 
-    - name: Restore permissions for build directory
-      run: docker exec app-user-transaction-new-container chown -R 1001:1001 /app/build && chmod -R 755 /app/build
+    # - name: Restore permissions for build directory
+    #   run: docker exec app-user-transaction-new-container chown -R 1001:1001 /app/build && chmod -R 755 /app/build
 
     - name: Stop Docker Compose
       run: docker-compose down

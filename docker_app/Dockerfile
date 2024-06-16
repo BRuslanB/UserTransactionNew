@@ -59,6 +59,9 @@ RUN apt-get update && apt-get install -y netcat-openbsd
 # Ensure scripts are executable
 RUN chmod +x ./wait-for-databases_ready.sh && chmod +x ./gradlew && chmod +x ./entrypoint.sh
 
+# Create necessary directories and set permissions
+RUN mkdir -p /.gradle && chmod -R 777 /.gradle && chown -R myuser:myusergroup /.gradle
+
 # Set permissions for /app directory
 RUN chown -R myuser:myusergroup /app && chmod -R 777 /app
 
