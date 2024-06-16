@@ -44,6 +44,3 @@ out/
 
 # File-txt format
 *.txt
-
-# Environment variables
-*.env
