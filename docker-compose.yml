@@ -4,7 +4,7 @@ services:
     # build:
     #   context: .
     #   dockerfile: docker_cassandra/Dockerfile
-    image: bruslanb/cassandra-image:latest
+    image: bruslanb/cassandra-image:latest # use image from git hub
     container_name: db-nosql-cassandra-server-container
     environment:
       - CASSANDRA_KEYSPACE=my_keyspace
@@ -28,7 +28,7 @@ services:
     # build:
     #   context: .
     #   dockerfile: docker_postgres/Dockerfile
-    image: bruslanb/postgres:alpine
+    image: bruslanb/postgres:alpine # use image from git hub
     container_name: db-pg-sql-server-container
     environment:
       POSTGRES_DB: transaction_new_db
@@ -48,9 +48,9 @@ services:
     # build:
     #   context: .
     #   dockerfile: docker_app/Dockerfile
-    image: bruslanb/app-user-transaction-new-image:1.0.1
+    image: bruslanb/app-user-transaction-new-image:1.0.1 # use image from git hub
     container_name: app-user-transaction-new-container
-    user: '1001:1001' # Specify the UID and GID of the user you want to run the container as
+    user: '1001:1001' # specify the UID and GID of the user you want to run the container as
     depends_on:
       db_cassandra:
         condition: service_healthy
@@ -61,3 +61,5 @@ services:
     ports:
       - '8080:8000'
       - '9090:9090'
+    volumes:
+      - ./build/test-results:/app/build/test-results      
