@@ -28,18 +28,18 @@ jobs:
 
     - name: Build and push Cassandra image
       run: |
-        docker build -t ${{ secrets.DOCKER_USERNAME }}/cassandra-image -f docker_cassandra/Dockerfile .
-        docker push ${{ secrets.DOCKER_USERNAME }}/cassandra-image
+        docker build -t bruslanb/cassandra-image -f docker_cassandra/Dockerfile .
+        docker push bruslanb/cassandra-image
 
     - name: Build and push Postgres image
       run: |
-        docker build -t ${{ secrets.DOCKER_USERNAME }}/postgres:alpine -f docker_postgres/Dockerfile .
-        docker push ${{ secrets.DOCKER_USERNAME }}/postgres:alpine
+        docker build -t bruslanb/postgres:alpine -f docker_postgres/Dockerfile .
+        docker push bruslanb/postgres:alpine
 
     - name: Build and push App image
       run: |
-        docker build -t ${{ secrets.DOCKER_USERNAME }}/app-user-transaction-new-image -f docker_app/Dockerfile .
-        docker push ${{ secrets.DOCKER_USERNAME }}/app-user-transaction-new-image
+        docker build -t bruslanb/app-user-transaction-new-image -f docker_app/Dockerfile .
+        docker push bruslanb/app-user-transaction-new-image
 
     - name: Run Docker Compose
       run: docker-compose up -d --build
