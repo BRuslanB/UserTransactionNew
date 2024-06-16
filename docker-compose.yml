@@ -62,4 +62,4 @@ services:
       - '8080:8000'
       - '9090:9090'
     volumes:
-      - ./build:/app/build
+      - ./build:/app/build:rw

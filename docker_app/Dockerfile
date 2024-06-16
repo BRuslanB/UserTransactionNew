@@ -19,7 +19,10 @@ FROM base as code
 WORKDIR /app
 COPY src ./src/
 
-# Build app excluded test (-x test)
+# Create the build directory and set permissions
+RUN mkdir -p /app/build && chmod -R 777 /app/build
+
+# Build app excluding tests (-x test)
 RUN ./gradlew build -x test && ls -la build/libs && ls -la build/generated/source/proto/main/java/
 
 # Final layer with runtime environment
