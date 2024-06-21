@@ -38,9 +38,6 @@ RUN mkdir -p /.gradle /home/myuser /app/build/tmp && \
     chown -R myuser:myusergroup /.gradle /home/myuser /app && \
     chmod -R 777 /.gradle /home/myuser /app
 
-# Switch to the new user
-USER myuser
-
 # Copy base layer
 COPY --from=base /app/gradle ./gradle/
 COPY --from=base /app/build.gradle ./
@@ -66,6 +63,9 @@ RUN apt-get update && apt-get install -y netcat-openbsd
 
 # Ensure scripts are executable
 RUN chmod +x ./wait-for-databases_ready.sh ./gradlew ./entrypoint.sh
+
+# Switch to the new user
+USER myuser
 
 # Set the entrypoint to execute the script
 ENTRYPOINT ["./entrypoint.sh"]
