@@ -74,8 +74,8 @@ RUN mkdir -p /.gradle /home/myuser /app/build/tmp && \
     chmod -R 777 /.gradle /home/myuser
 
 # Ensure all subdirectories have correct permissions
-RUN find /app -type d -exec chmod 777 {} \; && \
-    find /app -type f -exec chmod 666 {} \;
+# RUN find /app -type d -exec chmod 777 {} \; && \
+#    find /app -type f -exec chmod 666 {} \;
 
 # Switch to the new user
 USER myuser

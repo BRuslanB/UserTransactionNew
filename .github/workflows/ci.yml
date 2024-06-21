@@ -44,6 +44,11 @@ jobs:
     - name: Run Docker Compose
       run: docker-compose up -d --build
 
+    - name: Ensure permissions in the app container
+      run: |
+        docker exec my-app-container find /app -type d -exec chmod 777 {} \;
+        docker exec my-app-container find /app -type f -exec chmod 666 {} \;
+          
     # - name: Change permissions for build directory
     #   run: docker exec app-user-transaction-new-container chown -R 1001:1001 /app/build && chmod -R 777 /app/build
 
