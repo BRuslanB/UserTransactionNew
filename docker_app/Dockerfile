@@ -73,12 +73,12 @@ RUN mkdir -p /.gradle /home/myuser /app/build/tmp && \
     chmod -R 755 /app && \
     chmod -R 777 /.gradle /home/myuser
 
-# Switch to the new user
-USER myuser
-
 # Ensure all subdirectories have correct permissions
 RUN find /app -type d -exec chmod 755 {} \; && \
     find /app -type f -exec chmod 644 {} \;
+
+# Switch to the new user
+USER myuser
 
 # Set the entrypoint to execute the script
 ENTRYPOINT ["./entrypoint.sh"]
