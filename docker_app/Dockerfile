@@ -3,7 +3,8 @@ FROM openjdk:21-slim as base
 WORKDIR /app
 
 # Add user and group with specific UID and GID
-RUN groupadd -g 1001 myusergroup && useradd -u 1001 -g myusergroup myuser
+RUN groupadd -g 1001 myusergroup && \
+    useradd -u 1001 -g myusergroup myuser
 
 # Copy gradle files
 COPY gradle ./gradle/
@@ -16,7 +17,8 @@ COPY gradlew.bat ./
 RUN sed -i 's/\r$//' gradlew
 
 # Install dependencies
-RUN chmod +x ./gradlew && ./gradlew dependencies
+RUN chmod +x ./gradlew && \
+    ./gradlew dependencies
 
 # Layer with application code
 FROM base as code
@@ -24,14 +26,17 @@ WORKDIR /app
 COPY src ./src/
 
 # Build app excluding tests (-x test)
-RUN ./gradlew build -x test && ls -la build/libs && ls -la build/generated/source/proto/main/java/
+RUN ./gradlew build -x test && \
+    ls -la build/libs && \
+    ls -la build/generated/source/proto/main/java/
 
 # Final layer with runtime environment
 FROM openjdk:21-slim
 WORKDIR /app
 
 # Add user and group with specific UID and GID
-RUN groupadd -g 1001 myusergroup && useradd -u 1001 -g myusergroup myuser
+RUN groupadd -g 1001 myusergroup && \
+    useradd -u 1001 -g myusergroup myuser
 
 # Copy base layer
 COPY --from=base /app/gradle ./gradle/
@@ -54,21 +59,26 @@ RUN sed -i 's/\r$//' wait-for-databases_ready.sh
 RUN sed -i 's/\r$//' entrypoint.sh
 
 # Install netcat-openbsd for waiting script
-RUN apt-get update && apt-get install -y netcat-openbsd
+RUN apt-get update && \
+    apt-get install -y netcat-openbsd
 
 # Ensure scripts are executable
-RUN chmod +x ./wait-for-databases_ready.sh ./gradlew ./entrypoint.sh
+RUN chmod +x ./wait-for-databases_ready.sh && \
+    chmod +x ./gradlew && \
+    chmod +x ./entrypoint.sh
 
 # Create necessary directories and set permissions
 RUN mkdir -p /.gradle /home/myuser /app/build/tmp && \
     chown -R myuser:myusergroup /.gradle /home/myuser /app && \
-    chmod -R 777 /.gradle /home/myuser /app
+    chmod -R 755 /app && \
+    chmod -R 777 /.gradle /home/myuser
 
 # Switch to the new user
 USER myuser
 
 # Ensure all subdirectories have correct permissions
-RUN find /app -type d -exec chmod 777 {} \; && find /app -type f -exec chmod 666 {} \;
+RUN find /app -type d -exec chmod 755 {} \; && \
+    find /app -type f -exec chmod 644 {} \;
 
 # Set the entrypoint to execute the script
 ENTRYPOINT ["./entrypoint.sh"]
