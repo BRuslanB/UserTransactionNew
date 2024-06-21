@@ -33,6 +33,14 @@ WORKDIR /app
 # Add user and group with specific UID and GID
 RUN groupadd -g 1001 myusergroup && useradd -u 1001 -g myusergroup myuser
 
+# Create necessary directories and set permissions
+RUN mkdir -p /.gradle /home/myuser /app/build/tmp && \
+    chown -R myuser:myusergroup /.gradle /home/myuser /app && \
+    chmod -R 777 /.gradle /home/myuser /app
+
+# Switch to the new user
+USER myuser
+
 # Copy base layer
 COPY --from=base /app/gradle ./gradle/
 COPY --from=base /app/build.gradle ./
@@ -57,18 +65,7 @@ RUN sed -i 's/\r$//' entrypoint.sh
 RUN apt-get update && apt-get install -y netcat-openbsd
 
 # Ensure scripts are executable
-RUN chmod +x ./wait-for-databases_ready.sh && chmod +x ./gradlew && chmod +x ./entrypoint.sh
-
-# Create necessary directories and set permissions
-RUN mkdir -p /.gradle && chmod -R 777 /.gradle && chown -R myuser:myusergroup /.gradle
-RUN mkdir -p /home/myuser && chmod -R 777 /home/myuser && chown -R myuser:myusergroup /home/myuser
-RUN mkdir -p /app/build/tmp && chmod -R 777 /app/build/tmp && chown -R myuser:myusergroup /app/build/tmp
-
-# Set permissions for /app directory
-RUN chmod -R 777 /app && chown -R myuser:myusergroup /app
-
-# Switch to the new user
-USER myuser
+RUN chmod +x ./wait-for-databases_ready.sh ./gradlew ./entrypoint.sh
 
 # Set the entrypoint to execute the script
 ENTRYPOINT ["./entrypoint.sh"]
