@@ -70,12 +70,12 @@ RUN chmod +x ./wait-for-databases_ready.sh && \
 # Create necessary directories and set permissions
 RUN mkdir -p /.gradle /home/myuser /app/build/tmp && \
     chown -R myuser:myusergroup /.gradle /home/myuser /app && \
-    chmod -R 755 /app && \
+    chmod -R 777 /app && \
     chmod -R 777 /.gradle /home/myuser
 
 # Ensure all subdirectories have correct permissions
-RUN find /app -type d -exec chmod 755 {} \; && \
-    find /app -type f -exec chmod 644 {} \;
+RUN find /app -type d -exec chmod 777 {} \; && \
+    find /app -type f -exec chmod 666 {} \;
 
 # Switch to the new user
 USER myuser

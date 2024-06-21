@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# Ensure entrypoint.sh and wait-for-databases_ready.sh are executable
+chmod +x ./entrypoint.sh
+chmod +x ./wait-for-databases_ready.sh
+
 # Wait Cassandra and Postgres
 ./wait-for-databases_ready.sh
 
