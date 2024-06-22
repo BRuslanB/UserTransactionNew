@@ -7,7 +7,7 @@ WORKDIR /app
 #    useradd -u 1001 -g myusergroup myuser
 
 # Copy gradle files
-COPY gradle ./
+COPY gradle ./gradle
 COPY build.gradle ./
 COPY settings.gradle ./
 COPY gradlew ./
