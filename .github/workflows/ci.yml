@@ -46,10 +46,12 @@ jobs:
 
     - name: Ensure permissions in the app container
       run: |
-        docker exec app-user-transaction-new-container chown -R 1001:1001 /app && chmod -R 755 /app
-        docker exec app-user-transaction-new-container chown -R 1001:1001 /.gradle && chmod -R 777 /.gradle
-#        docker exec app-user-transaction-new-container find /app -type d -exec chmod 777 {} \;
-#        docker exec app-user-transaction-new-container find /app -type f -exec chmod 666 {} \;
+#        docker exec app-user-transaction-new-container chown -R 1001:1001 /app && chmod -R 755 /app
+#        docker exec app-user-transaction-new-container chown -R 1001:1001 /.gradle && chmod -R 777 /.gradle
+        docker exec app-user-transaction-new-container find /app -type d -exec chmod 777 {} \;
+        docker exec app-user-transaction-new-container find /app -type f -exec chmod 666 {} \;
+        docker exec app-user-transaction-new-container find /.gradle -type d -exec chmod 777 {} \;
+        docker exec app-user-transaction-new-container find /.gradle -type f -exec chmod 666 {} \;
 
     # - name: Change permissions for build directory
     #   run: docker exec app-user-transaction-new-container chown -R 1001:1001 /app/build && chmod -R 777 /app/build
@@ -61,6 +63,8 @@ jobs:
       run: |
         docker exec app-user-transaction-new-container find /app -type d -exec chmod 755 {} \;
         docker exec app-user-transaction-new-container find /app -type f -exec chmod 644 {} \;
+        docker exec app-user-transaction-new-container find /.gradle -type d -exec chmod 755 {} \;
+        docker exec app-user-transaction-new-container find /.gradle -type f -exec chmod 644 {} \;
 
     # - name: Restore permissions for build directory
     #   run: docker exec app-user-transaction-new-container chown -R 1001:1001 /app/build && chmod -R 755 /app/build
