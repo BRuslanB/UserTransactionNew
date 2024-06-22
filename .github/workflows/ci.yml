@@ -11,63 +11,55 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v2
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
 
-    - name: Set up QEMU
-      uses: docker/setup-qemu-action@v2
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
 
-    - name: Log in to DockerHub
-      uses: docker/login-action@v2
-      with:
+      - name: Log in to DockerHub
+        uses: docker/login-action@v2
+        with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-    - name: Build and push Cassandra image
-      run: |
-        docker build -t bruslanb/cassandra-image:latest -f docker_cassandra/Dockerfile .
-        docker push bruslanb/cassandra-image:latest
+      - name: Build and push Cassandra image
+        run: |
+          docker build -t bruslanb/cassandra-image:latest -f docker_cassandra/Dockerfile .
+          docker push bruslanb/cassandra-image:latest
 
-    - name: Build and push Postgres image
-      run: |
-        docker build -t bruslanb/postgres:alpine -f docker_postgres/Dockerfile .
-        docker push bruslanb/postgres:alpine
+      - name: Build and push Postgres image
+        run: |
+          docker build -t bruslanb/postgres:alpine -f docker_postgres/Dockerfile .
+          docker push bruslanb/postgres:alpine
 
-    - name: Build and push App image
-      run: |
-        docker build -t bruslanb/app-user-transaction-new-image:1.0.1 -f docker_app/Dockerfile .
-        docker push bruslanb/app-user-transaction-new-image:1.0.1
+      - name: Build and push App image
+        run: |
+          docker build -t bruslanb/app-user-transaction-new-image:1.0.1 -f docker_app/Dockerfile .
+          docker push bruslanb/app-user-transaction-new-image:1.0.1
 
-    - name: Run Docker Compose
-      run: docker-compose up -d --build
+      - name: Run Docker Compose
+        run: docker-compose up -d --build
 
-    - name: Ensure permissions in the app container
-      run: |
-        docker exec app-user-transaction-new-container find /app -type d -exec chmod 777 {} \;
-        docker exec app-user-transaction-new-container find /app -type f -exec chmod 666 {} \;
-        docker exec app-user-transaction-new-container find /.gradle -type d -exec chmod 777 {} \;
-        docker exec app-user-transaction-new-container find /.gradle -type f -exec chmod 666 {} \;
-#        docker exec app-user-transaction-new-container chown -R 1001:1001 /app && chmod -R 755 /app
-#        docker exec app-user-transaction-new-container chown -R 1001:1001 /.gradle && chmod -R 777 /.gradle
+      - name: Ensure permissions in the app container
+        run: |
+          docker exec -u root app-user-transaction-new-container find /app -type d -exec chmod 777 {} \;
+          docker exec -u root app-user-transaction-new-container find /app -type f -exec chmod 666 {} \;
+          docker exec -u root app-user-transaction-new-container find /.gradle -type d -exec chmod 777 {} \;
+          docker exec -u root app-user-transaction-new-container find /.gradle -type f -exec chmod 666 {} \;
 
-    # - name: Change permissions for build directory
-    #   run: docker exec app-user-transaction-new-container chown -R 1001:1001 /app/build && chmod -R 777 /app/build
+      - name: Run tests in the app container
+        run: docker exec -u root app-user-transaction-new-container ./gradlew test --stacktrace --info -Dorg.gradle.vfs.watch=true
 
-    - name: Run tests in the app container
-      run: docker exec app-user-transaction-new-container ./gradlew test --stacktrace --info -Dorg.gradle.vfs.watch=true
+      - name: Restore permissions in the app container
+        run: |
+          docker exec -u root app-user-transaction-new-container find /app -type d -exec chmod 755 {} \;
+          docker exec -u root app-user-transaction-new-container find /app -type f -exec chmod 644 {} \;
+          docker exec -u root app-user-transaction-new-container find /.gradle -type d -exec chmod 755 {} \;
+          docker exec -u root app-user-transaction-new-container find /.gradle -type f -exec chmod 644 {} \;
 
-    - name: Restore permissions in the app container
-      run: |
-        docker exec app-user-transaction-new-container find /app -type d -exec chmod 755 {} \;
-        docker exec app-user-transaction-new-container find /app -type f -exec chmod 644 {} \;
-        docker exec app-user-transaction-new-container find /.gradle -type d -exec chmod 755 {} \;
-        docker exec app-user-transaction-new-container find /.gradle -type f -exec chmod 644 {} \;
-
-    # - name: Restore permissions for build directory
-    #   run: docker exec app-user-transaction-new-container chown -R 1001:1001 /app/build && chmod -R 755 /app/build
-
-    - name: Stop Docker Compose
-      run: docker-compose down
+      - name: Stop Docker Compose
+        run: docker-compose down
