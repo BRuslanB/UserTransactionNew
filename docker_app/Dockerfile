@@ -64,7 +64,7 @@ RUN apt-get update && \
 
 # Ensure scripts are executable
 RUN chmod +x ./wait-for-databases_ready.sh && \
-    chmod +x ./entrypoint.sh \
+    chmod +x ./entrypoint.sh
 
 # Ensure gradlew is executable
 RUN chmod +x ./gradlew
