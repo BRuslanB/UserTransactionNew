@@ -3,8 +3,8 @@ FROM openjdk:21-slim as base
 WORKDIR /app
 
 # Add user and group with specific UID and GID
-RUN groupadd -g 1001 myusergroup && \
-    useradd -u 1001 -g myusergroup myuser
+#RUN groupadd -g 1001 myusergroup && \
+#    useradd -u 1001 -g myusergroup myuser
 
 # Copy gradle files
 COPY gradle ./gradle/
@@ -35,8 +35,8 @@ FROM openjdk:21-slim
 WORKDIR /app
 
 # Add user and group with specific UID and GID
-RUN groupadd -g 1001 myusergroup && \
-    useradd -u 1001 -g myusergroup myuser
+#RUN groupadd -g 1001 myusergroup && \
+#    useradd -u 1001 -g myusergroup myuser
 
 # Copy base layer
 COPY --from=base /app/gradle ./gradle/
@@ -68,17 +68,20 @@ RUN chmod +x ./wait-for-databases_ready.sh && \
     chmod +x ./entrypoint.sh
 
 # Create necessary directories and set permissions
+#RUN mkdir -p /.gradle /home/myuser /app/build/tmp && \
+#    chown -R myuser:myusergroup /.gradle /home/myuser /app && \
+#    chmod -R 777 /app && \
+#    chmod -R 777 /.gradle /home/myuser
+
 RUN mkdir -p /.gradle /home/myuser /app/build/tmp && \
-    chown -R myuser:myusergroup /.gradle /home/myuser /app && \
-    chmod -R 777 /app && \
-    chmod -R 777 /.gradle /home/myuser
+    chown -R 777 /.gradle /home/myuser /app
 
 # Ensure all subdirectories have correct permissions
 # RUN find /app -type d -exec chmod 777 {} \; && \
 #    find /app -type f -exec chmod 666 {} \;
 
 # Switch to the new user
-USER myuser
+#USER myuser
 
 # Set the entrypoint to execute the script
 ENTRYPOINT ["./entrypoint.sh"]
