@@ -67,7 +67,7 @@ RUN chmod +x ./wait-for-databases_ready.sh && \
     chmod +x ./entrypoint.sh
 
 # Ensure gradlew is executable
-RUN chmod +x /app/gradlew
+RUN chmod +x ./gradlew
 
 # Create necessary directories and set permissions
 #RUN mkdir -p /.gradle /home/myuser /app/build/tmp && \
